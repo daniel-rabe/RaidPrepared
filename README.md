@@ -23,6 +23,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 - Never opens in combat – it waits until combat ends.
 
 ### Raid gear check
+- Available to the **raid leader and assistants** only.
 - Lists **all group members** with their enchant/gem status.
 - Inspects players one after another (throttled, pauses in combat, doesn't interfere with your own inspect window).
 - Per-player **Refresh** button and a **Refresh All** button.
@@ -34,12 +35,12 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 | Action | Result |
 | --- | --- |
 | `/rp` or `/raidprepared` | Check your own gear and consumables |
-| `/rp raid` | Open the raid gear check |
+| `/rp raid` | Open the raid gear check (lead/assist only) |
 | `/rp minimap` | Show/hide the minimap button |
 | `/rp quality <rank>` | Set the required enchant/gem quality rank (default 2) |
 | `/rp debug` | Print raw item, socket and consumable data (for bug reports) |
 | Minimap button – left-click | Check your own gear |
-| Minimap button – right-click | Open the raid gear check |
+| Minimap button – right-click | Open the raid gear check (lead/assist only) |
 | Minimap button – drag | Move the button |
 
 The same actions are available from the addon compartment menu on the minimap.

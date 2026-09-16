@@ -24,6 +24,11 @@ local STATUS_TEXT = {
 local RaidCheck = {}
 RP.RaidCheck = RaidCheck
 
+-- The raid check is only available to the group leader and raid assistants.
+function RaidCheck:IsAllowed()
+    return IsInGroup() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
+end
+
 local members = {} -- guid -> { guid, name, classFile, status, issues }
 local order = {}   -- guids sorted by name
 local queue = {}   -- guids waiting to be inspected
@@ -253,16 +258,20 @@ end)
 
 ticker:RegisterEvent("INSPECT_READY")
 ticker:RegisterEvent("GROUP_ROSTER_UPDATE")
+ticker:RegisterEvent("PARTY_LEADER_CHANGED")
 ticker:RegisterEvent("PLAYER_REGEN_ENABLED")
 ticker:RegisterEvent("PLAYER_REGEN_DISABLED")
 ticker:SetScript("OnEvent", function(_, event, arg1)
     if event == "INSPECT_READY" then
         OnInspectReady(arg1)
-    elseif event == "GROUP_ROSTER_UPDATE" then
-        if frame and frame:IsShown() then
+    elseif event == "GROUP_ROSTER_UPDATE" or event == "PARTY_LEADER_CHANGED" then
+        if not RaidCheck:IsAllowed() then
+            RaidCheck:Stop()
+        elseif frame and frame:IsShown() then
             UpdateRoster()
             RaidCheck:Refresh()
         end
+        RP.Dialog:UpdateRaidCheckButton()
     else
         RaidCheck:Refresh()
     end
@@ -427,7 +436,19 @@ function RaidCheck:Refresh()
     headerText:SetText(header)
 end
 
+-- Closes the window and cancels pending inspects (e.g. after losing lead/assist).
+function RaidCheck:Stop()
+    wipe(queue)
+    if frame and frame:IsShown() then
+        frame:Hide()
+    end
+end
+
 function RaidCheck:Open()
+    if not self:IsAllowed() then
+        print("|cff33ccffRaidPrepared|r: The raid check requires raid lead or assist.")
+        return
+    end
     if not frame then CreateWindow() end
     UpdateRoster()
     frame:Show()

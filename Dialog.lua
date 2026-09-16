@@ -13,7 +13,7 @@ local PROBLEM_COLORS = {
 local Dialog = {}
 RP.Dialog = Dialog
 
-local frame, scrollChild, summaryText, potionText, weaponText, okText
+local frame, scrollChild, summaryText, potionText, weaponText, okText, raidCheckButton
 local rows = {}
 local pendingIssues, pendingPotions -- waiting for combat to end
 
@@ -110,11 +110,11 @@ local function CreateDialog()
     dismiss:SetText("Dismiss")
     dismiss:SetScript("OnClick", function() frame:Hide() end)
 
-    local raidCheck = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    raidCheck:SetSize(100, 24)
-    raidCheck:SetPoint("BOTTOMLEFT", 20, 18)
-    raidCheck:SetText("Raid Check")
-    raidCheck:SetScript("OnClick", function() RP.RaidCheck:Open() end)
+    raidCheckButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    raidCheckButton:SetSize(100, 24)
+    raidCheckButton:SetPoint("BOTTOMLEFT", 20, 18)
+    raidCheckButton:SetText("Raid Check")
+    raidCheckButton:SetScript("OnClick", function() RP.RaidCheck:Open() end)
 end
 
 local function ColorPotionCount(entry)
@@ -186,9 +186,16 @@ function Dialog:Show(issues, potions)
     end
     if not frame then CreateDialog() end
     Populate(issues, potions)
+    self:UpdateRaidCheckButton()
     frame:Show()
     if #issues > 0 then
         PlaySound(SOUNDKIT.RAID_WARNING)
+    end
+end
+
+function Dialog:UpdateRaidCheckButton()
+    if raidCheckButton then
+        raidCheckButton:SetShown(RP.RaidCheck:IsAllowed())
     end
 end
 

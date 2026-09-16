@@ -21,6 +21,7 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 - Warns you when you have none left
 
 ### 🛡️ Raid Gear Check
+- For **raid leaders and assistants**
 - Lists **every raid member** with their enchant and gem status
 - Hover a player to see exactly which items are missing an enchant or gem
 - **Refresh** button for each player, plus **Refresh All**
@@ -39,11 +40,11 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 |---|---|
 | **Join a raid** | Automatic check |
 | `/rp` | Check your own gear and consumables |
-| `/rp raid` | Open the raid gear check |
+| `/rp raid` | Open the raid gear check (lead/assist) |
 | `/rp minimap` | Show/hide the minimap button |
 | `/rp quality <rank>` | Set the required quality rank |
 | **Minimap left-click** | Check your gear |
-| **Minimap right-click** | Raid gear check |
+| **Minimap right-click** | Raid gear check (lead/assist) |
 
 Also available in the minimap **addon compartment** menu.
 

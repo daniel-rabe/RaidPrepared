@@ -27,7 +27,9 @@ local function ShowTooltip(owner)
     GameTooltip:SetOwner(owner, "ANCHOR_LEFT")
     GameTooltip:AddLine("RaidPrepared")
     GameTooltip:AddLine("Left-click: check enchants, gems & consumables", 1, 1, 1)
-    GameTooltip:AddLine("Right-click: raid gear check", 1, 1, 1)
+    if RP.RaidCheck:IsAllowed() then
+        GameTooltip:AddLine("Right-click: raid gear check", 1, 1, 1)
+    end
     GameTooltip:AddLine("Drag: move button", 1, 1, 1)
     GameTooltip:Show()
 end
