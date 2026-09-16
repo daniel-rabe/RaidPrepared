@@ -49,7 +49,7 @@ RP.HEALING_POTION_NAMES = {
 
 -- Same for mana potions: when non-empty, only these names count as mana potions.
 RP.MANA_POTION_NAMES = {
-    ["Silvermoon Mana Potion"] = true,
+    ["Lightfused Mana Potion"] = true,
 }
 
 -- Specialization roles that need mana potions ("HEALER", "DAMAGER", "TANK").

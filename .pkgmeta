@@ -1,0 +1,6 @@
+package-as: RaidPrepared
+
+ignore:
+  - media
+  - CURSEFORGE.md
+  - README.md
