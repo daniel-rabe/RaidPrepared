@@ -1,0 +1,18 @@
+## Interface: 120001, 120005, 120007
+## Title: RaidPrepared
+## Notes: Checks your equipped gear for missing or low-quality enchants and gems and your healing/mana potions when you join a raid.
+## Author: duneking
+## Version: 1.0.0
+## SavedVariables: RaidPreparedDB
+## IconTexture: Interface\Icons\INV_Misc_Gem_Diamond_02
+## AddonCompartmentFunc: RaidPrepared_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: RaidPrepared_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: RaidPrepared_OnAddonCompartmentLeave
+
+Data.lua
+Scanner.lua
+Potions.lua
+RaidCheck.lua
+Dialog.lua
+Minimap.lua
+Core.lua
