@@ -13,6 +13,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 - Detects:
   - **Missing enchants** on head, shoulders, chest, legs, feet, both rings, main hand and off-hand weapons.
   - **Empty gem sockets**.
+  - **Missing epic gem**: one Eversong Diamond (Indecipherable, Powerful, Stoic or Telluric) should be socketed in your gear.
   - **Low-quality** enchants and gems (below the highest crafting quality rank).
   - **Outdated** gems from previous expansions (and optionally enchants, see configuration).
 - Counts consumables in your bags:
@@ -25,7 +26,8 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 
 ### Raid gear check
 - Available to the **raid leader and assistants** only.
-- Lists **all group members** with their enchant/gem status.
+- Lists **all group members** with their enchant/gem status (including a missing epic gem).
+- Shows **low or mid quality enchants** together with the item level of that gear slot.
 - Inspects players one after another (throttled, pauses in combat, doesn't interfere with your own inspect window).
 - Per-player **Refresh** button and a **Refresh All** button.
 - Hover a player to see the full list of problems with item links.
@@ -62,6 +64,7 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 | `DEFAULT_MAX_QUALITY_TIER` | Highest crafting quality rank (anything lower is "low quality") |
 | `KNOWN_CURRENT_ENCHANTS` | Optional whitelist of enchant IDs; others are reported as outdated |
 | `MIN_GEM_EXPANSION` | Older gems count as outdated |
+| `EPIC_GEM_IDS` | Epic gem item IDs; warn if none is socketed (empty = no check) |
 | `HEALING_POTION_IDS` / `MANA_POTION_IDS` / `WEAPON_BUFF_IDS` | Item IDs that are counted (one ID per quality rank) |
 | `MIN_HEALING_POTIONS` / `MIN_MANA_POTIONS` / `MIN_WEAPON_BUFFS` | Warn below this amount |
 | `MANA_POTION_ROLES` | Spec roles that need mana potions |

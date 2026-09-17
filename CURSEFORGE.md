@@ -11,6 +11,7 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 ### 💎 Enchants & Gems
 - Detects **missing enchants** on head, shoulders, chest, legs, feet, rings and weapons
 - Finds **empty gem sockets**
+- Warns if no **Eversong Diamond** (Indecipherable, Powerful, Stoic or Telluric) is socketed
 - Flags **low-quality** enchants and gems below the highest crafting rank
 - Flags **outdated gems** from previous expansions
 
@@ -24,6 +25,7 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 ### 🛡️ Raid Gear Check
 - For **raid leaders and assistants**
 - Lists **every raid member** with their enchant and gem status
+- Shows **low/mid quality enchants** with the item level of the slot
 - Hover a player to see exactly which items are missing an enchant or gem
 - **Refresh** button for each player, plus **Refresh All**
 - Inspects players one at a time, pauses in combat, never interrupts your own inspect window

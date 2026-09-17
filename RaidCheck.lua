@@ -150,7 +150,7 @@ local function CountEquippedItems(unit)
 end
 
 local function ScanMember(guid, unit)
-    RP.ScanUnitAsync(unit, false, function(issues)
+    RP.ScanUnitAsync(unit, "enchant", function(issues)
         if current and current.guid == guid then
             Finish(guid, #issues > 0 and "issues" or "ok", issues)
         end
@@ -287,10 +287,16 @@ local function ColoredName(entry)
 end
 
 local function ShortIssue(issue)
-    if issue.kind == "enchant" then
-        return issue.slotName .. ": no enchant"
+    if issue.kind == "enchant" and issue.problem == "low" then
+        local quality = issue.tier == 1 and "low" or "mid"
+        local ilvl = issue.itemLevel and (" (ilvl %d)"):format(issue.itemLevel) or ""
+        return ("|cffff9919%s: %s quality enchant%s|r"):format(issue.slotName, quality, ilvl)
+    elseif issue.kind == "enchant" then
+        return "|cffff4040" .. issue.slotName .. ": no enchant|r"
+    elseif issue.kind == "epicgem" then
+        return "|cffff4040" .. issue.slotName .. ": missing|r"
     end
-    return issue.slotName .. ": " .. issue.detail:lower()
+    return "|cffff4040" .. issue.slotName .. ": " .. issue.detail:lower() .. "|r"
 end
 
 local function StatusText(entry)
@@ -299,7 +305,7 @@ local function StatusText(entry)
         for _, issue in ipairs(entry.issues) do
             parts[#parts + 1] = ShortIssue(issue)
         end
-        return "|cffff4040" .. table.concat(parts, ", ") .. "|r"
+        return table.concat(parts, ", ")
     end
     return STATUS_TEXT[entry.status] or entry.status
 end
@@ -341,7 +347,12 @@ local function CreateRow(index)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:AddLine(ColoredName(entry))
         for _, issue in ipairs(entry.issues) do
-            GameTooltip:AddDoubleLine(issue.itemLink or issue.slotName, issue.detail, 1, 1, 1, 1, 0.25, 0.25)
+            local detail = issue.detail
+            if issue.itemLevel then
+                detail = ("%s (ilvl %d)"):format(detail, issue.itemLevel)
+            end
+            local g = issue.problem == "missing" and 0.25 or 0.6
+            GameTooltip:AddDoubleLine(issue.itemLink or issue.slotName, detail, 1, 1, 1, 1, g, 0.1)
         end
         GameTooltip:Show()
     end)

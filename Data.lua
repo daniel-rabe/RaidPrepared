@@ -34,6 +34,16 @@ RP.KNOWN_CURRENT_ENCHANTS = {
 -- Gems whose expansion ID is lower than this are reported as "outdated".
 RP.MIN_GEM_EXPANSION = LE_EXPANSION_LEVEL_CURRENT
 
+-- Unique epic gems; one of them should be socketed somewhere in the gear.
+-- Matched by item ID (one ID per quality rank). Leave empty to skip the check.
+RP.EPIC_GEM_IDS = {
+    [240982] = true, [240983] = true, -- Indecipherable Eversong Diamond
+    [240966] = true, [240967] = true, -- Powerful Eversong Diamond
+    [240970] = true, [240971] = true, -- Stoic Eversong Diamond
+    [240968] = true, [240969] = true, -- Telluric Eversong Diamond
+}
+RP.EPIC_GEM_ICON_ID = 240967 -- icon shown for the missing epic gem warning
+
 -- Consumable check. Items are matched by item ID, so it works with every client language.
 -- Each crafting quality rank is a separate item ID - list all of them. Update each season.
 -- Warn when fewer than the minimum are in the bags.

@@ -148,7 +148,12 @@ local function CheckEnchant(issues, unit, slot, link, checkQuality)
     if tier and tier < maxTier then
         AddIssue(issues, slot, link, "enchant", "low",
             ("Low quality enchant (rank %d/%d)%s"):format(tier, maxTier, name and (": " .. name) or ""))
+        local issue = issues[#issues]
+        issue.tier, issue.maxTier = tier, maxTier
+        issue.itemLevel = C_Item.GetDetailedItemLevelInfo(link)
     end
+
+    if checkQuality ~= true then return end -- "enchant": enchant quality only
 
     if next(RP.KNOWN_CURRENT_ENCHANTS) and not RP.KNOWN_CURRENT_ENCHANTS[enchantID] then
         AddIssue(issues, slot, link, "enchant", "outdated",
@@ -173,7 +178,7 @@ local function CheckGems(issues, unit, slot, link, checkQuality)
             empty == 1 and "Empty gem socket" or ("%d empty gem sockets"):format(empty))
     end
 
-    if not checkQuality then return end
+    if checkQuality ~= true then return end
 
     local maxTier = GetMaxQualityTier()
     for _, gemID in ipairs(gems) do
@@ -193,8 +198,37 @@ local function CheckGems(issues, unit, slot, link, checkQuality)
     end
 end
 
+local EPIC_GEM_SLOT = 99 -- sort position of the epic gem issue (after gear slots)
+
+-- Reports a missing epic gem when the unit has sockets but none holds one of RP.EPIC_GEM_IDS.
+local function CheckEpicGem(issues, unit)
+    if not next(RP.EPIC_GEM_IDS) then return end
+
+    local sockets = 0
+    for slot = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
+        local link = GetInventoryItemLink(unit, slot)
+        if link then
+            for _, gemID in ipairs(GetGemIDs(link)) do
+                if RP.EPIC_GEM_IDS[gemID] then return end
+            end
+            sockets = sockets + math.max(GetNumSockets(link), (GetTooltipSocketInfo(unit, slot)))
+        end
+    end
+    if sockets == 0 then return end
+
+    issues[#issues + 1] = {
+        slot = EPIC_GEM_SLOT,
+        slotName = "Epic Gem",
+        icon = C_Item.GetItemIconByID(RP.EPIC_GEM_ICON_ID),
+        kind = "epicgem",
+        problem = "missing",
+        detail = "No Eversong Diamond socketed",
+    }
+end
+
 -- Synchronous scan of a unit ("player" or an inspected unit). Item data should be cached
--- (see RP.ScanUnitAsync). checkQuality = also report low-quality/outdated enchants and gems.
+-- (see RP.ScanUnitAsync). checkQuality: true = also report low-quality/outdated enchants and gems,
+-- "enchant" = also report low-quality enchants only, false = missing enchants/gems only.
 function RP.ScanUnit(unit, checkQuality)
     local issues = {}
     for slot = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
@@ -206,6 +240,7 @@ function RP.ScanUnit(unit, checkQuality)
             end
         end
     end
+    CheckEpicGem(issues, unit)
     table.sort(issues, function(a, b)
         if a.slot ~= b.slot then return a.slot < b.slot end
         return a.kind < b.kind
