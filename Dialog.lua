@@ -13,8 +13,12 @@ local PROBLEM_COLORS = {
 local Dialog = {}
 RP.Dialog = Dialog
 
+Dialog.TAB_CHECK = 1
+Dialog.TAB_TALENTS = 2
+Dialog.TAB_OPTIONS = 3
+
 local frame, scrollChild, summaryText, potionText, weaponText, okText, raidCheckButton
-local checkPanel, optionsPanel, indicatorsCheck, qualityValue
+local checkPanel, talentsPanel, optionsPanel, indicatorsCheck, qualityValue
 local rows = {}
 local pendingIssues, pendingPotions -- waiting for combat to end
 
@@ -121,13 +125,10 @@ local function CreateDialog()
     raidCheckButton:SetText("Raid Check")
     raidCheckButton:SetScript("OnClick", function() RP.RaidCheck:Open() end)
 
-    local talents = CreateFrame("Button", nil, checkPanel, "UIPanelButtonTemplate")
-    talents:SetSize(100, 24)
-    talents:SetPoint("BOTTOMRIGHT", -20, 18)
-    talents:SetText("Talents")
-    talents:SetScript("OnClick", function() RP.Talents:Open() end)
+    -- Tab 2: talent loadouts
+    talentsPanel = RP.Talents:CreatePanel(frame)
 
-    -- Tab 2: options
+    -- Tab 3: options
     optionsPanel = CreateFrame("Frame", nil, frame)
     optionsPanel:SetAllPoints()
     optionsPanel:Hide()
@@ -189,7 +190,7 @@ local function CreateDialog()
 
     -- Tabs below the frame
     frame.Tabs = {}
-    for i, label in ipairs({ "Check", OPTIONS or "Options" }) do
+    for i, label in ipairs({ "Check", TALENTS or "Talents", OPTIONS or "Options" }) do
         local tab = CreateFrame("Button", "RaidPreparedDialogTab" .. i, frame, "PanelTabButtonTemplate")
         tab:SetID(i)
         tab:SetText(label)
@@ -210,8 +211,9 @@ end
 
 function Dialog:SelectTab(index)
     PanelTemplates_SetTab(frame, index)
-    checkPanel:SetShown(index == 1)
-    optionsPanel:SetShown(index == 2)
+    checkPanel:SetShown(index == Dialog.TAB_CHECK)
+    talentsPanel:SetShown(index == Dialog.TAB_TALENTS)
+    optionsPanel:SetShown(index == Dialog.TAB_OPTIONS)
 end
 
 local function ColorPotionCount(entry)
@@ -281,7 +283,7 @@ function Dialog:Show(issues, potions)
     if not frame then CreateDialog() end
     Populate(issues, potions)
     self:UpdateRaidCheckButton()
-    self:SelectTab(1)
+    self:SelectTab(Dialog.TAB_CHECK)
     frame:Show()
     if #issues > 0 then
         PlaySound(SOUNDKIT.RAID_WARNING)
@@ -294,15 +296,27 @@ function Dialog:UpdateRaidCheckButton()
     end
 end
 
-function Dialog:OpenOptions()
+function Dialog:OpenTab(index)
     if not frame then
         CreateDialog()
         Populate({}, nil)
         okText:Hide()
         summaryText:SetText("No check run yet - use /rp or the minimap button.")
     end
-    self:SelectTab(2)
+    self:SelectTab(index)
     frame:Show()
+end
+
+function Dialog:ToggleTab(index)
+    if frame and frame:IsShown() and frame.selectedTab == index then
+        frame:Hide()
+    else
+        self:OpenTab(index)
+    end
+end
+
+function Dialog:OpenOptions()
+    self:OpenTab(Dialog.TAB_OPTIONS)
 end
 
 function Dialog:Hide()

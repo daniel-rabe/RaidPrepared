@@ -13,7 +13,7 @@ local CONTENT_LABELS = {
     dungeon = "Mythic dungeon",
 }
 
-local FRAME_WIDTH = 380
+local FRAME_WIDTH = 380 -- width of the hint text
 local ROW_HEIGHT = 26
 
 local Talents = {}
@@ -136,7 +136,7 @@ function RP.RunTalentCheck()
 end
 
 ---------------------------------------------------------------------------
--- Settings window
+-- Talents tab (main dialog)
 ---------------------------------------------------------------------------
 
 local function CreateCheckbox(parent, label, onClick)
@@ -177,64 +177,37 @@ local function CreateRow(index)
     return row
 end
 
-local function CreateWindow()
-    frame = CreateFrame("Frame", "RaidPreparedTalents", UIParent, "BackdropTemplate")
-    frame:SetSize(FRAME_WIDTH, 300)
-    frame:SetPoint("CENTER", -40, 40)
-    frame:SetFrameStrata("DIALOG")
-    frame:SetToplevel(true)
-    frame:SetClampedToScreen(true)
-    frame:EnableMouse(true)
-    frame:SetMovable(true)
-    frame:RegisterForDrag("LeftButton")
-    frame:SetScript("OnDragStart", frame.StartMoving)
-    frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
-    frame:SetBackdrop({
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-        tile = true, tileSize = 32, edgeSize = 32,
-        insets = { left = 11, right = 12, top = 12, bottom = 11 },
-    })
+-- Builds the loadout list into a parent frame (the "Talents" tab of the main dialog).
+function Talents:CreatePanel(parent)
+    frame = CreateFrame("Frame", nil, parent)
+    frame:SetAllPoints()
     frame:Hide()
-    tinsert(UISpecialFrames, frame:GetName())
     frame:SetScript("OnShow", function() Talents:RefreshWindow() end)
 
-    local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    title:SetPoint("TOP", 0, -18)
-    title:SetText("RaidPrepared - Talent Loadouts")
-
     headerText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    headerText:SetPoint("TOP", title, "BOTTOM", 0, -6)
+    headerText:SetPoint("TOP", 0, -42)
 
     local hint = frame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     hint:SetPoint("TOP", headerText, "BOTTOM", 0, -4)
-    hint:SetWidth(FRAME_WIDTH - 50)
+    hint:SetWidth(FRAME_WIDTH)
     hint:SetText("Flag the loadouts you use for raids and Mythic dungeons.")
-
-    local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
-    close:SetPoint("TOPRIGHT", -6, -6)
 
     local scroll = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", 20, -80)
     scroll:SetPoint("BOTTOMRIGHT", -38, 52)
 
     scrollChild = CreateFrame("Frame", nil, scroll)
-    scrollChild:SetSize(FRAME_WIDTH - 58, 1)
+    scrollChild:SetSize(parent:GetWidth() - 58, 1)
     scroll:SetScrollChild(scrollChild)
 
     emptyText = frame:CreateFontString(nil, "OVERLAY", "GameFontDisable")
     emptyText:SetPoint("CENTER", scroll, "CENTER")
     emptyText:SetText("No saved loadouts for this specialization.")
-
-    local closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    closeButton:SetSize(120, 24)
-    closeButton:SetPoint("BOTTOM", 0, 18)
-    closeButton:SetText(CLOSE or "Close")
-    closeButton:SetScript("OnClick", function() frame:Hide() end)
+    return frame
 end
 
 function Talents:RefreshWindow()
-    if not frame or not frame:IsShown() then return end
+    if not frame or not frame:IsVisible() then return end
 
     local specName = GetSpecNameAndIcon()
     headerText:SetText(specName or "")
@@ -261,16 +234,11 @@ function Talents:RefreshWindow()
 end
 
 function Talents:Open()
-    if not frame then CreateWindow() end
-    frame:Show()
+    RP.Dialog:OpenTab(RP.Dialog.TAB_TALENTS)
 end
 
 function Talents:Toggle()
-    if frame and frame:IsShown() then
-        frame:Hide()
-    else
-        self:Open()
-    end
+    RP.Dialog:ToggleTab(RP.Dialog.TAB_TALENTS)
 end
 
 ---------------------------------------------------------------------------

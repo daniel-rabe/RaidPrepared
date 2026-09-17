@@ -24,7 +24,7 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 - Works with **every client language** (items are matched by ID, all quality ranks)
 
 ### 📜 Talent Loadouts
-- Flag your loadouts as **Raid** or **Dungeon** (addon window or checkboxes in the talent frame)
+- Flag your loadouts as **Raid** or **Dungeon** (Talents tab of the addon window or checkboxes in the talent frame)
 - Warns when you enter a raid or Mythic/Mythic+ dungeon – or on a ready check – with the wrong loadout
 - No flags for a content type, no warning
 

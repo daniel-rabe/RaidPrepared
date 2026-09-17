@@ -26,7 +26,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 - Optional **indicators on the character panel** item slots: enchant icon and socket icon next to each slot – red = missing, orange = low quality/outdated; items with a missing enchant or gem get a red border. Hover for details, toggle in the **Options** tab of the addon window or with `/rp indicators`.
 
 ### Talent loadout check
-- Flag your saved talent loadouts as **Raid** and/or **Dungeon** – in the addon window (`/rp talents`) or with the checkboxes above the loadout dropdown in the talent frame.
+- Flag your saved talent loadouts as **Raid** and/or **Dungeon** – in the **Talents** tab of the addon window (`/rp talents`) or with the checkboxes above the loadout dropdown in the talent frame.
 - When you enter a **raid** or a **Mythic / Mythic+ dungeon**, and on every **ready check** inside, you are warned if your active loadout is not flagged for that content.
 - If no loadout of your current spec is flagged for the content, no warning appears.
 - Flags are saved per character.
@@ -46,7 +46,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 | --- | --- |
 | `/rp` or `/raidprepared` | Check your own gear and consumables |
 | `/rp raid` | Open the raid gear check (lead/assist only) |
-| `/rp talents` | Flag talent loadouts for raid / Mythic dungeons |
+| `/rp talents` | Open the Talents tab (flag loadouts for raid / Mythic dungeons) |
 | `/rp options` | Open the Options tab of the addon window |
 | `/rp indicators` | Toggle enchant/socket indicators on the character panel |
 | `/rp minimap` | Show/hide the minimap button |
@@ -54,7 +54,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 | `/rp debug` | Print raw item, socket and consumable data (for bug reports) |
 | Minimap button – left-click | Check your own gear |
 | Minimap button – right-click | Open the raid gear check (lead/assist only) |
-| Minimap button – Shift-click | Open the talent loadout flags |
+| Minimap button – Shift-click | Open the Talents tab |
 | Minimap button – drag | Move the button |
 
 The same actions are available from the addon compartment menu on the minimap.
