@@ -4,6 +4,7 @@
 ## Author: duneking
 ## Version: 1.0.0
 ## SavedVariables: RaidPreparedDB
+## SavedVariablesPerCharacter: RaidPreparedCharDB
 ## IconTexture: Interface\Icons\INV_Misc_Gem_Diamond_02
 ## AddonCompartmentFunc: RaidPrepared_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: RaidPrepared_OnAddonCompartmentEnter
@@ -13,6 +14,7 @@ Data.lua
 Scanner.lua
 Potions.lua
 RaidCheck.lua
+Talents.lua
 Dialog.lua
 Minimap.lua
 Core.lua

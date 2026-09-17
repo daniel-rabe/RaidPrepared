@@ -115,6 +115,12 @@ local function CreateDialog()
     raidCheckButton:SetPoint("BOTTOMLEFT", 20, 18)
     raidCheckButton:SetText("Raid Check")
     raidCheckButton:SetScript("OnClick", function() RP.RaidCheck:Open() end)
+
+    local talents = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    talents:SetSize(100, 24)
+    talents:SetPoint("BOTTOMRIGHT", -20, 18)
+    talents:SetText("Talents")
+    talents:SetScript("OnClick", function() RP.Talents:Open() end)
 end
 
 local function ColorPotionCount(entry)

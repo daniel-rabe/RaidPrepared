@@ -38,6 +38,10 @@ function RP.RunCheck(manual)
             for _, issue in ipairs(potionIssues) do
                 issues[#issues + 1] = issue
             end
+            local talentIssue = RP.Talents:Check()
+            if talentIssue then
+                issues[#issues + 1] = talentIssue
+            end
 
             if #issues > 0 then
                 Print(("%d problem(s) found. %s, %s, %s"):format(#issues,
@@ -72,7 +76,10 @@ events:SetScript("OnEvent", function(_, event, arg1, arg2)
         if arg1 ~= addonName then return end
         RaidPreparedDB = RaidPreparedDB or {}
         ApplyDefaults(RaidPreparedDB, DEFAULTS)
+        RaidPreparedCharDB = RaidPreparedCharDB or {}
+        RaidPreparedCharDB.loadoutFlags = RaidPreparedCharDB.loadoutFlags or {}
         RP.Minimap:Create()
+        RP.Talents:Init()
         events:UnregisterEvent("ADDON_LOADED")
     elseif event == "PLAYER_ENTERING_WORLD" then
         local isInitialLogin, isReloadingUi = arg1, arg2
@@ -94,6 +101,8 @@ SlashCmdList.RAIDPREPARED = function(input)
         RP.RunCheck(true)
     elseif cmd == "raid" then
         RP.RaidCheck:Open()
+    elseif cmd == "talents" then
+        RP.Talents:Open()
     elseif cmd == "debug" then
         RP.Debug()
         RP.DebugPotions()
@@ -112,6 +121,7 @@ SlashCmdList.RAIDPREPARED = function(input)
         Print("Commands:")
         print("  /rp - check enchants, gems, potions and weapon buffs")
         print("  /rp raid - check enchants and gems of all group members")
+        print("  /rp talents - flag talent loadouts for raid / Mythic dungeons")
         print("  /rp minimap - toggle minimap button")
         print("  /rp quality <rank> - required enchant/gem quality rank")
         print("  /rp debug - print raw item/socket data")

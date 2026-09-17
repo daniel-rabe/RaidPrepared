@@ -22,6 +22,11 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 - Warns you when you have none left
 - Works with **every client language** (items are matched by ID, all quality ranks)
 
+### 📜 Talent Loadouts
+- Flag your loadouts as **Raid** or **Dungeon** (addon window or checkboxes in the talent frame)
+- Warns when you enter a raid or Mythic/Mythic+ dungeon – or on a ready check – with the wrong loadout
+- No flags for a content type, no warning
+
 ### 🛡️ Raid Gear Check
 - For **raid leaders and assistants**
 - Lists **every raid member** with their enchant and gem status
@@ -44,10 +49,12 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 | **Join a raid** | Automatic check |
 | `/rp` | Check your own gear and consumables |
 | `/rp raid` | Open the raid gear check (lead/assist) |
+| `/rp talents` | Flag talent loadouts |
 | `/rp minimap` | Show/hide the minimap button |
 | `/rp quality <rank>` | Set the required quality rank |
 | **Minimap left-click** | Check your gear |
 | **Minimap right-click** | Raid gear check (lead/assist) |
+| **Minimap Shift-click** | Talent loadout flags |
 
 Also available in the minimap **addon compartment** menu.
 

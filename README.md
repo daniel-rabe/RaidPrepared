@@ -24,6 +24,12 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 - Shows a dialog listing every problem, dismissable with a button. Nothing pops up when everything is fine.
 - Never opens in combat – it waits until combat ends.
 
+### Talent loadout check
+- Flag your saved talent loadouts as **Raid** and/or **Dungeon** – in the addon window (`/rp talents`) or with the checkboxes above the loadout dropdown in the talent frame.
+- When you enter a **raid** or a **Mythic / Mythic+ dungeon**, and on every **ready check** inside, you are warned if your active loadout is not flagged for that content.
+- If no loadout of your current spec is flagged for the content, no warning appears.
+- Flags are saved per character.
+
 ### Raid gear check
 - Available to the **raid leader and assistants** only.
 - Lists **all group members** with their enchant/gem status (including a missing epic gem).
@@ -39,11 +45,13 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 | --- | --- |
 | `/rp` or `/raidprepared` | Check your own gear and consumables |
 | `/rp raid` | Open the raid gear check (lead/assist only) |
+| `/rp talents` | Flag talent loadouts for raid / Mythic dungeons |
 | `/rp minimap` | Show/hide the minimap button |
 | `/rp quality <rank>` | Set the required enchant/gem quality rank (default 2) |
 | `/rp debug` | Print raw item, socket and consumable data (for bug reports) |
 | Minimap button – left-click | Check your own gear |
 | Minimap button – right-click | Open the raid gear check (lead/assist only) |
+| Minimap button – Shift-click | Open the talent loadout flags |
 | Minimap button – drag | Move the button |
 
 The same actions are available from the addon compartment menu on the minimap.
@@ -87,4 +95,5 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 | `RaidCheck.lua` | Raid inspect queue and window |
 | `Dialog.lua` | Personal check result dialog |
 | `Minimap.lua` | Minimap button and addon compartment |
+| `Talents.lua` | Talent loadout flags, instance/ready check warning, talent frame checkboxes |
 | `Core.lua` | Events, raid join detection, slash commands |
