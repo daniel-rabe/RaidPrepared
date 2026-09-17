@@ -112,7 +112,7 @@ SlashCmdList.RAIDPREPARED = function(input)
     local cmd, arg = strtrim(input or ""):lower():match("^(%S*)%s*(.-)$")
     if cmd == "" or cmd == "check" then
         RP.RunCheck(true)
-    elseif cmd == "raid" then
+    elseif cmd == "raid" or cmd == "party" or cmd == "inspect" then
         RP.RaidCheck:Open()
     elseif cmd == "talents" then
         RP.Talents:Open()
@@ -135,7 +135,7 @@ SlashCmdList.RAIDPREPARED = function(input)
     else
         Print("Commands:")
         print("  /rp - check enchants, gems, potions and weapon buffs")
-        print("  /rp raid - check enchants and gems of all group members")
+        print("  /rp inspect - raid/party inspect of all group members (also /rp raid, /rp party)")
         print("  /rp talents - flag talent loadouts for raid / Mythic dungeons")
         print("  /rp options - open the options tab")
         print("  /rp indicators - toggle enchant/socket indicators on the character panel")

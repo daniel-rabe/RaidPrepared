@@ -31,8 +31,8 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 - If no loadout of your current spec is flagged for the content, no warning appears.
 - Flags are saved per character.
 
-### Raid gear check
-- Available to the **raid leader and assistants** only.
+### Raid / Party Inspect
+- Tab **Raid Inspect** (in a raid, leader and assistants only) or **Party Inspect** (in a party, available to everyone).
 - Lists **all group members** with their enchant/gem status (including a missing epic gem).
 - Shows **low or mid quality enchants** together with the item level of that gear slot.
 - Inspects players one after another (throttled, pauses in combat, doesn't interfere with your own inspect window).
@@ -45,7 +45,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 | Action | Result |
 | --- | --- |
 | `/rp` or `/raidprepared` | Check your own gear and consumables |
-| `/rp raid` | Open the raid gear check (lead/assist only) |
+| `/rp inspect` (or `/rp raid`, `/rp party`) | Open the Raid/Party Inspect tab (raid: lead/assist only) |
 | `/rp talents` | Open the Talents tab (flag loadouts for raid / Mythic dungeons) |
 | `/rp options` | Open the Options tab of the addon window |
 | `/rp indicators` | Toggle enchant/socket indicators on the character panel |
@@ -53,7 +53,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 | `/rp quality <rank>` | Set the required enchant/gem quality rank (default 2, also in the Options tab) |
 | `/rp debug` | Print raw item, socket and consumable data (for bug reports) |
 | Minimap button – left-click | Check your own gear |
-| Minimap button – right-click | Open the raid gear check (lead/assist only) |
+| Minimap button – right-click | Open the Raid/Party Inspect tab |
 | Minimap button – Shift-click | Open the Talents tab |
 | Minimap button – drag | Move the button |
 
@@ -95,8 +95,8 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 | `Data.lua` | Patch-specific configuration |
 | `Scanner.lua` | Gear scanning (enchants, gems) for any unit |
 | `Potions.lua` | Potion and weapon buff counting |
-| `RaidCheck.lua` | Raid inspect queue and window |
-| `Dialog.lua` | Personal check result dialog |
+| `RaidCheck.lua` | Raid/Party Inspect queue and tab |
+| `Dialog.lua` | Main window with Check, Inspect, Talents and Options tabs |
 | `Minimap.lua` | Minimap button and addon compartment |
 | `Talents.lua` | Talent loadout flags, instance/ready check warning, talent frame checkboxes |
 | `CharacterPanel.lua` | Enchant/socket indicators on the character panel |

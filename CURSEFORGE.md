@@ -28,8 +28,8 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 - Warns when you enter a raid or Mythic/Mythic+ dungeon – or on a ready check – with the wrong loadout
 - No flags for a content type, no warning
 
-### 🛡️ Raid Gear Check
-- For **raid leaders and assistants**
+### 🛡️ Raid / Party Inspect
+- **Raid Inspect** for raid leaders and assistants, **Party Inspect** for everyone in a party
 - Lists **every raid member** with their enchant and gem status
 - Shows **low/mid quality enchants** with the item level of the slot
 - Hover a player to see exactly which items are missing an enchant or gem
@@ -49,14 +49,14 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 |---|---|
 | **Join a raid** | Automatic check |
 | `/rp` | Check your own gear and consumables |
-| `/rp raid` | Open the raid gear check (lead/assist) |
+| `/rp inspect` | Raid/Party Inspect |
 | `/rp talents` | Flag talent loadouts |
 | `/rp options` | Open the options tab |
 | `/rp indicators` | Toggle character panel indicators |
 | `/rp minimap` | Show/hide the minimap button |
 | `/rp quality <rank>` | Set the required quality rank |
 | **Minimap left-click** | Check your gear |
-| **Minimap right-click** | Raid gear check (lead/assist) |
+| **Minimap right-click** | Raid/Party Inspect |
 | **Minimap Shift-click** | Talent loadout flags |
 
 Also available in the minimap **addon compartment** menu.

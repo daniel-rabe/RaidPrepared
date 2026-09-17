@@ -7,8 +7,6 @@ local INSPECT_TIMEOUT = 5     -- give up on a member after this many seconds
 local LINK_RETRIES = 6        -- retries while item links of an inspected unit are still incomplete
 local LINK_RETRY_DELAY = 0.3
 
-local FRAME_WIDTH = 580
-local FRAME_HEIGHT = 440
 local ROW_HEIGHT = 24
 local NAME_WIDTH = 150
 
@@ -24,9 +22,16 @@ local STATUS_TEXT = {
 local RaidCheck = {}
 RP.RaidCheck = RaidCheck
 
--- The raid check is only available to the group leader and raid assistants.
+-- In a raid the inspect is only available to the leader and assistants; in a party to everyone.
 function RaidCheck:IsAllowed()
-    return IsInGroup() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))
+    if IsInRaid() then
+        return UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")
+    end
+    return IsInGroup()
+end
+
+function RaidCheck:GetTitle()
+    return IsInRaid() and "Raid Inspect" or "Party Inspect"
 end
 
 local members = {} -- guid -> { guid, name, classFile, status, issues }
@@ -267,11 +272,11 @@ ticker:SetScript("OnEvent", function(_, event, arg1)
     elseif event == "GROUP_ROSTER_UPDATE" or event == "PARTY_LEADER_CHANGED" then
         if not RaidCheck:IsAllowed() then
             RaidCheck:Stop()
-        elseif frame and frame:IsShown() then
+        elseif frame and frame:IsVisible() then
             UpdateRoster()
             RaidCheck:Refresh()
         end
-        RP.Dialog:UpdateRaidCheckButton()
+        RP.Dialog:UpdateInspectAccess()
     else
         RaidCheck:Refresh()
     end
@@ -362,60 +367,37 @@ local function CreateRow(index)
     return row
 end
 
-local function CreateWindow()
-    frame = CreateFrame("Frame", "RaidPreparedRaidCheck", UIParent, "BackdropTemplate")
-    frame:SetSize(FRAME_WIDTH, FRAME_HEIGHT)
-    frame:SetPoint("CENTER", 40, -40)
-    frame:SetFrameStrata("DIALOG")
-    frame:SetToplevel(true)
-    frame:SetClampedToScreen(true)
-    frame:EnableMouse(true)
-    frame:SetMovable(true)
-    frame:RegisterForDrag("LeftButton")
-    frame:SetScript("OnDragStart", frame.StartMoving)
-    frame:SetScript("OnDragStop", frame.StopMovingOrSizing)
-    frame:SetBackdrop({
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-        tile = true, tileSize = 32, edgeSize = 32,
-        insets = { left = 11, right = 12, top = 12, bottom = 11 },
-    })
+-- Builds the inspect list into a parent frame (the "Raid/Party Inspect" tab of the main dialog).
+function RaidCheck:CreatePanel(parent)
+    frame = CreateFrame("Frame", nil, parent)
+    frame:SetAllPoints()
     frame:Hide()
-    tinsert(UISpecialFrames, frame:GetName())
-
-    local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    title:SetPoint("TOP", 0, -18)
-    title:SetText("RaidPrepared - Raid Gear Check")
+    frame:SetScript("OnShow", function()
+        UpdateRoster()
+        RaidCheck:Refresh()
+    end)
 
     headerText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    headerText:SetPoint("TOP", title, "BOTTOM", 0, -6)
-
-    local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
-    close:SetPoint("TOPRIGHT", -6, -6)
+    headerText:SetPoint("TOP", 0, -42)
 
     local scroll = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
-    scroll:SetPoint("TOPLEFT", 20, -62)
+    scroll:SetPoint("TOPLEFT", 20, -66)
     scroll:SetPoint("BOTTOMRIGHT", -38, 52)
 
     scrollChild = CreateFrame("Frame", nil, scroll)
-    scrollChild:SetSize(FRAME_WIDTH - 58, 1)
+    scrollChild:SetSize(parent:GetWidth() - 58, 1)
     scroll:SetScrollChild(scrollChild)
 
     local refreshAll = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    refreshAll:SetSize(120, 24)
+    refreshAll:SetSize(110, 24)
     refreshAll:SetPoint("BOTTOMLEFT", 20, 18)
     refreshAll:SetText("Refresh All")
     refreshAll:SetScript("OnClick", function() RaidCheck:QueueAll() end)
-
-    local closeButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    closeButton:SetSize(120, 24)
-    closeButton:SetPoint("BOTTOMRIGHT", -20, 18)
-    closeButton:SetText(CLOSE or "Close")
-    closeButton:SetScript("OnClick", function() frame:Hide() end)
+    return frame
 end
 
 function RaidCheck:Refresh()
-    if not frame or not frame:IsShown() then return end
+    if not frame or not frame:IsVisible() then return end
 
     local done, withIssues = 0, 0
     for i, guid in ipairs(order) do
@@ -447,29 +429,26 @@ function RaidCheck:Refresh()
     headerText:SetText(header)
 end
 
--- Closes the window and cancels pending inspects (e.g. after losing lead/assist).
+-- Cancels pending inspects and leaves the tab (e.g. after losing lead/assist in a raid).
 function RaidCheck:Stop()
     wipe(queue)
-    if frame and frame:IsShown() then
-        frame:Hide()
+    if frame and frame:IsVisible() then
+        RP.Dialog:SelectTab(RP.Dialog.TAB_CHECK)
     end
 end
 
 function RaidCheck:Open()
     if not self:IsAllowed() then
-        print("|cff33ccffRaidPrepared|r: The raid check requires raid lead or assist.")
+        print("|cff33ccffRaidPrepared|r: Raid Inspect requires raid lead or assist; Party Inspect requires a party.")
         return
     end
-    if not frame then CreateWindow() end
-    UpdateRoster()
-    frame:Show()
-    self:Refresh()
+    RP.Dialog:OpenTab(RP.Dialog.TAB_INSPECT)
 end
 
 function RaidCheck:Toggle()
-    if frame and frame:IsShown() then
-        frame:Hide()
-    else
+    if not self:IsAllowed() then
         self:Open()
+        return
     end
+    RP.Dialog:ToggleTab(RP.Dialog.TAB_INSPECT)
 end

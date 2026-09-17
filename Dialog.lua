@@ -1,6 +1,6 @@
 local addonName, RP = ...
 
-local FRAME_WIDTH = 460
+local FRAME_WIDTH = 580
 local FRAME_HEIGHT = 390
 local ROW_HEIGHT = 34
 
@@ -14,11 +14,12 @@ local Dialog = {}
 RP.Dialog = Dialog
 
 Dialog.TAB_CHECK = 1
-Dialog.TAB_TALENTS = 2
-Dialog.TAB_OPTIONS = 3
+Dialog.TAB_INSPECT = 2
+Dialog.TAB_TALENTS = 3
+Dialog.TAB_OPTIONS = 4
 
 local frame, scrollChild, summaryText, potionText, weaponText, okText, raidCheckButton
-local checkPanel, talentsPanel, optionsPanel, indicatorsCheck, qualityValue
+local checkPanel, inspectPanel, talentsPanel, optionsPanel, indicatorsCheck, qualityValue
 local rows = {}
 local pendingIssues, pendingPotions -- waiting for combat to end
 
@@ -120,15 +121,17 @@ local function CreateDialog()
     dismiss:SetScript("OnClick", function() frame:Hide() end)
 
     raidCheckButton = CreateFrame("Button", nil, checkPanel, "UIPanelButtonTemplate")
-    raidCheckButton:SetSize(100, 24)
+    raidCheckButton:SetSize(120, 24)
     raidCheckButton:SetPoint("BOTTOMLEFT", 20, 18)
-    raidCheckButton:SetText("Raid Check")
     raidCheckButton:SetScript("OnClick", function() RP.RaidCheck:Open() end)
 
-    -- Tab 2: talent loadouts
+    -- Tab 2: raid / party inspect
+    inspectPanel = RP.RaidCheck:CreatePanel(frame)
+
+    -- Tab 3: talent loadouts
     talentsPanel = RP.Talents:CreatePanel(frame)
 
-    -- Tab 3: options
+    -- Tab 4: options
     optionsPanel = CreateFrame("Frame", nil, frame)
     optionsPanel:SetAllPoints()
     optionsPanel:Hide()
@@ -190,7 +193,7 @@ local function CreateDialog()
 
     -- Tabs below the frame
     frame.Tabs = {}
-    for i, label in ipairs({ "Check", TALENTS or "Talents", OPTIONS or "Options" }) do
+    for i, label in ipairs({ "Check", "Raid Inspect", TALENTS or "Talents", OPTIONS or "Options" }) do
         local tab = CreateFrame("Button", "RaidPreparedDialogTab" .. i, frame, "PanelTabButtonTemplate")
         tab:SetID(i)
         tab:SetText(label)
@@ -212,6 +215,7 @@ end
 function Dialog:SelectTab(index)
     PanelTemplates_SetTab(frame, index)
     checkPanel:SetShown(index == Dialog.TAB_CHECK)
+    inspectPanel:SetShown(index == Dialog.TAB_INSPECT)
     talentsPanel:SetShown(index == Dialog.TAB_TALENTS)
     optionsPanel:SetShown(index == Dialog.TAB_OPTIONS)
 end
@@ -282,7 +286,7 @@ function Dialog:Show(issues, potions)
     end
     if not frame then CreateDialog() end
     Populate(issues, potions)
-    self:UpdateRaidCheckButton()
+    self:UpdateInspectAccess()
     self:SelectTab(Dialog.TAB_CHECK)
     frame:Show()
     if #issues > 0 then
@@ -290,9 +294,25 @@ function Dialog:Show(issues, potions)
     end
 end
 
-function Dialog:UpdateRaidCheckButton()
-    if raidCheckButton then
-        raidCheckButton:SetShown(RP.RaidCheck:IsAllowed())
+-- Updates title and availability of the inspect tab and button (raid lead/assist or party).
+function Dialog:UpdateInspectAccess()
+    if not frame then return end
+    local allowed = RP.RaidCheck:IsAllowed()
+    local title = RP.RaidCheck:GetTitle()
+
+    raidCheckButton:SetText(title)
+    raidCheckButton:SetShown(allowed)
+
+    local tab = frame.Tabs[Dialog.TAB_INSPECT]
+    tab:SetText(title)
+    PanelTemplates_TabResize(tab, 0)
+    if allowed then
+        PanelTemplates_EnableTab(frame, Dialog.TAB_INSPECT)
+    else
+        PanelTemplates_DisableTab(frame, Dialog.TAB_INSPECT)
+        if frame.selectedTab == Dialog.TAB_INSPECT and checkPanel then
+            self:SelectTab(Dialog.TAB_CHECK)
+        end
     end
 end
 
@@ -303,6 +323,7 @@ function Dialog:OpenTab(index)
         okText:Hide()
         summaryText:SetText("No check run yet - use /rp or the minimap button.")
     end
+    self:UpdateInspectAccess()
     self:SelectTab(index)
     frame:Show()
 end
