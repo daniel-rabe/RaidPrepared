@@ -15,6 +15,7 @@ Scanner.lua
 Potions.lua
 RaidCheck.lua
 Talents.lua
+CharacterPanel.lua
 Dialog.lua
 Minimap.lua
 Core.lua

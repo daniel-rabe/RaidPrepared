@@ -14,7 +14,7 @@ do
 end
 
 local function GetMaxQualityTier()
-    return (RaidPreparedDB and RaidPreparedDB.maxQualityTier) or RP.DEFAULT_MAX_QUALITY_TIER
+    return RP.GetMaxQualityTier()
 end
 
 local function GetEnchantID(link)

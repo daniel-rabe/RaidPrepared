@@ -24,6 +24,8 @@ RP.ENCHANTABLE_OFFHAND = {
 -- Highest crafted quality tier for enchants and gems. Anything below is reported as "low quality".
 -- Can be changed in-game with /rp quality <n> (stored in SavedVariables).
 RP.DEFAULT_MAX_QUALITY_TIER = 2
+RP.MIN_QUALITY_RANK_OPTION = 1 -- range selectable in the options tab / slash command
+RP.MAX_QUALITY_RANK_OPTION = 3
 
 -- Optional whitelist of current-season enchant IDs (the second field of an item link).
 -- When non-empty, any enchant not listed here is reported as "outdated".

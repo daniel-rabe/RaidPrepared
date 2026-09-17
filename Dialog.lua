@@ -14,6 +14,7 @@ local Dialog = {}
 RP.Dialog = Dialog
 
 local frame, scrollChild, summaryText, potionText, weaponText, okText, raidCheckButton
+local checkPanel, optionsPanel, indicatorsCheck, qualityValue
 local rows = {}
 local pendingIssues, pendingPotions -- waiting for combat to end
 
@@ -80,19 +81,23 @@ local function CreateDialog()
     title:SetPoint("TOP", 0, -18)
     title:SetText("RaidPrepared")
 
-    summaryText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    -- Tab 1: check results
+    checkPanel = CreateFrame("Frame", nil, frame)
+    checkPanel:SetAllPoints()
+
+    summaryText = checkPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     summaryText:SetPoint("TOP", title, "BOTTOM", 0, -6)
 
-    potionText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    potionText = checkPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     potionText:SetPoint("TOP", summaryText, "BOTTOM", 0, -6)
 
-    weaponText = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    weaponText = checkPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     weaponText:SetPoint("TOP", potionText, "BOTTOM", 0, -4)
 
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -6, -6)
 
-    local scroll = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
+    local scroll = CreateFrame("ScrollFrame", nil, checkPanel, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", 20, -104)
     scroll:SetPoint("BOTTOMRIGHT", -38, 52)
 
@@ -100,7 +105,7 @@ local function CreateDialog()
     scrollChild:SetSize(FRAME_WIDTH - 58, 1)
     scroll:SetScrollChild(scrollChild)
 
-    okText = frame:CreateFontString(nil, "OVERLAY", "GameFontGreenLarge")
+    okText = checkPanel:CreateFontString(nil, "OVERLAY", "GameFontGreenLarge")
     okText:SetPoint("CENTER", scroll, "CENTER")
     okText:SetText("Everything looks good!")
 
@@ -110,17 +115,103 @@ local function CreateDialog()
     dismiss:SetText("Dismiss")
     dismiss:SetScript("OnClick", function() frame:Hide() end)
 
-    raidCheckButton = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    raidCheckButton = CreateFrame("Button", nil, checkPanel, "UIPanelButtonTemplate")
     raidCheckButton:SetSize(100, 24)
     raidCheckButton:SetPoint("BOTTOMLEFT", 20, 18)
     raidCheckButton:SetText("Raid Check")
     raidCheckButton:SetScript("OnClick", function() RP.RaidCheck:Open() end)
 
-    local talents = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+    local talents = CreateFrame("Button", nil, checkPanel, "UIPanelButtonTemplate")
     talents:SetSize(100, 24)
     talents:SetPoint("BOTTOMRIGHT", -20, 18)
     talents:SetText("Talents")
     talents:SetScript("OnClick", function() RP.Talents:Open() end)
+
+    -- Tab 2: options
+    optionsPanel = CreateFrame("Frame", nil, frame)
+    optionsPanel:SetAllPoints()
+    optionsPanel:Hide()
+    optionsPanel:SetScript("OnShow", function()
+        indicatorsCheck:SetChecked(RaidPreparedDB.characterIndicators)
+        qualityValue:SetText(RP.GetMaxQualityTier())
+    end)
+
+    local optionsHeader = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    optionsHeader:SetPoint("TOPLEFT", 24, -56)
+    optionsHeader:SetText(OPTIONS or "Options")
+
+    indicatorsCheck = CreateFrame("CheckButton", nil, optionsPanel, "UICheckButtonTemplate")
+    indicatorsCheck:SetSize(26, 26)
+    indicatorsCheck:SetPoint("TOPLEFT", optionsHeader, "BOTTOMLEFT", -4, -10)
+    indicatorsCheck:SetScript("OnClick", function(self)
+        RP.CharacterPanel:SetEnabled(self:GetChecked())
+    end)
+
+    local indicatorsLabel = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    indicatorsLabel:SetPoint("LEFT", indicatorsCheck, "RIGHT", 2, 1)
+    indicatorsLabel:SetText("Show enchant & socket indicators on the character panel")
+
+    local indicatorsHint = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    indicatorsHint:SetPoint("TOPLEFT", indicatorsLabel, "BOTTOMLEFT", 0, -4)
+    indicatorsHint:SetPoint("RIGHT", optionsPanel, "RIGHT", -24, 0)
+    indicatorsHint:SetJustifyH("LEFT")
+    indicatorsHint:SetText("Icons next to item slots and a red border on items with a missing enchant or gem.")
+
+    local qualityLabel = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    qualityLabel:SetPoint("TOPLEFT", indicatorsCheck, "BOTTOMLEFT", 4, -34)
+    qualityLabel:SetText("Required enchant & gem quality rank:")
+
+    local function Step(delta)
+        qualityValue:SetText(RP.SetMaxQualityTier(RP.GetMaxQualityTier() + delta))
+    end
+
+    local minus = CreateFrame("Button", nil, optionsPanel, "UIPanelButtonTemplate")
+    minus:SetSize(24, 22)
+    minus:SetPoint("LEFT", qualityLabel, "RIGHT", 10, 0)
+    minus:SetText("-")
+    minus:SetScript("OnClick", function() Step(-1) end)
+
+    qualityValue = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    qualityValue:SetPoint("LEFT", minus, "RIGHT", 6, 0)
+    qualityValue:SetWidth(20)
+
+    local plus = CreateFrame("Button", nil, optionsPanel, "UIPanelButtonTemplate")
+    plus:SetSize(24, 22)
+    plus:SetPoint("LEFT", qualityValue, "RIGHT", 6, 0)
+    plus:SetText("+")
+    plus:SetScript("OnClick", function() Step(1) end)
+
+    local qualityHint = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    qualityHint:SetPoint("TOPLEFT", qualityLabel, "BOTTOMLEFT", 0, -6)
+    qualityHint:SetPoint("RIGHT", optionsPanel, "RIGHT", -24, 0)
+    qualityHint:SetJustifyH("LEFT")
+    qualityHint:SetText("Enchants and gems below this crafting quality rank are reported as low quality.")
+
+    -- Tabs below the frame
+    frame.Tabs = {}
+    for i, label in ipairs({ "Check", OPTIONS or "Options" }) do
+        local tab = CreateFrame("Button", "RaidPreparedDialogTab" .. i, frame, "PanelTabButtonTemplate")
+        tab:SetID(i)
+        tab:SetText(label)
+        PanelTemplates_TabResize(tab, 0)
+        if i == 1 then
+            tab:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 12, 6)
+        else
+            tab:SetPoint("TOPLEFT", frame.Tabs[i - 1], "TOPRIGHT", 3, 0)
+        end
+        tab:SetScript("OnClick", function(self)
+            Dialog:SelectTab(self:GetID())
+            PlaySound(SOUNDKIT.IG_CHARACTER_INFO_TAB)
+        end)
+        frame.Tabs[i] = tab
+    end
+    PanelTemplates_SetNumTabs(frame, #frame.Tabs)
+end
+
+function Dialog:SelectTab(index)
+    PanelTemplates_SetTab(frame, index)
+    checkPanel:SetShown(index == 1)
+    optionsPanel:SetShown(index == 2)
 end
 
 local function ColorPotionCount(entry)
@@ -190,6 +281,7 @@ function Dialog:Show(issues, potions)
     if not frame then CreateDialog() end
     Populate(issues, potions)
     self:UpdateRaidCheckButton()
+    self:SelectTab(1)
     frame:Show()
     if #issues > 0 then
         PlaySound(SOUNDKIT.RAID_WARNING)
@@ -200,6 +292,17 @@ function Dialog:UpdateRaidCheckButton()
     if raidCheckButton then
         raidCheckButton:SetShown(RP.RaidCheck:IsAllowed())
     end
+end
+
+function Dialog:OpenOptions()
+    if not frame then
+        CreateDialog()
+        Populate({}, nil)
+        okText:Hide()
+        summaryText:SetText("No check run yet - use /rp or the minimap button.")
+    end
+    self:SelectTab(2)
+    frame:Show()
 end
 
 function Dialog:Hide()

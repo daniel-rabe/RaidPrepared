@@ -6,6 +6,7 @@ local RAID_JOIN_DELAY = 2
 local DEFAULTS = {
     maxQualityTier = nil, -- nil = RP.DEFAULT_MAX_QUALITY_TIER
     minimap = { hide = false, angle = 225 },
+    characterIndicators = true, -- enchant/socket indicators on the character panel
 }
 
 local function Print(msg)
@@ -29,6 +30,17 @@ local function FormatPotionCount(entry)
         text = text .. (" (active %dm)"):format(math.floor(entry.activeTime / 60))
     end
     return text
+end
+
+function RP.GetMaxQualityTier()
+    return RaidPreparedDB.maxQualityTier or RP.DEFAULT_MAX_QUALITY_TIER
+end
+
+function RP.SetMaxQualityTier(tier)
+    tier = math.max(RP.MIN_QUALITY_RANK_OPTION, math.min(RP.MAX_QUALITY_RANK_OPTION, math.floor(tier)))
+    RaidPreparedDB.maxQualityTier = tier
+    RP.CharacterPanel:RequestUpdate()
+    return tier
 end
 
 -- manual = true: always show the dialog (also when everything is fine).
@@ -80,6 +92,7 @@ events:SetScript("OnEvent", function(_, event, arg1, arg2)
         RaidPreparedCharDB.loadoutFlags = RaidPreparedCharDB.loadoutFlags or {}
         RP.Minimap:Create()
         RP.Talents:Init()
+        RP.CharacterPanel:Init()
         events:UnregisterEvent("ADDON_LOADED")
     elseif event == "PLAYER_ENTERING_WORLD" then
         local isInitialLogin, isReloadingUi = arg1, arg2
@@ -106,22 +119,26 @@ SlashCmdList.RAIDPREPARED = function(input)
     elseif cmd == "debug" then
         RP.Debug()
         RP.DebugPotions()
+    elseif cmd == "options" then
+        RP.Dialog:OpenOptions()
+    elseif cmd == "indicators" then
+        Print("Character panel indicators " .. (RP.CharacterPanel:Toggle() and "enabled." or "disabled."))
     elseif cmd == "minimap" then
         Print("Minimap button " .. (RP.Minimap:Toggle() and "shown." or "hidden."))
     elseif cmd == "quality" then
         local tier = tonumber(arg)
-        if tier and tier >= 1 then
-            RaidPreparedDB.maxQualityTier = math.floor(tier)
-            Print("Required quality rank set to " .. RaidPreparedDB.maxQualityTier .. ".")
+        if tier then
+            Print("Required quality rank set to " .. RP.SetMaxQualityTier(tier) .. ".")
         else
-            local current = RaidPreparedDB.maxQualityTier or RP.DEFAULT_MAX_QUALITY_TIER
-            Print("Required quality rank is " .. current .. ". Usage: /rp quality <rank>")
+            Print("Required quality rank is " .. RP.GetMaxQualityTier() .. ". Usage: /rp quality <rank>")
         end
     else
         Print("Commands:")
         print("  /rp - check enchants, gems, potions and weapon buffs")
         print("  /rp raid - check enchants and gems of all group members")
         print("  /rp talents - flag talent loadouts for raid / Mythic dungeons")
+        print("  /rp options - open the options tab")
+        print("  /rp indicators - toggle enchant/socket indicators on the character panel")
         print("  /rp minimap - toggle minimap button")
         print("  /rp quality <rank> - required enchant/gem quality rank")
         print("  /rp debug - print raw item/socket data")

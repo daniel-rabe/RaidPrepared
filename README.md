@@ -23,6 +23,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
   - Consumables are matched by item ID (all quality ranks), so the check works with every client language.
 - Shows a dialog listing every problem, dismissable with a button. Nothing pops up when everything is fine.
 - Never opens in combat – it waits until combat ends.
+- Optional **indicators on the character panel** item slots: enchant icon and socket icon next to each slot – red = missing, orange = low quality/outdated; items with a missing enchant or gem get a red border. Hover for details, toggle in the **Options** tab of the addon window or with `/rp indicators`.
 
 ### Talent loadout check
 - Flag your saved talent loadouts as **Raid** and/or **Dungeon** – in the addon window (`/rp talents`) or with the checkboxes above the loadout dropdown in the talent frame.
@@ -46,8 +47,10 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 | `/rp` or `/raidprepared` | Check your own gear and consumables |
 | `/rp raid` | Open the raid gear check (lead/assist only) |
 | `/rp talents` | Flag talent loadouts for raid / Mythic dungeons |
+| `/rp options` | Open the Options tab of the addon window |
+| `/rp indicators` | Toggle enchant/socket indicators on the character panel |
 | `/rp minimap` | Show/hide the minimap button |
-| `/rp quality <rank>` | Set the required enchant/gem quality rank (default 2) |
+| `/rp quality <rank>` | Set the required enchant/gem quality rank (default 2, also in the Options tab) |
 | `/rp debug` | Print raw item, socket and consumable data (for bug reports) |
 | Minimap button – left-click | Check your own gear |
 | Minimap button – right-click | Open the raid gear check (lead/assist only) |
@@ -96,4 +99,5 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 | `Dialog.lua` | Personal check result dialog |
 | `Minimap.lua` | Minimap button and addon compartment |
 | `Talents.lua` | Talent loadout flags, instance/ready check warning, talent frame checkboxes |
+| `CharacterPanel.lua` | Enchant/socket indicators on the character panel |
 | `Core.lua` | Events, raid join detection, slash commands |

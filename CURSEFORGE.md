@@ -14,6 +14,7 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 - Warns if no **Eversong Diamond** (Indecipherable, Powerful, Stoic or Telluric) is socketed
 - Flags **low-quality** enchants and gems below the highest crafting rank
 - Flags **outdated gems** from previous expansions
+- Optional **indicators on your character panel** show exactly which items lack an enchant or gem
 
 ### 🧪 Consumables
 - Counts your **Silvermoon Health Potions** and **Concentrated Silvermoon Health Potions**
@@ -50,6 +51,8 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 | `/rp` | Check your own gear and consumables |
 | `/rp raid` | Open the raid gear check (lead/assist) |
 | `/rp talents` | Flag talent loadouts |
+| `/rp options` | Open the options tab |
+| `/rp indicators` | Toggle character panel indicators |
 | `/rp minimap` | Show/hide the minimap button |
 | `/rp quality <rank>` | Set the required quality rank |
 | **Minimap left-click** | Check your gear |
