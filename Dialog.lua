@@ -129,9 +129,6 @@ local function ColorPotionCount(entry)
         color = "ff40ff40"
     end
     local text = ("%s: |c%s%d|r"):format(entry.label, color, entry.count)
-    if entry.outdated > 0 then
-        text = text .. (" |cffaaaaaa(+%d outdated)|r"):format(entry.outdated)
-    end
     if entry.activeTime then
         text = text .. (" |cff40ff40(active %dm)|r"):format(math.floor(entry.activeTime / 60))
     end

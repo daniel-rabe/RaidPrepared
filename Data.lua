@@ -34,22 +34,31 @@ RP.KNOWN_CURRENT_ENCHANTS = {
 -- Gems whose expansion ID is lower than this are reported as "outdated".
 RP.MIN_GEM_EXPANSION = LE_EXPANSION_LEVEL_CURRENT
 
--- Potion check. Potions are detected by item class (Consumable > Potion) and classified as
--- healing/mana by their "Use:" tooltip text. Warn when fewer than the minimum are in the bags.
+-- Consumable check. Items are matched by item ID, so it works with every client language.
+-- Each crafting quality rank is a separate item ID - list all of them. Update each season.
+-- Warn when fewer than the minimum are in the bags.
 RP.MIN_HEALING_POTIONS = 1
 RP.MIN_MANA_POTIONS = 1
+RP.MIN_WEAPON_BUFFS = 1
 
--- When non-empty, only potions with one of these names count as healing potions
--- (item names as shown in game, all quality ranks share the name).
--- Leave empty to count every potion whose tooltip restores health.
-RP.HEALING_POTION_NAMES = {
-    ["Concentrated Silvermoon Health Potion"] = true,
-    ["Silvermoon Health Potion"] = true,
+RP.HEALING_POTION_IDS = {
+    [241304] = true, [241305] = true, -- Silvermoon Health Potion
+    [271883] = true, [271884] = true, -- Concentrated Silvermoon Health Potion
 }
 
--- Same for mana potions: when non-empty, only these names count as mana potions.
-RP.MANA_POTION_NAMES = {
-    ["Lightfused Mana Potion"] = true,
+RP.MANA_POTION_IDS = {
+    [241300] = true, [241301] = true, -- Lightfused Mana Potion
+}
+
+-- Temporary weapon buffs: oils, sharpening stones, weightstones and hunter ammo.
+RP.WEAPON_BUFF_IDS = {
+    [243733] = true, [243734] = true, -- Thalassian Phoenix Oil
+    [243735] = true, [243736] = true, -- Oil of Dawn
+    [243737] = true, [243738] = true, -- Smuggler's Enchanted Edge
+    [237370] = true, [237371] = true, -- Refulgent Whetstone
+    [237367] = true, [237369] = true, -- Refulgent Weightstone
+    [257749] = true, [257750] = true, -- Laced Zoomshots
+    [257751] = true, [257752] = true, -- Weighted Boomshots
 }
 
 -- Specialization roles that need mana potions ("HEALER", "DAMAGER", "TANK").
@@ -58,28 +67,12 @@ RP.MANA_POTION_ROLES = {
     HEALER = true,
 }
 
--- Temporary weapon buffs (oils, sharpening stones, weightstones). Detected as consumables
--- whose "Use:" tooltip text mentions the weapon.
-RP.MIN_WEAPON_BUFFS = 1
-
 -- Classes that use their own weapon imbues/poisons/runes instead of oils or stones.
 -- Their weapon buff count is still shown, but never reported as a problem.
 RP.WEAPON_BUFF_EXEMPT_CLASSES = {
     DEATHKNIGHT = true,
     ROGUE = true,
     SHAMAN = true,
-}
-
--- Potions and weapon buffs from older expansions are shown as "outdated" and not counted.
-RP.MIN_CONSUMABLE_EXPANSION = LE_EXPANSION_LEVEL_CURRENT
-
--- Extra item IDs that should count as healing/mana potions or weapon buffs even if not detected automatically.
--- Example: [5512] = true, -- Healthstone
-RP.EXTRA_HEALING_ITEMS = {
-}
-RP.EXTRA_MANA_ITEMS = {
-}
-RP.EXTRA_WEAPON_BUFF_ITEMS = {
 }
 
 RP.SLOT_NAMES = {

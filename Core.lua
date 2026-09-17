@@ -25,9 +25,6 @@ end
 
 local function FormatPotionCount(entry)
     local text = ("%s: %d"):format(entry.label, entry.count)
-    if entry.outdated > 0 then
-        text = text .. (" (+%d outdated)"):format(entry.outdated)
-    end
     if entry.activeTime then
         text = text .. (" (active %dm)"):format(math.floor(entry.activeTime / 60))
     end

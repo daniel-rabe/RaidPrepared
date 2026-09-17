@@ -16,9 +16,10 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
   - **Low-quality** enchants and gems (below the highest crafting quality rank).
   - **Outdated** gems from previous expansions (and optionally enchants, see configuration).
 - Counts consumables in your bags:
-  - **Healing potions** (Silvermoon Health Potion, Concentrated Silvermoon Health Potion)
-  - **Mana potions** (Lightfused Mana Potion) – required for healer specs only
-  - **Weapon buffs** (oils, sharpening stones, weightstones) – including remaining time of the active buff. Death Knights, Rogues and Shamans are not warned.
+  - **Healing potions**: Silvermoon Health Potion, Concentrated Silvermoon Health Potion
+  - **Mana potions**: Lightfused Mana Potion – required for healer specs only
+  - **Weapon buffs**: Thalassian Phoenix Oil, Oil of Dawn, Smuggler's Enchanted Edge, Refulgent Whetstone, Refulgent Weightstone, Laced Zoomshots, Weighted Boomshots – including remaining time of the active buff. Death Knights, Rogues and Shamans are not warned.
+  - Consumables are matched by item ID (all quality ranks), so the check works with every client language.
 - Shows a dialog listing every problem, dismissable with a button. Nothing pops up when everything is fine.
 - Never opens in combat – it waits until combat ends.
 
@@ -60,16 +61,15 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 | `ENCHANT_SLOTS` | Slots that must be enchanted |
 | `DEFAULT_MAX_QUALITY_TIER` | Highest crafting quality rank (anything lower is "low quality") |
 | `KNOWN_CURRENT_ENCHANTS` | Optional whitelist of enchant IDs; others are reported as outdated |
-| `MIN_GEM_EXPANSION` / `MIN_CONSUMABLE_EXPANSION` | Older gems/consumables count as outdated |
-| `HEALING_POTION_NAMES` / `MANA_POTION_NAMES` | Potions that are counted (empty = detect automatically) |
+| `MIN_GEM_EXPANSION` | Older gems count as outdated |
+| `HEALING_POTION_IDS` / `MANA_POTION_IDS` / `WEAPON_BUFF_IDS` | Item IDs that are counted (one ID per quality rank) |
 | `MIN_HEALING_POTIONS` / `MIN_MANA_POTIONS` / `MIN_WEAPON_BUFFS` | Warn below this amount |
 | `MANA_POTION_ROLES` | Spec roles that need mana potions |
 | `WEAPON_BUFF_EXEMPT_CLASSES` | Classes that use imbues/poisons/runes instead of oils |
-| `EXTRA_HEALING_ITEMS` / `EXTRA_MANA_ITEMS` / `EXTRA_WEAPON_BUFF_ITEMS` | Additional item IDs to count |
 
 ## Limitations
 
-- Potion names are matched in English; on other client languages add the localized names to `Data.lua`.
+- Consumable item IDs are season-specific and need to be updated in `Data.lua` for new seasons/expansions.
 - The raid check can only inspect players who are nearby (visible). Use **Refresh** once they are in range.
 - The raid check reports missing enchants and empty sockets only; potion counts of other players are not visible to addons.
 

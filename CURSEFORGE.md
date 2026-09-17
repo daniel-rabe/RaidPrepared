@@ -17,8 +17,9 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 ### 🧪 Consumables
 - Counts your **Silvermoon Health Potions** and **Concentrated Silvermoon Health Potions**
 - Counts your **Lightfused Mana Potions** (only required for healers)
-- Counts **weapon oils and stones** and shows the remaining time of your active weapon buff
+- Counts **weapon buffs** (Thalassian Phoenix Oil, Oil of Dawn, Smuggler's Enchanted Edge, Refulgent Whetstone & Weightstone, hunter ammo) and shows the remaining time of your active weapon buff
 - Warns you when you have none left
+- Works with **every client language** (items are matched by ID, all quality ranks)
 
 ### 🛡️ Raid Gear Check
 - For **raid leaders and assistants**
@@ -52,10 +53,9 @@ Also available in the minimap **addon compartment** menu.
 
 ## ⚙️ Configuration
 
-Advanced settings (enchantable slots, potion names, minimum counts, classes exempt from weapon oils, ...) can be adjusted in `Data.lua`.
+Advanced settings (enchantable slots, consumable item IDs, minimum counts, classes exempt from weapon oils, ...) can be adjusted in `Data.lua`.
 
 ## ⚠️ Notes
-- Potion names are matched in English. Other client languages: add the localized names in `Data.lua`.
 - The raid check can only inspect players within inspect range – use **Refresh** when they're nearby.
 
 ---
