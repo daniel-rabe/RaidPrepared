@@ -2,7 +2,7 @@
 ## Title: RaidPrepared
 ## Notes: Checks your equipped gear for missing or low-quality enchants and gems and your healing/mana potions when you join a raid, and searches your fast-travel options.
 ## Author: duneking
-## Version: 1.0.0
+## Version: 1.4.0
 ## SavedVariables: RaidPreparedDB
 ## SavedVariablesPerCharacter: RaidPreparedCharDB
 ## IconTexture: Interface\Icons\INV_Misc_Gem_Diamond_02
