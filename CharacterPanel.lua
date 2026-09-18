@@ -141,6 +141,13 @@ local function Update()
     if not (PaperDollFrame and PaperDollFrame:IsVisible()) then return end
 
     RP.ScanUnitAsync("player", true, function(issues)
+        -- The scan is async: the option may have been turned off or the panel closed meanwhile.
+        if not RaidPreparedDB.characterIndicators then
+            HideAll()
+            return
+        end
+        if not (PaperDollFrame and PaperDollFrame:IsVisible()) then return end
+
         -- Worst issue per slot and kind ("missing" wins over "low"/"outdated").
         local bySlot = {}
         for _, issue in ipairs(issues) do

@@ -32,14 +32,14 @@ local function GetSpecID()
     if PlayerUtil and PlayerUtil.GetCurrentSpecID then
         return PlayerUtil.GetCurrentSpecID()
     end
-    local specIndex = GetSpecialization()
-    return specIndex and (GetSpecializationInfo(specIndex))
+    local specIndex = RP.GetSpecIndex()
+    return specIndex and (RP.GetSpecInfo(specIndex))
 end
 
 local function GetSpecNameAndIcon()
-    local specIndex = GetSpecialization()
+    local specIndex = RP.GetSpecIndex()
     if not specIndex then return nil, nil end
-    local _, name, _, icon = GetSpecializationInfo(specIndex)
+    local _, name, _, icon = RP.GetSpecInfo(specIndex)
     return name, icon
 end
 
