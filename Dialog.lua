@@ -17,9 +17,10 @@ Dialog.TAB_CHECK = 1
 Dialog.TAB_INSPECT = 2
 Dialog.TAB_TALENTS = 3
 Dialog.TAB_OPTIONS = 4
+Dialog.TAB_TRAVEL = 5
 
 local frame, scrollChild, summaryText, potionText, weaponText, okText, raidCheckButton
-local checkPanel, inspectPanel, talentsPanel, optionsPanel, indicatorsCheck, qualityValue
+local checkPanel, inspectPanel, talentsPanel, optionsPanel, travelPanel, indicatorsCheck, qualityValue
 local rows = {}
 local pendingIssues, pendingPotions -- waiting for combat to end
 
@@ -191,9 +192,12 @@ local function CreateDialog()
     qualityHint:SetJustifyH("LEFT")
     qualityHint:SetText("Enchants and gems below this crafting quality rank are reported as low quality.")
 
+    -- Tab 5: fast-travel search
+    travelPanel = RP.Travel:CreatePanel(frame)
+
     -- Tabs below the frame
     frame.Tabs = {}
-    for i, label in ipairs({ "Check", "Raid Inspect", TALENTS or "Talents", OPTIONS or "Options" }) do
+    for i, label in ipairs({ "Check", "Raid Inspect", TALENTS or "Talents", OPTIONS or "Options", "Travel" }) do
         local tab = CreateFrame("Button", "RaidPreparedDialogTab" .. i, frame, "PanelTabButtonTemplate")
         tab:SetID(i)
         tab:SetText(label)
@@ -223,6 +227,7 @@ function Dialog:SelectTab(index)
     inspectPanel:SetShown(index == Dialog.TAB_INSPECT)
     talentsPanel:SetShown(index == Dialog.TAB_TALENTS)
     optionsPanel:SetShown(index == Dialog.TAB_OPTIONS)
+    travelPanel:SetShown(index == Dialog.TAB_TRAVEL)
 end
 
 local function ColorPotionCount(entry)

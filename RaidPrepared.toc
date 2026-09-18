@@ -1,6 +1,6 @@
-## Interface: 120001, 120005, 120007
+## Interface: 120001, 120005, 120007, 120100
 ## Title: RaidPrepared
-## Notes: Checks your equipped gear for missing or low-quality enchants and gems and your healing/mana potions when you join a raid.
+## Notes: Checks your equipped gear for missing or low-quality enchants and gems and your healing/mana potions when you join a raid, and searches your fast-travel options.
 ## Author: duneking
 ## Version: 1.0.0
 ## SavedVariables: RaidPreparedDB
@@ -16,6 +16,16 @@ Potions.lua
 RaidCheck.lua
 Talents.lua
 CharacterPanel.lua
+
+Travel\Core.lua
+Travel\Data.lua
+Travel\Portals.lua
+Travel\Collector.lua
+Travel\Search.lua
+Travel\Season.lua
+Travel\CopyFrame.lua
+Travel\Panel.lua
+
 Dialog.lua
 Minimap.lua
 Core.lua
