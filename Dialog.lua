@@ -213,6 +213,11 @@ local function CreateDialog()
 end
 
 function Dialog:SelectTab(index)
+    -- Never land on a disabled tab (inspect without raid lead/assist).
+    local tab = frame.Tabs[index]
+    if tab and tab.isDisabled then
+        index = Dialog.TAB_CHECK
+    end
     PanelTemplates_SetTab(frame, index)
     checkPanel:SetShown(index == Dialog.TAB_CHECK)
     inspectPanel:SetShown(index == Dialog.TAB_INSPECT)
