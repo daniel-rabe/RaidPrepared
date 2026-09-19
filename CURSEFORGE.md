@@ -41,12 +41,13 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 - Shows **low/mid quality enchants** with the item level of the slot
 - Hover a player to see exactly which items are missing an enchant or gem
 - **Refresh** button for each player, plus **Refresh All**
+- **Whisper** button for each player: sends a short, friendly heads-up listing what's missing (hover it to preview the text)
 - Inspects players one at a time, pauses in combat, never interrupts your own inspect window
 
 ### 🔔 Unobtrusive
 - Runs automatically when you join a raid – stays silent if everything is fine
 - Never opens in combat
-- Dismiss the dialog with one click (or ESC)
+- Close the window with the X button or ESC
 
 ---
 

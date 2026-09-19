@@ -16,8 +16,8 @@ RP.Dialog = Dialog
 Dialog.TAB_CHECK = 1
 Dialog.TAB_INSPECT = 2
 Dialog.TAB_TALENTS = 3
-Dialog.TAB_OPTIONS = 4
-Dialog.TAB_TRAVEL = 5
+Dialog.TAB_TRAVEL = 4
+Dialog.TAB_OPTIONS = 5
 
 local frame, scrollChild, summaryText, potionText, weaponText, okText
 local checkPanel, inspectPanel, talentsPanel, optionsPanel, travelPanel, indicatorsCheck, qualityValue
@@ -78,7 +78,7 @@ local function CreateDialog()
         bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
         edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
         tile = true, tileSize = 32, edgeSize = 32,
-        insets = { left = 11, right = 12, top = 12, bottom = 11 },
+        insets = { left = 11, right = 8, top = 12, bottom = 11 },
     })
     frame:Hide()
     tinsert(UISpecialFrames, frame:GetName()) -- close with ESC
@@ -105,7 +105,7 @@ local function CreateDialog()
 
     local scroll = CreateFrame("ScrollFrame", nil, checkPanel, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", 20, -104)
-    scroll:SetPoint("BOTTOMRIGHT", -38, 52)
+    scroll:SetPoint("BOTTOMRIGHT", -38, 20)
 
     scrollChild = CreateFrame("Frame", nil, scroll)
     scrollChild:SetSize(FRAME_WIDTH - 58, 1)
@@ -115,19 +115,13 @@ local function CreateDialog()
     okText:SetPoint("CENTER", scroll, "CENTER")
     okText:SetText("Everything looks good!")
 
-    local dismiss = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
-    dismiss:SetSize(120, 24)
-    dismiss:SetPoint("BOTTOM", 0, 18)
-    dismiss:SetText("Dismiss")
-    dismiss:SetScript("OnClick", function() frame:Hide() end)
-
     -- Tab 2: raid / party inspect
     inspectPanel = RP.RaidCheck:CreatePanel(frame)
 
     -- Tab 3: talent loadouts
     talentsPanel = RP.Talents:CreatePanel(frame)
 
-    -- Tab 4: options
+    -- Tab 5: options
     optionsPanel = CreateFrame("Frame", nil, frame)
     optionsPanel:SetAllPoints()
     optionsPanel:Hide()
@@ -187,12 +181,12 @@ local function CreateDialog()
     qualityHint:SetJustifyH("LEFT")
     qualityHint:SetText("Enchants and gems below this crafting quality rank are reported as low quality.")
 
-    -- Tab 5: fast-travel search
+    -- Tab 4: fast-travel search
     travelPanel = RP.Travel:CreatePanel(frame)
 
     -- Tabs below the frame
     frame.Tabs = {}
-    for i, label in ipairs({ "Check", "Raid Inspect", TALENTS or "Talents", OPTIONS or "Options", "Travel" }) do
+    for i, label in ipairs({ "Check", "Raid Inspect", TALENTS or "Talents", "Travel", OPTIONS or "Options" }) do
         local tab = CreateFrame("Button", "RaidPreparedDialogTab" .. i, frame, "PanelTabButtonTemplate")
         tab:SetID(i)
         tab:SetText(label)

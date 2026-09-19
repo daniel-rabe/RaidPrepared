@@ -21,7 +21,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
   - **Mana potions**: Lightfused Mana Potion – required for healer specs only
   - **Weapon buffs**: Thalassian Phoenix Oil, Oil of Dawn, Smuggler's Enchanted Edge, Refulgent Whetstone, Refulgent Weightstone, Laced Zoomshots, Weighted Boomshots – including remaining time of the active buff. Death Knights, Rogues and Shamans are not warned.
   - Consumables are matched by item ID (all quality ranks), so the check works with every client language.
-- Shows a dialog listing every problem, dismissable with a button. Nothing pops up when everything is fine.
+- Shows a dialog listing every problem (close with the X button or ESC). Nothing pops up when everything is fine.
 - Never opens in combat – it waits until combat ends.
 - Optional **indicators on the character panel** item slots: enchant icon and socket icon next to each slot – red = missing, orange = low quality/outdated; items with a missing enchant or gem get a red border. Hover for details, toggle in the **Options** tab of the addon window or with `/rp indicators`.
 
@@ -37,6 +37,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 - Shows **low or mid quality enchants** together with the item level of that gear slot.
 - Inspects players one after another (throttled, pauses in combat, doesn't interfere with your own inspect window).
 - Per-player **Refresh** button and a **Refresh All** button.
+- Per-player **Whisper** button: sends a short, friendly whisper listing the missing/low enchants and empty sockets (hover it to preview the text). Once per inspect result, so nobody gets spammed.
 - Hover a player to see the full list of problems with item links.
 - Shows players who are out of range or offline.
 

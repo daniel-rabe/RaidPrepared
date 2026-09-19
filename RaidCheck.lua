@@ -236,6 +236,7 @@ function RaidCheck:Queue(guid)
     RemoveFromQueue(guid)
     table.insert(queue, 1, guid)
     entry.status = "pending"
+    entry.whispered = nil
     self:Refresh()
 end
 
@@ -245,6 +246,7 @@ function RaidCheck:QueueAll()
         if not (current and current.guid == guid) then
             queue[#queue + 1] = guid
             members[guid].status = "pending"
+            members[guid].whispered = nil
         end
     end
     self:Refresh()
@@ -315,6 +317,91 @@ local function StatusText(entry)
     return STATUS_TEXT[entry.status] or entry.status
 end
 
+---------------------------------------------------------------------------
+-- Whisper
+---------------------------------------------------------------------------
+
+local WHISPER_MAX = 255 -- chat message length limit
+local WHISPER_PREFIX = "[RaidPrepared] Hi! Automated gear check found: "
+local WHISPER_SUFFIX = ". Just a friendly heads-up, no stress :)"
+
+-- Issue groups in message order: label, count label (singular, plural) and matcher.
+local WHISPER_GROUPS = {
+    { label = "missing enchant", one = "missing enchant", many = "missing enchants",
+      match = function(i) return i.kind == "enchant" and i.problem == "missing" end },
+    { label = "lower rank enchant", one = "lower rank enchant", many = "lower rank enchants",
+      match = function(i) return i.kind == "enchant" and i.problem == "low" end },
+    { label = "empty socket", one = "empty socket", many = "empty sockets",
+      match = function(i) return i.kind == "gem" and i.problem == "missing" end },
+    { label = "gem", one = "gem to check", many = "gems to check",
+      match = function(i) return i.kind == "gem" end },
+    { label = "enchant", one = "enchant to check", many = "enchants to check",
+      match = function(i) return i.kind == "enchant" end },
+}
+
+local function BuildWhisper(entry)
+    local slots = {}
+    local epicGem = false
+    for _, issue in ipairs(entry.issues) do
+        if issue.kind == "epicgem" then
+            epicGem = true
+        else
+            for g, group in ipairs(WHISPER_GROUPS) do
+                if group.match(issue) then
+                    slots[g] = slots[g] or {}
+                    table.insert(slots[g], issue.slotName)
+                    break
+                end
+            end
+        end
+    end
+
+    local detailed, counted = {}, {}
+    for g, group in ipairs(WHISPER_GROUPS) do
+        local list = slots[g]
+        if list then
+            detailed[#detailed + 1] = group.label .. ": " .. table.concat(list, ", ")
+            counted[#counted + 1] = ("%d %s"):format(#list, #list == 1 and group.one or group.many)
+        end
+    end
+    if epicGem then
+        detailed[#detailed + 1] = "no Eversong Diamond socketed"
+        counted[#counted + 1] = "no Eversong Diamond"
+    end
+
+    local body = table.concat(detailed, "; ")
+    local candidates = {
+        WHISPER_PREFIX .. body .. WHISPER_SUFFIX,
+        WHISPER_PREFIX .. body,
+        WHISPER_PREFIX .. table.concat(counted, ", ") .. WHISPER_SUFFIX,
+    }
+    for _, msg in ipairs(candidates) do
+        if #msg <= WHISPER_MAX then
+            return msg
+        end
+    end
+    return candidates[3]:sub(1, WHISPER_MAX)
+end
+
+local function CanWhisper(entry)
+    if entry.status ~= "issues" or #entry.issues == 0 or entry.whispered then return false end
+    if entry.guid == UnitGUID("player") or InCombatLockdown() then return false end
+    local unit = FindUnit(entry.guid)
+    return unit ~= nil and UnitIsConnected(unit)
+end
+
+function RaidCheck:Whisper(guid)
+    local entry = members[guid]
+    if not entry or not CanWhisper(entry) then return end
+    local target = GetUnitName(FindUnit(guid), true)
+    if not target or target == UNKNOWNOBJECT then return end
+
+    local send = C_ChatInfo and C_ChatInfo.SendChatMessage or SendChatMessage
+    send(BuildWhisper(entry), "WHISPER", nil, target)
+    entry.whispered = true
+    self:Refresh()
+end
+
 local function CreateRow(index)
     local row = CreateFrame("Frame", nil, scrollChild)
     row:SetHeight(ROW_HEIGHT)
@@ -340,9 +427,31 @@ local function CreateRow(index)
         RaidCheck:Queue(row.guid)
     end)
 
+    row.whisper = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
+    row.whisper:SetSize(70, 20)
+    row.whisper:SetPoint("RIGHT", row.refresh, "LEFT", -4, 0)
+    row.whisper:SetText("Whisper")
+    row.whisper:SetMotionScriptsWhileDisabled(true)
+    row.whisper:SetScript("OnClick", function()
+        RaidCheck:Whisper(row.guid)
+    end)
+    row.whisper:SetScript("OnEnter", function(self)
+        local entry = members[row.guid]
+        if not entry or entry.status ~= "issues" then return end
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        if entry.whispered then
+            GameTooltip:AddLine("Already whispered. Refresh this member to whisper again.", 1, 1, 1, true)
+        else
+            GameTooltip:AddLine("Whisper " .. ColoredName(entry) .. ":")
+            GameTooltip:AddLine(BuildWhisper(entry), 1, 1, 1, true)
+        end
+        GameTooltip:Show()
+    end)
+    row.whisper:SetScript("OnLeave", GameTooltip_Hide)
+
     row.status = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     row.status:SetPoint("LEFT", row.name, "RIGHT", 8, 0)
-    row.status:SetPoint("RIGHT", row.refresh, "LEFT", -8, 0)
+    row.status:SetPoint("RIGHT", row.whisper, "LEFT", -8, 0)
     row.status:SetJustifyH("LEFT")
     row.status:SetWordWrap(false)
 
@@ -407,6 +516,8 @@ function RaidCheck:Refresh()
         row.name:SetText(ColoredName(entry))
         row.status:SetText(StatusText(entry))
         row.refresh:SetEnabled(entry.status ~= "inspecting" and entry.status ~= "pending")
+        row.whisper:SetText(entry.whispered and "Sent" or "Whisper")
+        row.whisper:SetEnabled(CanWhisper(entry))
         row:Show()
 
         if entry.status == "ok" or entry.status == "issues" then
