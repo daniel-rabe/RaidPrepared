@@ -18,7 +18,7 @@ Dialog.TAB_INSPECT = 2
 Dialog.TAB_TALENTS = 3
 Dialog.TAB_OPTIONS = 4
 
-local frame, scrollChild, summaryText, potionText, weaponText, okText, raidCheckButton
+local frame, scrollChild, summaryText, potionText, weaponText, okText
 local checkPanel, inspectPanel, talentsPanel, optionsPanel, indicatorsCheck, qualityValue
 local rows = {}
 local pendingIssues, pendingPotions -- waiting for combat to end
@@ -119,11 +119,6 @@ local function CreateDialog()
     dismiss:SetPoint("BOTTOM", 0, 18)
     dismiss:SetText("Dismiss")
     dismiss:SetScript("OnClick", function() frame:Hide() end)
-
-    raidCheckButton = CreateFrame("Button", nil, checkPanel, "UIPanelButtonTemplate")
-    raidCheckButton:SetSize(120, 24)
-    raidCheckButton:SetPoint("BOTTOMLEFT", 20, 18)
-    raidCheckButton:SetScript("OnClick", function() RP.RaidCheck:Open() end)
 
     -- Tab 2: raid / party inspect
     inspectPanel = RP.RaidCheck:CreatePanel(frame)
@@ -299,9 +294,6 @@ function Dialog:UpdateInspectAccess()
     if not frame then return end
     local allowed = RP.RaidCheck:IsAllowed()
     local title = RP.RaidCheck:GetTitle()
-
-    raidCheckButton:SetText(title)
-    raidCheckButton:SetShown(allowed)
 
     local tab = frame.Tabs[Dialog.TAB_INSPECT]
     tab:SetText(title)
