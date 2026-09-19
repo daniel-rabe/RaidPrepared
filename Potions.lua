@@ -58,7 +58,41 @@ local function NewEntry(kind, ids, minimum, required)
         required = required,
         count = 0,
         icon = DEFAULT_ICONS[kind],
+        items = {},     -- one entry per item ID found, most numerous first
+        itemsByID = {}, -- [itemID] = entry in items
     }
+end
+
+-- Adds one bag stack to the entry and to its per-item breakdown.
+local function AddStack(entry, info)
+    local count = info.stackCount or 1
+    entry.count = entry.count + count
+
+    local item = entry.itemsByID[info.itemID]
+    if not item then
+        item = {
+            itemID = info.itemID,
+            icon = info.iconFileID or C_Item.GetItemIconByID(info.itemID) or entry.icon,
+            link = info.hyperlink,
+            name = C_Item.GetItemNameByID(info.itemID),
+            count = 0,
+        }
+        entry.itemsByID[info.itemID] = item
+        entry.items[#entry.items + 1] = item
+    end
+    item.count = item.count + count
+end
+
+-- Most numerous item first (item ID as tie-breaker, so the order stays stable);
+-- that item also gives the entry its icon.
+local function SortItems(entry)
+    table.sort(entry.items, function(a, b)
+        if a.count ~= b.count then return a.count > b.count end
+        return a.itemID < b.itemID
+    end)
+    if entry.items[1] then
+        entry.icon = entry.items[1].icon
+    end
 end
 
 local function BuildIssues(consumables)
@@ -109,11 +143,14 @@ function RP.ScanPotions()
     ForEachBagItem(function(_, _, info)
         for _, entry in ipairs(consumables) do
             if entry.ids[info.itemID] then
-                entry.count = entry.count + (info.stackCount or 1)
-                entry.icon = info.iconFileID or C_Item.GetItemIconByID(info.itemID) or entry.icon
+                AddStack(entry, info)
             end
         end
     end)
+
+    for _, entry in ipairs(consumables) do
+        SortItems(entry)
+    end
 
     return consumables, BuildIssues(consumables)
 end

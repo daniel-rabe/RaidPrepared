@@ -50,6 +50,8 @@ L["No weapon buffs in your bags!"] = "Nenhum aprimoramento de arma nas bolsas!"
 L["Only %d healing potions (minimum %d)"] = "Apenas %d poções de cura (mínimo %d)"
 L["Only %d mana potions (minimum %d)"] = "Apenas %d poções de mana (mínimo %d)"
 L["Only %d weapon buffs (minimum %d)"] = "Apenas %d aprimoramentos de arma (mínimo %d)"
+L["Not required"] = "Não necessário"
+L["None in your bags"] = "Nenhum nas suas bolsas"
 
 -- Talents
 L["raid"] = "raides"

@@ -5,6 +5,12 @@ local FRAME_WIDTH = 580
 local FRAME_HEIGHT = 390
 local ROW_HEIGHT = 34
 
+-- Consumable summary: one icon per kind with its stack count, details in the tooltip.
+local POTION_ICON_SIZE = 34
+local POTION_ICON_GAP = 26
+local POTION_KINDS = { "heal", "mana", "weapon" }
+local TOOLTIP_ICON = "|T%s:16:16:0:0:64:64:5:59:5:59|t"
+
 local PROBLEM_COLORS = {
     missing  = { 1.0, 0.25, 0.25 },
     low      = { 1.0, 0.6, 0.1 },
@@ -20,7 +26,7 @@ Dialog.TAB_TALENTS = 3
 Dialog.TAB_TRAVEL = 4
 Dialog.TAB_OPTIONS = 5
 
-local frame, scrollChild, summaryText, potionText, weaponText, okText
+local frame, scrollChild, summaryText, potionBar, okText
 local checkPanel, inspectPanel, talentsPanel, optionsPanel, travelPanel, indicatorsCheck, qualityValue
 local whisperCheck, whisperDrop
 local rows = {}
@@ -64,6 +70,86 @@ local function CreateRow(index)
     return row
 end
 
+-- Red = none, orange = below the minimum, green = enough, grey = not required.
+local function PotionStatusColor(entry)
+    if not entry.required then
+        return 0.65, 0.65, 0.65
+    elseif entry.count == 0 then
+        return 1.0, 0.25, 0.25
+    elseif entry.count < entry.minimum then
+        return 1.0, 0.6, 0.1
+    end
+    return 0.25, 1.0, 0.25
+end
+
+-- Lists every item kind the scan found for this consumable, with its quantity.
+local function ShowPotionTooltip(self)
+    local entry = self.entry
+    if not entry then return end
+    local r, g, b = PotionStatusColor(entry)
+
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:AddDoubleLine(entry.label, tostring(entry.count), 1, 1, 1, r, g, b)
+    GameTooltip:AddLine(" ")
+    if entry.items and #entry.items > 0 then
+        for _, item in ipairs(entry.items) do
+            local icon = item.icon and TOOLTIP_ICON:format(item.icon) .. " " or ""
+            GameTooltip:AddDoubleLine(icon .. (item.link or item.name or L["item %d"]:format(item.itemID)),
+                tostring(item.count), 1, 1, 1, 1, 1, 1)
+        end
+    else
+        GameTooltip:AddLine(L["None in your bags"], 1, 0.25, 0.25)
+    end
+    if entry.activeTime then
+        GameTooltip:AddLine(L["(active %dm)"]:format(math.floor(entry.activeTime / 60)), 0.25, 1, 0.25)
+    end
+    if not entry.required then
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddLine(L["Not required"], 0.65, 0.65, 0.65)
+    end
+    GameTooltip:Show()
+end
+
+local function CreatePotionIcon(parent, index)
+    local button = CreateFrame("Button", nil, parent)
+    button:SetSize(POTION_ICON_SIZE, POTION_ICON_SIZE)
+    button:SetPoint("LEFT", (index - 1) * (POTION_ICON_SIZE + POTION_ICON_GAP), 0)
+
+    -- Slightly oversized colored texture behind the icon, so it reads as a status border.
+    button.border = button:CreateTexture(nil, "BACKGROUND")
+    button.border:SetPoint("TOPLEFT", -2, 2)
+    button.border:SetPoint("BOTTOMRIGHT", 2, -2)
+
+    button.icon = button:CreateTexture(nil, "ARTWORK")
+    button.icon:SetAllPoints()
+    button.icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
+
+    button.count = button:CreateFontString(nil, "OVERLAY", "NumberFontNormal")
+    button.count:SetPoint("BOTTOMRIGHT", 2, -2)
+    button.count:SetJustifyH("RIGHT")
+
+    button:SetScript("OnEnter", ShowPotionTooltip)
+    button:SetScript("OnLeave", GameTooltip_Hide)
+    return button
+end
+
+-- Icon, stack count and status color for one consumable kind.
+local function UpdatePotionIcon(button, entry)
+    button.entry = entry
+    if not entry then
+        button:Hide()
+        return
+    end
+    local r, g, b = PotionStatusColor(entry)
+    button.icon:SetTexture(entry.icon or 134400)
+    button.icon:SetDesaturated(entry.count == 0)
+    button.icon:SetAlpha(entry.required and 1 or 0.6)
+    button.border:SetColorTexture(r, g, b, 0.9)
+    button.count:SetText(tostring(entry.count))
+    button.count:SetTextColor(r, g, b)
+    button:Show()
+end
+
 local function CreateDialog()
     frame = CreateFrame("Frame", "RaidPreparedDialog", UIParent, "BackdropTemplate")
     frame:SetSize(FRAME_WIDTH, FRAME_HEIGHT)
@@ -96,11 +182,14 @@ local function CreateDialog()
     summaryText = checkPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     summaryText:SetPoint("TOP", title, "BOTTOM", 0, -6)
 
-    potionText = checkPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    potionText:SetPoint("TOP", summaryText, "BOTTOM", 0, -6)
-
-    weaponText = checkPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    weaponText:SetPoint("TOP", potionText, "BOTTOM", 0, -4)
+    potionBar = CreateFrame("Frame", nil, checkPanel)
+    potionBar:SetSize(#POTION_KINDS * POTION_ICON_SIZE + (#POTION_KINDS - 1) * POTION_ICON_GAP,
+        POTION_ICON_SIZE)
+    potionBar:SetPoint("TOP", summaryText, "BOTTOM", 0, -8)
+    potionBar.icons = {}
+    for i, kind in ipairs(POTION_KINDS) do
+        potionBar.icons[kind] = CreatePotionIcon(potionBar, i)
+    end
 
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -6, -6)
@@ -260,24 +349,6 @@ function Dialog:SelectTab(index)
     travelPanel:SetShown(index == Dialog.TAB_TRAVEL)
 end
 
-local function ColorPotionCount(entry)
-    local color
-    if not entry.required then
-        color = "ffaaaaaa"
-    elseif entry.count == 0 then
-        color = "ffff4040"
-    elseif entry.count < entry.minimum then
-        color = "ffff9919"
-    else
-        color = "ff40ff40"
-    end
-    local text = ("%s: |c%s%d|r"):format(entry.label, color, entry.count)
-    if entry.activeTime then
-        text = text .. " |cff40ff40" .. L["(active %dm)"]:format(math.floor(entry.activeTime / 60)) .. "|r"
-    end
-    return text
-end
-
 local function Populate(issues, potions)
     for i, issue in ipairs(issues) do
         local row = rows[i] or CreateRow(i)
@@ -302,12 +373,8 @@ local function Populate(issues, potions)
     for _, issue in ipairs(issues) do
         if issue.problem == "missing" then missing = missing + 1 end
     end
-    if potions then
-        potionText:SetText(ColorPotionCount(potions.heal) .. "    " .. ColorPotionCount(potions.mana))
-        weaponText:SetText(ColorPotionCount(potions.weapon))
-    else
-        potionText:SetText("")
-        weaponText:SetText("")
+    for _, kind in ipairs(POTION_KINDS) do
+        UpdatePotionIcon(potionBar.icons[kind], potions and potions[kind])
     end
 
     if #issues == 0 then

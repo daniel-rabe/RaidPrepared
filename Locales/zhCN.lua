@@ -50,6 +50,8 @@ L["No weapon buffs in your bags!"] = "背包中没有武器强化物品！"
 L["Only %d healing potions (minimum %d)"] = "仅有%d瓶治疗药水（至少%d瓶）"
 L["Only %d mana potions (minimum %d)"] = "仅有%d瓶法力药水（至少%d瓶）"
 L["Only %d weapon buffs (minimum %d)"] = "仅有%d个武器强化物品（至少%d个）"
+L["Not required"] = "无需携带"
+L["None in your bags"] = "背包中没有"
 
 -- Talents
 L["raid"] = "团队副本"
