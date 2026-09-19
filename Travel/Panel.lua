@@ -2,7 +2,7 @@ local _, RP = ...
 local T = RP.Travel
 local L = T.L
 
--- RaidPrepared - Travel/Panel.lua
+-- FCKAFD - Travel/Panel.lua
 -- The travel tab: one edit box, and a pool of secure action buttons underneath
 -- it that get rebound to whatever the search currently matches.
 --
@@ -119,7 +119,7 @@ end
 -- ============================================================================
 
 local function CreateRow(index)
-    local row = CreateFrame("Button", "RaidPreparedTravelRow" .. index, panel, "SecureActionButtonTemplate")
+    local row = CreateFrame("Button", "FCKAFDTravelRow" .. index, panel, "SecureActionButtonTemplate")
     row:SetSize(rowWidth, ROW_HEIGHT)
     -- Both edges: with "action button use key down" enabled (the retail
     -- default) the secure handler fires on the down edge, so a button

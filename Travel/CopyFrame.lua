@@ -1,4 +1,4 @@
--- RaidPrepared - Travel/CopyFrame.lua
+-- FCKAFD - Travel/CopyFrame.lua
 -- A scrollable text box for diagnostic output, because WoW chat cannot be
 -- copied. Text arrives pre-selected so Ctrl+C works immediately.
 
@@ -15,7 +15,7 @@ local FRAME_WIDTH  = 560
 local FRAME_HEIGHT = 420
 
 local function CreateCopyFrame()
-    copyFrame = CreateFrame("Frame", "RaidPreparedTravelCopyFrame", UIParent, "BackdropTemplate")
+    copyFrame = CreateFrame("Frame", "FCKAFDTravelCopyFrame", UIParent, "BackdropTemplate")
     copyFrame:SetSize(FRAME_WIDTH, FRAME_HEIGHT)
     copyFrame:SetPoint("CENTER")
     copyFrame:SetFrameStrata("DIALOG")
@@ -35,7 +35,7 @@ local function CreateCopyFrame()
     copyFrame:SetBackdropBorderColor(0.4, 0.4, 0.45, 1)
     copyFrame:Hide()
 
-    tinsert(UISpecialFrames, "RaidPreparedTravelCopyFrame")
+    tinsert(UISpecialFrames, "FCKAFDTravelCopyFrame")
 
     copyTitle = copyFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     copyTitle:SetPoint("TOPLEFT", 12, -10)
@@ -48,7 +48,7 @@ local function CreateCopyFrame()
     hint:SetPoint("BOTTOMLEFT", 14, 10)
     hint:SetText(L["Ctrl+C to copy, Esc to close"])
 
-    local scroll = CreateFrame("ScrollFrame", "RaidPreparedTravelCopyScroll", copyFrame, "UIPanelScrollFrameTemplate")
+    local scroll = CreateFrame("ScrollFrame", "FCKAFDTravelCopyScroll", copyFrame, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", 14, -32)
     scroll:SetPoint("BOTTOMRIGHT", -32, 28)
 
@@ -70,7 +70,7 @@ function UI.ShowCopy(title, text)
     if not copyFrame then
         CreateCopyFrame()
     end
-    copyTitle:SetText(L["RaidPrepared travel - %s"]:format(title or L["Output"]))
+    copyTitle:SetText(L["FCKAFD travel - %s"]:format(title or L["Output"]))
     copyBox:SetText(text or "")
     copyFrame:Show()
     copyBox:SetFocus()

@@ -123,7 +123,7 @@ function RP.ScanPotionsAsync(callback)
     callback(RP.ScanPotions())
 end
 
--- /rp debug output for consumables.
+-- /fck debug output for consumables.
 function RP.DebugPotions()
     local consumables = RP.ScanPotions()
     ForEachBagItem(function(_, _, info)

@@ -68,12 +68,12 @@ function Talents:GetActiveLoadoutID()
 end
 
 function Talents:GetFlag(configID, content)
-    local flags = RaidPreparedCharDB.loadoutFlags[configID]
+    local flags = FCKAFDCharDB.loadoutFlags[configID]
     return flags ~= nil and flags[content] == true
 end
 
 function Talents:SetFlag(configID, content, value)
-    local all = RaidPreparedCharDB.loadoutFlags
+    local all = FCKAFDCharDB.loadoutFlags
     all[configID] = all[configID] or {}
     all[configID][content] = value and true or nil
     if not next(all[configID]) then
@@ -131,7 +131,7 @@ end
 function RP.RunTalentCheck()
     local issue = Talents:Check()
     if issue then
-        print("|cffff4040RaidPrepared|r: " .. issue.detail)
+        print("|cffff4040FCKAFD|r: " .. issue.detail)
         RP.Dialog:Show({ issue })
     end
 end
@@ -284,7 +284,7 @@ local function HookTalentFrame()
     for _, check in ipairs({ raid, dungeon }) do
         check:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_TOP")
-            GameTooltip:AddLine("RaidPrepared")
+            GameTooltip:AddLine("FCKAFD")
             GameTooltip:AddLine(L["Flag the selected loadout for this content. You are warned when entering it with a loadout that is not flagged."], 1, 1, 1, true)
             GameTooltip:Show()
         end)
@@ -320,7 +320,7 @@ end
 
 events:SetScript("OnEvent", function(_, event, arg1)
     if event == "ADDON_LOADED" then
-        if arg1 == "Blizzard_PlayerSpells" and RaidPreparedCharDB then
+        if arg1 == "Blizzard_PlayerSpells" and FCKAFDCharDB then
             HookTalentFrame()
         end
     elseif event == "PLAYER_ENTERING_WORLD" then

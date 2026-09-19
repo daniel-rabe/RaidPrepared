@@ -9,7 +9,7 @@ local _, RP = ...
 local T = {}
 RP.Travel = T
 
-local PREFIX = "|cff33ccffRaidPrepared|r: "
+local PREFIX = "|cff33ccffFCKAFD|r: "
 
 -- Set at ADDON_LOADED; every module reads travel settings through this.
 T.db = nil
@@ -136,7 +136,7 @@ end
 -- one-handler-per-frame style used elsewhere in this addon does not cover.
 
 local handlers = {}
-local eventFrame = CreateFrame("Frame", "RaidPreparedTravelEvents")
+local eventFrame = CreateFrame("Frame", "FCKAFDTravelEvents")
 
 ---Register a callback for a game event. Multiple callbacks per event are fine.
 function T:RegisterEvent(event, fn)

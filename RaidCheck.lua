@@ -330,7 +330,7 @@ end
 ---------------------------------------------------------------------------
 
 local WHISPER_MAX = 255 -- chat message length limit
-local WHISPER_PREFIX = "[RaidPrepared] " .. L["Hi! Automated gear check found: "]
+local WHISPER_PREFIX = "[FCKAFD] " .. L["Hi! Automated gear check found: "]
 local WHISPER_SUFFIX = L[". Just a friendly heads-up, no stress :)"]
 
 -- Issue groups in message order: label, count format (singular, plural) and matcher.
@@ -582,7 +582,7 @@ end
 
 function RaidCheck:Open()
     if not self:IsAllowed() then
-        print("|cff33ccffRaidPrepared|r: " .. L["Raid Inspect requires raid lead or assist; Party Inspect requires a party."])
+        print("|cff33ccffFCKAFD|r: " .. L["Raid Inspect requires raid lead or assist; Party Inspect requires a party."])
         return
     end
     RP.Dialog:OpenTab(RP.Dialog.TAB_INSPECT)

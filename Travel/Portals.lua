@@ -1,4 +1,4 @@
--- RaidPrepared - Travel/Portals.lua
+-- FCKAFD - Travel/Portals.lua
 -- Mythic+ / challenge-mode dungeon teleports.
 --
 -- These are learned spells that sit in your spellbook, and Blizzard adds a new
@@ -7,7 +7,7 @@
 -- matches one of the patterns below as a dungeon teleport.
 --
 -- Anything the patterns miss can be pinned by ID in `extra` below. Use
--- `/rp travel scan` to dump your spellbook and find the ID.
+-- `/fck travel scan` to dump your spellbook and find the ID.
 
 local _, RP = ...
 local T = RP.Travel

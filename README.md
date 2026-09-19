@@ -1,8 +1,10 @@
 <p align="center">
-  <img src="media/logo.png" alt="RaidPrepared" width="200">
+  <img src="media/logo.png" alt="FCKAFD" width="200">
 </p>
 
-# RaidPrepared
+# FCKAFD
+
+**F**ull **C**haracter **K**it **A**udit **F**or **D**ungeons
 
 A World of Warcraft (Retail – Midnight) addon that makes sure you and your raid show up prepared: it checks equipped gear for missing or low-quality **enchants** and **gems**, counts your **healing potions**, **mana potions** and **weapon buffs** (oils, stones), can inspect the whole raid for missing enchants and gems, and searches every fast-travel option your character actually has.
 
@@ -23,10 +25,10 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
   - Consumables are matched by item ID (all quality ranks), so the check works with every client language.
 - Shows a dialog listing every problem (close with the X button or ESC). Nothing pops up when everything is fine.
 - Never opens in combat – it waits until combat ends.
-- Optional **indicators on the character panel** item slots: enchant icon and socket icon next to each slot – red = missing, orange = low quality/outdated; items with a missing enchant or gem get a red border. Hover for details, toggle in the **Options** tab of the addon window or with `/rp indicators`.
+- Optional **indicators on the character panel** item slots: enchant icon and socket icon next to each slot – red = missing, orange = low quality/outdated; items with a missing enchant or gem get a red border. Hover for details, toggle in the **Options** tab of the addon window or with `/fck indicators`.
 
 ### Talent loadout check
-- Flag your saved talent loadouts as **Raid** and/or **Dungeon** – in the **Talents** tab of the addon window (`/rp talents`) or with the checkboxes above the loadout dropdown in the talent frame.
+- Flag your saved talent loadouts as **Raid** and/or **Dungeon** – in the **Talents** tab of the addon window (`/fck talents`) or with the checkboxes above the loadout dropdown in the talent frame.
 - When you enter a **raid** or a **Mythic / Mythic+ dungeon**, and on every **ready check** inside, you are warned if your active loadout is not flagged for that content.
 - If no loadout of your current spec is flagged for the content, no warning appears.
 - Flags are saved per character.
@@ -42,7 +44,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 - Shows players who are out of range or offline.
 
 ### Travel
-- Tab **Travel** (`/rp travel`, or Ctrl-click the minimap button): one search box for every fast-travel option this character can actually use right now.
+- Tab **Travel** (`/fck travel`, or Ctrl-click the minimap button): one search box for every fast-travel option this character can actually use right now.
 - Covers **Mythic+ dungeon teleports**, the Garrison and Dalaran hearthstones, every **hearthstone toy** you own, **class travel spells** and **engineering wormholes**.
 - Dungeon ports are found by **destination**: a port named "Path of the Warding Candles" is listed and searchable as *Darkflame Cleft*, because the destination is read out of the spell description. That keeps working across seasons and locales.
 - **M+** filters the list to dungeon ports for the current Mythic+ season.
@@ -58,20 +60,20 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 
 | Action | Result |
 | --- | --- |
-| `/rp` or `/raidprepared` | Check your own gear and consumables |
-| `/rp inspect` (or `/rp raid`, `/rp party`) | Open the Raid/Party Inspect tab (raid: lead/assist only) |
-| `/rp talents` | Open the Talents tab (flag loadouts for raid / Mythic dungeons) |
-| `/rp travel` | Open the Travel tab (search your fast-travel options) |
-| `/rp travel season` | List this season's Mythic+ maps and the ports that serve them |
-| `/rp travel audit` | Report travel entries whose ID does not resolve |
-| `/rp travel scan [text]` | Dump spellbook entries, used to harvest teleport IDs |
-| `/rp travel discover` | Show which spells the teleport patterns match |
-| `/rp travel copy` | Reopen the last diagnostic output for copying |
-| `/rp options` | Open the Options tab of the addon window |
-| `/rp indicators` | Toggle enchant/socket indicators on the character panel |
-| `/rp minimap` | Show/hide the minimap button |
-| `/rp quality <rank>` | Set the required enchant/gem quality rank (default 2, also in the Options tab) |
-| `/rp debug` | Print raw item, socket and consumable data (for bug reports) |
+| `/fck` or `/fckafd` | Check your own gear and consumables |
+| `/fck inspect` (or `/fck raid`, `/fck party`) | Open the Raid/Party Inspect tab (raid: lead/assist only) |
+| `/fck talents` | Open the Talents tab (flag loadouts for raid / Mythic dungeons) |
+| `/fck travel` | Open the Travel tab (search your fast-travel options) |
+| `/fck travel season` | List this season's Mythic+ maps and the ports that serve them |
+| `/fck travel audit` | Report travel entries whose ID does not resolve |
+| `/fck travel scan [text]` | Dump spellbook entries, used to harvest teleport IDs |
+| `/fck travel discover` | Show which spells the teleport patterns match |
+| `/fck travel copy` | Reopen the last diagnostic output for copying |
+| `/fck options` | Open the Options tab of the addon window |
+| `/fck indicators` | Toggle enchant/socket indicators on the character panel |
+| `/fck minimap` | Show/hide the minimap button |
+| `/fck quality <rank>` | Set the required enchant/gem quality rank (default 2, also in the Options tab) |
+| `/fck debug` | Print raw item, socket and consumable data (for bug reports) |
 | Minimap button – left-click | Check your own gear |
 | Minimap button – right-click | Open the Raid/Party Inspect tab |
 | Minimap button – Shift-click | Open the Talents tab |
@@ -83,8 +85,15 @@ The same actions are available from the addon compartment menu on the minimap.
 ## Installation
 
 1. Download the latest release (or clone this repository).
-2. Copy the `RaidPrepared` folder to `World of Warcraft\_retail_\Interface\AddOns\`.
+2. Copy the `FCKAFD` folder to `World of Warcraft\_retail_\Interface\AddOns\`.
 3. Restart the game or type `/reload`.
+
+### Upgrading from RaidPrepared
+
+The addon folder was renamed in 1.5.0. WoW stores saved variables under the folder
+name, so log in **once with both folders installed** – FCKAFD then adopts your old
+settings, favourites and loadout flags – and delete the old `RaidPrepared` folder
+afterwards. The old `/rp` and `/raidprepared` commands keep working either way.
 
 ## Configuration
 
@@ -112,7 +121,7 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 
 | File | Purpose |
 | --- | --- |
-| `RaidPrepared.toc` | Addon manifest |
+| `FCKAFD.toc` | Addon manifest |
 | `Data.lua` | Patch-specific configuration |
 | `Scanner.lua` | Gear scanning (enchants, gems) for any unit |
 | `Potions.lua` | Potion and weapon buff counting |

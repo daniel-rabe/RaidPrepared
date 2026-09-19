@@ -9,7 +9,7 @@ RP.Minimap = Minimap_
 local button
 
 local function UpdatePosition()
-    local angle = math.rad(RaidPreparedDB.minimap.angle or 225)
+    local angle = math.rad(FCKAFDDB.minimap.angle or 225)
     local radius = (Minimap:GetWidth() / 2) + 5
     button:ClearAllPoints()
     button:SetPoint("CENTER", Minimap, "CENTER", math.cos(angle) * radius, math.sin(angle) * radius)
@@ -20,13 +20,13 @@ local function OnDragUpdate()
     local cx, cy = GetCursorPosition()
     local scale = Minimap:GetEffectiveScale()
     cx, cy = cx / scale, cy / scale
-    RaidPreparedDB.minimap.angle = math.deg(math.atan2(cy - my, cx - mx)) % 360
+    FCKAFDDB.minimap.angle = math.deg(math.atan2(cy - my, cx - mx)) % 360
     UpdatePosition()
 end
 
 local function ShowTooltip(owner)
     GameTooltip:SetOwner(owner, "ANCHOR_LEFT")
-    GameTooltip:AddLine("RaidPrepared")
+    GameTooltip:AddLine("FCKAFD")
     GameTooltip:AddLine(L["Left-click: check enchants, gems & consumables"], 1, 1, 1)
     if RP.RaidCheck:IsAllowed() then
         GameTooltip:AddLine(L["Right-click: %s"]:format(RP.RaidCheck:GetTitle()), 1, 1, 1)
@@ -40,7 +40,7 @@ end
 function Minimap_:Create()
     if button then return end
 
-    button = CreateFrame("Button", "RaidPreparedMinimapButton", Minimap)
+    button = CreateFrame("Button", "FCKAFDMinimapButton", Minimap)
     button:SetSize(31, 31)
     button:SetFrameStrata("MEDIUM")
     button:SetFrameLevel(8)
@@ -91,17 +91,17 @@ end
 
 function Minimap_:UpdateVisibility()
     if not button then return end
-    button:SetShown(not RaidPreparedDB.minimap.hide)
+    button:SetShown(not FCKAFDDB.minimap.hide)
 end
 
 function Minimap_:Toggle()
-    RaidPreparedDB.minimap.hide = not RaidPreparedDB.minimap.hide
+    FCKAFDDB.minimap.hide = not FCKAFDDB.minimap.hide
     self:UpdateVisibility()
-    return not RaidPreparedDB.minimap.hide
+    return not FCKAFDDB.minimap.hide
 end
 
 -- Addon compartment (retail minimap addon menu), referenced from the TOC.
-function RaidPrepared_OnAddonCompartmentClick(_, mouseButton)
+function FCKAFD_OnAddonCompartmentClick(_, mouseButton)
     if IsControlKeyDown() then
         RP.Travel:Toggle()
     elseif IsShiftKeyDown() then
@@ -113,10 +113,10 @@ function RaidPrepared_OnAddonCompartmentClick(_, mouseButton)
     end
 end
 
-function RaidPrepared_OnAddonCompartmentEnter(_, menuButtonFrame)
+function FCKAFD_OnAddonCompartmentEnter(_, menuButtonFrame)
     ShowTooltip(menuButtonFrame)
 end
 
-function RaidPrepared_OnAddonCompartmentLeave()
+function FCKAFD_OnAddonCompartmentLeave()
     GameTooltip:Hide()
 end

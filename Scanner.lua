@@ -294,7 +294,7 @@ function RP.ScanAsync(callback)
     RP.ScanUnitAsync("player", true, callback)
 end
 
--- /rp debug: dump what the scanner sees for every equipped item.
+-- /fck debug: dump what the scanner sees for every equipped item.
 function RP.Debug()
     for slot = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
         local link = GetInventoryItemLink("player", slot)

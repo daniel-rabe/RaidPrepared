@@ -1,4 +1,4 @@
--- RaidPrepared - Travel/Season.lua
+-- FCKAFD - Travel/Season.lua
 -- Which dungeon ports belong to the current Mythic+ season.
 --
 -- There is no API linking a teleport spell to a challenge map, so the link is

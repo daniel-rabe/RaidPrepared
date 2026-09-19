@@ -64,7 +64,7 @@ local function CreateRow(index)
 end
 
 local function CreateDialog()
-    frame = CreateFrame("Frame", "RaidPreparedDialog", UIParent, "BackdropTemplate")
+    frame = CreateFrame("Frame", "FCKAFDDialog", UIParent, "BackdropTemplate")
     frame:SetSize(FRAME_WIDTH, FRAME_HEIGHT)
     frame:SetPoint("CENTER")
     frame:SetFrameStrata("DIALOG")
@@ -86,7 +86,7 @@ local function CreateDialog()
 
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -18)
-    title:SetText("RaidPrepared")
+    title:SetText("FCKAFD")
 
     -- Tab 1: check results
     checkPanel = CreateFrame("Frame", nil, frame)
@@ -127,7 +127,7 @@ local function CreateDialog()
     optionsPanel:SetAllPoints()
     optionsPanel:Hide()
     optionsPanel:SetScript("OnShow", function()
-        indicatorsCheck:SetChecked(RaidPreparedDB.characterIndicators)
+        indicatorsCheck:SetChecked(FCKAFDDB.characterIndicators)
         qualityValue:SetText(RP.GetMaxQualityTier())
     end)
 
@@ -188,7 +188,7 @@ local function CreateDialog()
     -- Tabs below the frame
     frame.Tabs = {}
     for i, label in ipairs({ L["Check"], L["Raid Inspect"], TALENTS or L["Talents"], L["Travel"], OPTIONS or L["Options"] }) do
-        local tab = CreateFrame("Button", "RaidPreparedDialogTab" .. i, frame, "PanelTabButtonTemplate")
+        local tab = CreateFrame("Button", "FCKAFDDialogTab" .. i, frame, "PanelTabButtonTemplate")
         tab:SetID(i)
         tab:SetText(label)
         PanelTemplates_TabResize(tab, 0)
@@ -318,7 +318,7 @@ function Dialog:OpenTab(index)
         CreateDialog()
         Populate({}, nil)
         okText:Hide()
-        summaryText:SetText(L["No check run yet - use /rp or the minimap button."])
+        summaryText:SetText(L["No check run yet - use /fck or the minimap button."])
     end
     self:UpdateInspectAccess()
     self:SelectTab(index)

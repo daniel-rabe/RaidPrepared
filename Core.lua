@@ -1,7 +1,7 @@
 local addonName, RP = ...
 local L = RP.L
 
-local PREFIX = "|cff33ccffRaidPrepared|r: "
+local PREFIX = "|cff33ccffFCKAFD|r: "
 local RAID_JOIN_DELAY = 2
 
 local DEFAULTS = {
@@ -31,6 +31,33 @@ local function ApplyDefaults(db, defaults)
     end
 end
 
+-- The addon folder was renamed from RaidPrepared to FCKAFD. WoW keys SavedVariables
+-- to the folder name, so a renamed install starts with an empty db. If the old folder
+-- is still installed its globals are set by the time PLAYER_LOGIN fires, so the old
+-- settings are adopted once, there. Users who removed the old folder start fresh.
+local function DeepCopy(source, target)
+    for key, value in pairs(source) do
+        if type(value) == "table" then
+            if type(target[key]) ~= "table" then target[key] = {} end
+            DeepCopy(value, target[key])
+        else
+            target[key] = value
+        end
+    end
+    return target
+end
+
+local function MigrateLegacyDB()
+    if FCKAFDDB.migratedFromRaidPrepared then return end
+    FCKAFDDB.migratedFromRaidPrepared = true
+    if type(RaidPreparedDB) == "table" and next(RaidPreparedDB) then
+        DeepCopy(RaidPreparedDB, FCKAFDDB)
+    end
+    if type(RaidPreparedCharDB) == "table" and next(RaidPreparedCharDB) then
+        DeepCopy(RaidPreparedCharDB, FCKAFDCharDB)
+    end
+end
+
 local function FormatPotionCount(entry)
     local text = ("%s: %d"):format(entry.label, entry.count)
     if entry.activeTime then
@@ -40,12 +67,12 @@ local function FormatPotionCount(entry)
 end
 
 function RP.GetMaxQualityTier()
-    return RaidPreparedDB.maxQualityTier or RP.DEFAULT_MAX_QUALITY_TIER
+    return FCKAFDDB.maxQualityTier or RP.DEFAULT_MAX_QUALITY_TIER
 end
 
 function RP.SetMaxQualityTier(tier)
     tier = math.max(RP.MIN_QUALITY_RANK_OPTION, math.min(RP.MAX_QUALITY_RANK_OPTION, math.floor(tier)))
-    RaidPreparedDB.maxQualityTier = tier
+    FCKAFDDB.maxQualityTier = tier
     RP.CharacterPanel:RequestUpdate()
     return tier
 end
@@ -86,22 +113,32 @@ local function CheckRaidJoin()
     wasInRaid = inRaid
 end
 
+local function InitDB()
+    FCKAFDDB = FCKAFDDB or {}
+    FCKAFDCharDB = FCKAFDCharDB or {}
+    ApplyDefaults(FCKAFDDB, DEFAULTS)
+    RP.Travel.db = FCKAFDDB.travel
+    FCKAFDCharDB.loadoutFlags = FCKAFDCharDB.loadoutFlags or {}
+end
+
 local events = CreateFrame("Frame")
 events:RegisterEvent("ADDON_LOADED")
+events:RegisterEvent("PLAYER_LOGIN")
 events:RegisterEvent("PLAYER_ENTERING_WORLD")
 events:RegisterEvent("GROUP_ROSTER_UPDATE")
 events:SetScript("OnEvent", function(_, event, arg1, arg2)
     if event == "ADDON_LOADED" then
         if arg1 ~= addonName then return end
-        RaidPreparedDB = RaidPreparedDB or {}
-        ApplyDefaults(RaidPreparedDB, DEFAULTS)
-        RP.Travel.db = RaidPreparedDB.travel
-        RaidPreparedCharDB = RaidPreparedCharDB or {}
-        RaidPreparedCharDB.loadoutFlags = RaidPreparedCharDB.loadoutFlags or {}
+        InitDB()
+        events:UnregisterEvent("ADDON_LOADED")
+    elseif event == "PLAYER_LOGIN" then
+        -- every addon has loaded, so a still-installed RaidPrepared has set its globals
+        MigrateLegacyDB()
+        InitDB() -- fill in anything the adopted db is missing, then build the UI from it
         RP.Minimap:Create()
         RP.Talents:Init()
         RP.CharacterPanel:Init()
-        events:UnregisterEvent("ADDON_LOADED")
+        events:UnregisterEvent("PLAYER_LOGIN")
     elseif event == "PLAYER_ENTERING_WORLD" then
         local isInitialLogin, isReloadingUi = arg1, arg2
         if isInitialLogin or isReloadingUi then
@@ -114,9 +151,11 @@ events:SetScript("OnEvent", function(_, event, arg1, arg2)
     end
 end)
 
-SLASH_RAIDPREPARED1 = "/raidprepared"
-SLASH_RAIDPREPARED2 = "/rp"
-SlashCmdList.RAIDPREPARED = function(input)
+SLASH_FCKAFD1 = "/fckafd"
+SLASH_FCKAFD2 = "/fck"
+SLASH_FCKAFD3 = "/raidprepared" -- legacy alias, kept so old macros keep working
+SLASH_FCKAFD4 = "/rp"           -- legacy alias
+SlashCmdList.FCKAFD = function(input)
     local cmd, arg = strtrim(input or ""):lower():match("^(%S*)%s*(.-)$")
     if cmd == "" or cmd == "check" then
         RP.RunCheck(true)
@@ -140,7 +179,7 @@ SlashCmdList.RAIDPREPARED = function(input)
         elseif sub == "copy" then
             Travel:ShowLastOutput()
         else
-            Print(L["Usage: /rp travel [audit | scan <text> | discover | season | copy]"])
+            Print(L["Usage: /fck travel [audit | scan <text> | discover | season | copy]"])
         end
     elseif cmd == "debug" then
         RP.Debug()
@@ -157,18 +196,18 @@ SlashCmdList.RAIDPREPARED = function(input)
         if tier then
             Print(L["Required quality rank set to %d."]:format(RP.SetMaxQualityTier(tier)))
         else
-            Print(L["Required quality rank is %d. Usage: /rp quality <rank>"]:format(RP.GetMaxQualityTier()))
+            Print(L["Required quality rank is %d. Usage: /fck quality <rank>"]:format(RP.GetMaxQualityTier()))
         end
     else
         Print(L["Commands:"])
-        print("  /rp - " .. L["check enchants, gems, potions and weapon buffs"])
-        print("  /rp inspect - " .. L["raid/party inspect of all group members (also /rp raid, /rp party)"])
-        print("  /rp talents - " .. L["flag talent loadouts for raid / Mythic dungeons"])
-        print("  /rp travel - " .. L["search your fast-travel options (also /rp travel season)"])
-        print("  /rp options - " .. L["open the options tab"])
-        print("  /rp indicators - " .. L["toggle enchant/socket indicators on the character panel"])
-        print("  /rp minimap - " .. L["toggle minimap button"])
-        print("  /rp quality <rank> - " .. L["required enchant/gem quality rank"])
-        print("  /rp debug - " .. L["print raw item/socket data"])
+        print("  /fck - " .. L["check enchants, gems, potions and weapon buffs"])
+        print("  /fck inspect - " .. L["raid/party inspect of all group members (also /fck raid, /fck party)"])
+        print("  /fck talents - " .. L["flag talent loadouts for raid / Mythic dungeons"])
+        print("  /fck travel - " .. L["search your fast-travel options (also /fck travel season)"])
+        print("  /fck options - " .. L["open the options tab"])
+        print("  /fck indicators - " .. L["toggle enchant/socket indicators on the character panel"])
+        print("  /fck minimap - " .. L["toggle minimap button"])
+        print("  /fck quality <rank> - " .. L["required enchant/gem quality rank"])
+        print("  /fck debug - " .. L["print raw item/socket data"])
     end
 end

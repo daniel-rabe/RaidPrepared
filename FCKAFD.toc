@@ -1,14 +1,14 @@
 ## Interface: 120001, 120005, 120007, 120100
-## Title: RaidPrepared
-## Notes: Checks your equipped gear for missing or low-quality enchants and gems and your healing/mana potions when you join a raid, and searches your fast-travel options.
+## Title: FCKAFD
+## Notes: Full Character Kit Audit For Dungeons. Checks your equipped gear for missing or low-quality enchants and gems and your healing/mana potions when you join a raid, and searches your fast-travel options.
 ## Author: duneking
-## Version: 1.4.0
-## SavedVariables: RaidPreparedDB
-## SavedVariablesPerCharacter: RaidPreparedCharDB
+## Version: 1.5.0
+## SavedVariables: FCKAFDDB
+## SavedVariablesPerCharacter: FCKAFDCharDB
 ## IconTexture: Interface\Icons\INV_Misc_Gem_Diamond_02
-## AddonCompartmentFunc: RaidPrepared_OnAddonCompartmentClick
-## AddonCompartmentFuncOnEnter: RaidPrepared_OnAddonCompartmentEnter
-## AddonCompartmentFuncOnLeave: RaidPrepared_OnAddonCompartmentLeave
+## AddonCompartmentFunc: FCKAFD_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: FCKAFD_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: FCKAFD_OnAddonCompartmentLeave
 ## Notes-deDE: Prüft deine Ausrüstung auf fehlende oder minderwertige Verzauberungen und Edelsteine sowie deine Heil- und Manatränke, wenn du einem Schlachtzug beitrittst, und durchsucht deine Schnellreiseoptionen.
 ## Notes-frFR: Vérifie les enchantements et gemmes manquants ou de faible qualité ainsi que vos potions de soins et de mana lorsque vous rejoignez un raid, et recherche vos options de voyage rapide.
 ## Notes-esES: Revisa tu equipo en busca de encantamientos y gemas que falten o sean de baja calidad, y tus pociones de sanación y maná al unirte a una banda. También busca tus opciones de viaje rápido.

@@ -1,8 +1,10 @@
-# RaidPrepared
+# FCKAFD
+
+**F**ull **C**haracter **K**it **A**udit **F**or **D**ungeons
 
 **Show up to raid prepared – and make sure everyone else does too.**
 
-RaidPrepared checks your gear the moment you join a raid group. Missing enchants, empty gem sockets, low-quality gems or no potions in your bags? A short dialog tells you exactly what's missing, before the pull timer does.
+FCKAFD checks your gear the moment you join a raid group. Missing enchants, empty gem sockets, low-quality gems or no potions in your bags? A short dialog tells you exactly what's missing, before the pull timer does.
 
 ---
 
@@ -59,15 +61,15 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 | | |
 |---|---|
 | **Join a raid** | Automatic check |
-| `/rp` | Check your own gear and consumables |
-| `/rp inspect` | Raid/Party Inspect |
-| `/rp talents` | Flag talent loadouts |
-| `/rp travel` | Search your fast-travel options |
-| `/rp travel season` | This season's M+ maps and their ports |
-| `/rp options` | Open the options tab |
-| `/rp indicators` | Toggle character panel indicators |
-| `/rp minimap` | Show/hide the minimap button |
-| `/rp quality <rank>` | Set the required quality rank |
+| `/fck` | Check your own gear and consumables |
+| `/fck inspect` | Raid/Party Inspect |
+| `/fck talents` | Flag talent loadouts |
+| `/fck travel` | Search your fast-travel options |
+| `/fck travel season` | This season's M+ maps and their ports |
+| `/fck options` | Open the options tab |
+| `/fck indicators` | Toggle character panel indicators |
+| `/fck minimap` | Show/hide the minimap button |
+| `/fck quality <rank>` | Set the required quality rank |
 | **Minimap left-click** | Check your gear |
 | **Minimap right-click** | Raid/Party Inspect |
 | **Minimap Shift-click** | Talent loadout flags |
@@ -83,7 +85,8 @@ Advanced settings (enchantable slots, consumable item IDs, minimum counts, class
 
 ## ⚠️ Notes
 - The raid check can only inspect players within inspect range – use **Refresh** when they're nearby.
+- **Renamed from RaidPrepared in 1.5.0.** Log in once with both folders installed and your settings are carried over, then delete the old `RaidPrepared` folder. `/rp` and `/raidprepared` still work as aliases.
 
 ---
 
-Found a bug or have a suggestion? Please open an issue and include the output of `/rp debug`.
+Found a bug or have a suggestion? Please open an issue and include the output of `/fck debug`.

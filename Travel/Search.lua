@@ -1,4 +1,4 @@
--- RaidPrepared - Travel/Search.lua
+-- FCKAFD - Travel/Search.lua
 -- Scores the collected travel options against what you typed.
 --
 -- Every whitespace-separated token in the query must match something (a word in
