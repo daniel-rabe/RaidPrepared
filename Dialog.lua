@@ -63,6 +63,51 @@ local function CreateRow(index)
     return row
 end
 
+local TITLE_TEXT = "Full Character Kit Audit For Dungeons"
+local TITLE_WORD_GAP = 5
+local TITLE_INITIAL_FLAGS = "THICKOUTLINE" -- "OUTLINE" for a lighter bold
+
+-- Font strings have no inline bold markup, so the header is assembled from one font
+-- string per fragment: the initial of each word white and bold, the rest in the normal
+-- title colour. The client ships no bold face, so THICKOUTLINE is how bold is faked.
+-- The fragments are chained left to right inside a container that is centred as a whole.
+local function CreateTitle(parent)
+    local container = CreateFrame("Frame", nil, parent)
+    local parts, totalWidth, height = {}, 0, 0
+
+    local function AddPart(text, initial)
+        local fs = container:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+        if initial then
+            local font, size = fs:GetFont()
+            fs:SetFont(font, size, TITLE_INITIAL_FLAGS)
+            fs:SetTextColor(1, 1, 1)
+        end
+        fs:SetText(text)
+        totalWidth = totalWidth + fs:GetStringWidth()
+        height = math.max(height, fs:GetStringHeight())
+        parts[#parts + 1] = { fs = fs }
+    end
+
+    for word in TITLE_TEXT:gmatch("%S+") do
+        if #parts > 0 then
+            parts[#parts].gapAfter = true
+            totalWidth = totalWidth + TITLE_WORD_GAP
+        end
+        AddPart(word:sub(1, 1), true)
+        if #word > 1 then AddPart(word:sub(2), false) end
+    end
+
+    container:SetSize(totalWidth, height > 0 and height or 20)
+
+    local x = 0
+    for _, part in ipairs(parts) do
+        part.fs:SetPoint("LEFT", container, "LEFT", x, 0)
+        x = x + part.fs:GetStringWidth() + (part.gapAfter and TITLE_WORD_GAP or 0)
+    end
+
+    return container
+end
+
 local function CreateDialog()
     frame = CreateFrame("Frame", "FCKAFDDialog", UIParent, "BackdropTemplate")
     frame:SetSize(FRAME_WIDTH, FRAME_HEIGHT)
@@ -84,9 +129,8 @@ local function CreateDialog()
     frame:Hide()
     tinsert(UISpecialFrames, frame:GetName()) -- close with ESC
 
-    local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    local title = CreateTitle(frame)
     title:SetPoint("TOP", 0, -18)
-    title:SetText("FCKAFD")
 
     -- Tab 1: check results
     checkPanel = CreateFrame("Frame", nil, frame)
