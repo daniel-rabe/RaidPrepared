@@ -1,6 +1,5 @@
 local _, RP = ...
-if GetLocale() ~= "zhCN" then return end
-local L = RP.L
+local L = RP.NewLocale("zhCN")
 
 L["cat.hearth"] = "炉石"
 L["cat.dungeon"] = "地下城"
@@ -25,6 +24,9 @@ L["Show enchant & socket indicators on the character panel"] = "在角色面板�
 L["Icons next to item slots and a red border on items with a missing enchant or gem."] = "在装备栏旁显示图标，并为缺少附魔或宝石的物品加红色边框。"
 L["Required enchant & gem quality rank:"] = "附魔和宝石的最低品质等级："
 L["Enchants and gems below this crafting quality rank are reported as low quality."] = "低于此制造品质等级的附魔和宝石会被标记为低品质。"
+L["Send Raid Inspect whispers in my language"] = "以我的语言发送团队观察密语"
+L["Off: whispers are sent in the language chosen below, since the other player's game language is unknown."] = "关闭：密语以下方选择的语言发送，因为无法得知对方玩家的游戏语言。"
+L["Whisper language:"] = "密语语言："
 
 -- Gear scan
 L["Missing enchant"] = "缺少附魔"
@@ -149,3 +151,22 @@ L["Output"] = "输出"
 L["Last output"] = "上次输出"
 L["no output."] = "无输出。"
 L["nothing captured yet - run audit, scan or discover first."] = "尚无记录 - 请先运行audit、scan或discover。"
+
+-- Equipment slots, for whispers in this language.
+L["Head"] = "头部"
+L["Neck"] = "颈部"
+L["Shoulder"] = "肩部"
+L["Shirt"] = "衬衣"
+L["Chest"] = "胸部"
+L["Waist"] = "腰部"
+L["Legs"] = "腿部"
+L["Feet"] = "脚"
+L["Wrist"] = "手腕"
+L["Hands"] = "手"
+L["Finger 1"] = "手指 1"
+L["Finger 2"] = "手指 2"
+L["Trinket 1"] = "饰品 1"
+L["Trinket 2"] = "饰品 2"
+L["Back"] = "背部"
+L["Main Hand"] = "主手"
+L["Off Hand"] = "副手"

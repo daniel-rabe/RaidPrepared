@@ -1,6 +1,5 @@
 local _, RP = ...
-if GetLocale() ~= "koKR" then return end
-local L = RP.L
+local L = RP.NewLocale("koKR")
 
 L["cat.hearth"] = "귀환석"
 L["cat.dungeon"] = "던전"
@@ -25,6 +24,9 @@ L["Show enchant & socket indicators on the character panel"] = "캐릭터 창에
 L["Icons next to item slots and a red border on items with a missing enchant or gem."] = "장비 칸 옆에 아이콘을 표시하고, 마법부여나 보석이 없는 아이템에 빨간 테두리를 표시합니다."
 L["Required enchant & gem quality rank:"] = "필요한 마법부여 및 보석 품질 등급:"
 L["Enchants and gems below this crafting quality rank are reported as low quality."] = "이 제작 품질 등급 미만의 마법부여와 보석은 저품질로 표시됩니다."
+L["Send Raid Inspect whispers in my language"] = "공격대 살펴보기 귓속말을 내 언어로 보내기"
+L["Off: whispers are sent in the language chosen below, since the other player's game language is unknown."] = "끄기: 상대 플레이어의 게임 언어를 알 수 없으므로 아래에서 선택한 언어로 귓속말을 보냅니다."
+L["Whisper language:"] = "귓속말 언어:"
 
 -- Gear scan
 L["Missing enchant"] = "마법부여 없음"
@@ -149,3 +151,22 @@ L["Output"] = "출력"
 L["Last output"] = "마지막 출력"
 L["no output."] = "출력 없음."
 L["nothing captured yet - run audit, scan or discover first."] = "아직 기록된 내용이 없습니다 - 먼저 audit, scan 또는 discover를 실행하세요."
+
+-- Equipment slots, for whispers in this language.
+L["Head"] = "머리"
+L["Neck"] = "목"
+L["Shoulder"] = "어깨"
+L["Shirt"] = "셔츠"
+L["Chest"] = "가슴"
+L["Waist"] = "허리"
+L["Legs"] = "다리"
+L["Feet"] = "발"
+L["Wrist"] = "손목"
+L["Hands"] = "손"
+L["Finger 1"] = "반지 1"
+L["Finger 2"] = "반지 2"
+L["Trinket 1"] = "장신구 1"
+L["Trinket 2"] = "장신구 2"
+L["Back"] = "등"
+L["Main Hand"] = "주장비"
+L["Off Hand"] = "보조장비"

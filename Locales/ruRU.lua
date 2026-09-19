@@ -1,6 +1,5 @@
 local _, RP = ...
-if GetLocale() ~= "ruRU" then return end
-local L = RP.L
+local L = RP.NewLocale("ruRU")
 
 L["cat.hearth"] = "Камень возвращения"
 L["cat.dungeon"] = "Подземелье"
@@ -25,6 +24,9 @@ L["Show enchant & socket indicators on the character panel"] = "Показыва
 L["Icons next to item slots and a red border on items with a missing enchant or gem."] = "Значки рядом с ячейками экипировки и красная рамка у предметов без чар или самоцвета."
 L["Required enchant & gem quality rank:"] = "Требуемый ранг качества чар и самоцветов:"
 L["Enchants and gems below this crafting quality rank are reported as low quality."] = "Чары и самоцветы ниже этого ранга качества считаются низкокачественными."
+L["Send Raid Inspect whispers in my language"] = "Отправлять шепот из осмотра рейда на моем языке"
+L["Off: whispers are sent in the language chosen below, since the other player's game language is unknown."] = "Выкл.: шепот отправляется на выбранном ниже языке, так как язык игры другого игрока неизвестен."
+L["Whisper language:"] = "Язык шепота:"
 
 -- Gear scan
 L["Missing enchant"] = "Нет чар"
@@ -149,3 +151,22 @@ L["Output"] = "Вывод"
 L["Last output"] = "Последний вывод"
 L["no output."] = "нет вывода."
 L["nothing captured yet - run audit, scan or discover first."] = "пока ничего нет - сначала выполните audit, scan или discover."
+
+-- Equipment slots, for whispers in this language.
+L["Head"] = "Голова"
+L["Neck"] = "Шея"
+L["Shoulder"] = "Плечи"
+L["Shirt"] = "Рубашка"
+L["Chest"] = "Грудь"
+L["Waist"] = "Пояс"
+L["Legs"] = "Ноги"
+L["Feet"] = "Ступни"
+L["Wrist"] = "Запястья"
+L["Hands"] = "Руки"
+L["Finger 1"] = "Палец 1"
+L["Finger 2"] = "Палец 2"
+L["Trinket 1"] = "Аксессуар 1"
+L["Trinket 2"] = "Аксессуар 2"
+L["Back"] = "Спина"
+L["Main Hand"] = "Правая рука"
+L["Off Hand"] = "Левая рука"

@@ -127,3 +127,24 @@ RP.SLOT_NAMES = {
     [INVSLOT_MAINHAND]  = MAINHANDSLOT,
     [INVSLOT_OFFHAND]   = SECONDARYHANDSLOT,
 }
+
+-- English slot names for whispers: the recipient's client language is unknown.
+RP.SLOT_NAMES_EN = {
+    [INVSLOT_HEAD]      = "Head",
+    [INVSLOT_NECK]      = "Neck",
+    [INVSLOT_SHOULDER]  = "Shoulder",
+    [INVSLOT_BODY]      = "Shirt",
+    [INVSLOT_CHEST]     = "Chest",
+    [INVSLOT_WAIST]     = "Waist",
+    [INVSLOT_LEGS]      = "Legs",
+    [INVSLOT_FEET]      = "Feet",
+    [INVSLOT_WRIST]     = "Wrist",
+    [INVSLOT_HAND]      = "Hands",
+    [INVSLOT_FINGER1]   = "Finger 1",
+    [INVSLOT_FINGER2]   = "Finger 2",
+    [INVSLOT_TRINKET1]  = "Trinket 1",
+    [INVSLOT_TRINKET2]  = "Trinket 2",
+    [INVSLOT_BACK]      = "Back",
+    [INVSLOT_MAINHAND]  = "Main Hand",
+    [INVSLOT_OFFHAND]   = "Off Hand",
+}

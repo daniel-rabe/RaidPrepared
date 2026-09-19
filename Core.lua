@@ -8,6 +8,8 @@ local DEFAULTS = {
     maxQualityTier = nil, -- nil = RP.DEFAULT_MAX_QUALITY_TIER
     minimap = { hide = false, angle = 225 },
     characterIndicators = true, -- enchant/socket indicators on the character panel
+    localizedWhisper = false,   -- false = whisper in whisperLocale (recipient's language is unknown)
+    whisperLocale = "enUS",     -- language of Raid Inspect whispers when localizedWhisper is off
     travel = {                  -- fast-travel tab
         closeOnUse = true,
         maxRecent  = 15,

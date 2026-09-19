@@ -22,6 +22,7 @@ Dialog.TAB_OPTIONS = 5
 
 local frame, scrollChild, summaryText, potionText, weaponText, okText
 local checkPanel, inspectPanel, talentsPanel, optionsPanel, travelPanel, indicatorsCheck, qualityValue
+local whisperCheck, whisperDrop
 local rows = {}
 local pendingIssues, pendingPotions -- waiting for combat to end
 
@@ -129,6 +130,8 @@ local function CreateDialog()
     optionsPanel:SetScript("OnShow", function()
         indicatorsCheck:SetChecked(RaidPreparedDB.characterIndicators)
         qualityValue:SetText(RP.GetMaxQualityTier())
+        whisperCheck:SetChecked(RaidPreparedDB.localizedWhisper)
+        Dialog:UpdateWhisperLocale()
     end)
 
     local optionsHeader = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -181,6 +184,43 @@ local function CreateDialog()
     qualityHint:SetPoint("RIGHT", optionsPanel, "RIGHT", -24, 0)
     qualityHint:SetJustifyH("LEFT")
     qualityHint:SetText(L["Enchants and gems below this crafting quality rank are reported as low quality."])
+
+    whisperCheck = CreateFrame("CheckButton", nil, optionsPanel, "UICheckButtonTemplate")
+    whisperCheck:SetSize(26, 26)
+    whisperCheck:SetPoint("TOPLEFT", qualityHint, "BOTTOMLEFT", -4, -24)
+    whisperCheck:SetScript("OnClick", function(self)
+        RaidPreparedDB.localizedWhisper = self:GetChecked() and true or false
+        Dialog:UpdateWhisperLocale()
+    end)
+
+    local whisperLabel = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    whisperLabel:SetPoint("LEFT", whisperCheck, "RIGHT", 2, 1)
+    whisperLabel:SetText(L["Send Raid Inspect whispers in my language"])
+
+    local whisperHint = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    whisperHint:SetPoint("TOPLEFT", whisperLabel, "BOTTOMLEFT", 0, -4)
+    whisperHint:SetPoint("RIGHT", optionsPanel, "RIGHT", -24, 0)
+    whisperHint:SetJustifyH("LEFT")
+    whisperHint:SetText(L["Off: whispers are sent in the language chosen below, since the other player's game language is unknown."])
+
+    local whisperLangLabel = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    whisperLangLabel:SetPoint("TOPLEFT", whisperHint, "BOTTOMLEFT", 4, -12)
+    whisperLangLabel:SetText(L["Whisper language:"])
+
+    whisperDrop = CreateFrame("DropdownButton", nil, optionsPanel, "WowStyle1DropdownTemplate")
+    whisperDrop:SetWidth(160)
+    whisperDrop:SetPoint("LEFT", whisperLangLabel, "RIGHT", 10, 0)
+    whisperDrop:SetupMenu(function(_, rootDescription)
+        for _, entry in ipairs(RP.WHISPER_LOCALES) do
+            rootDescription:CreateRadio(entry.name,
+                function() return RaidPreparedDB.whisperLocale == entry.locale end,
+                function()
+                    RaidPreparedDB.whisperLocale = entry.locale
+                    Dialog:UpdateWhisperLocale()
+                end)
+        end
+    end)
+    whisperDrop.label = whisperLangLabel
 
     -- Tab 4: fast-travel search
     travelPanel = RP.Travel:CreatePanel(frame)
@@ -331,6 +371,21 @@ function Dialog:ToggleTab(index)
     else
         self:OpenTab(index)
     end
+end
+
+-- The whisper language only applies when whispers are not sent in the client's language.
+function Dialog:UpdateWhisperLocale()
+    if not whisperDrop then return end
+    local selectable = not RaidPreparedDB.localizedWhisper
+    local name = RP.CLIENT_LOCALE
+    for _, entry in ipairs(RP.WHISPER_LOCALES) do
+        if entry.locale == (selectable and RaidPreparedDB.whisperLocale or RP.CLIENT_LOCALE) then
+            name = entry.name
+        end
+    end
+    whisperDrop:SetDefaultText(name)
+    whisperDrop:SetEnabled(selectable)
+    whisperDrop.label:SetFontObject(selectable and "GameFontHighlight" or "GameFontDisable")
 end
 
 function Dialog:OpenOptions()

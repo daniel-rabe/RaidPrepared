@@ -330,20 +330,37 @@ end
 ---------------------------------------------------------------------------
 
 local WHISPER_MAX = 255 -- chat message length limit
-local WHISPER_PREFIX = "[RaidPrepared] " .. L["Hi! Automated gear check found: "]
-local WHISPER_SUFFIX = L[". Just a friendly heads-up, no stress :)"]
+-- Whisper texts are locale keys (English). The recipient's client language is unknown, so
+-- whispers go out in the language picked in the options (English by default), unless the
+-- player opts into their own.
+local function WhisperLocale()
+    if RaidPreparedDB.localizedWhisper then return RP.CLIENT_LOCALE end
+    return RaidPreparedDB.whisperLocale or "enUS"
+end
+
+local function W(key)
+    return RP.GetString(key, WhisperLocale())
+end
+
+-- Slot names come from the game client, so they are only right in the client's language.
+local function WhisperSlotName(issue)
+    local locale = WhisperLocale()
+    if locale == RP.CLIENT_LOCALE then return issue.slotName end
+    local english = RP.SLOT_NAMES_EN[issue.slot]
+    return english and RP.GetString(english, locale) or issue.slotName
+end
 
 -- Issue groups in message order: label, count format (singular, plural) and matcher.
 local WHISPER_GROUPS = {
-    { label = L["missing enchant"], one = L["%d missing enchant"], many = L["%d missing enchants"],
+    { label = "missing enchant", one = "%d missing enchant", many = "%d missing enchants",
       match = function(i) return i.kind == "enchant" and i.problem == "missing" end },
-    { label = L["lower rank enchant"], one = L["%d lower rank enchant"], many = L["%d lower rank enchants"],
+    { label = "lower rank enchant", one = "%d lower rank enchant", many = "%d lower rank enchants",
       match = function(i) return i.kind == "enchant" and i.problem == "low" end },
-    { label = L["empty socket"], one = L["%d empty socket"], many = L["%d empty sockets"],
+    { label = "empty socket", one = "%d empty socket", many = "%d empty sockets",
       match = function(i) return i.kind == "gem" and i.problem == "missing" end },
-    { label = L["gem"], one = L["%d gem to check"], many = L["%d gems to check"],
+    { label = "gem", one = "%d gem to check", many = "%d gems to check",
       match = function(i) return i.kind == "gem" end },
-    { label = L["enchant"], one = L["%d enchant to check"], many = L["%d enchants to check"],
+    { label = "enchant", one = "%d enchant to check", many = "%d enchants to check",
       match = function(i) return i.kind == "enchant" end },
 }
 
@@ -369,7 +386,7 @@ local function BuildWhisper(entry)
             for g, group in ipairs(WHISPER_GROUPS) do
                 if group.match(issue) then
                     slots[g] = slots[g] or {}
-                    table.insert(slots[g], issue.slotName)
+                    table.insert(slots[g], WhisperSlotName(issue))
                     break
                 end
             end
@@ -380,20 +397,22 @@ local function BuildWhisper(entry)
     for g, group in ipairs(WHISPER_GROUPS) do
         local list = slots[g]
         if list then
-            detailed[#detailed + 1] = group.label .. ": " .. table.concat(list, ", ")
-            counted[#counted + 1] = (#list == 1 and group.one or group.many):format(#list)
+            detailed[#detailed + 1] = W(group.label) .. ": " .. table.concat(list, ", ")
+            counted[#counted + 1] = W(#list == 1 and group.one or group.many):format(#list)
         end
     end
     if epicGem then
-        detailed[#detailed + 1] = L["no Eversong Diamond socketed"]
-        counted[#counted + 1] = L["no Eversong Diamond"]
+        detailed[#detailed + 1] = W("no Eversong Diamond socketed")
+        counted[#counted + 1] = W("no Eversong Diamond")
     end
 
+    local prefix = "[RaidPrepared] " .. W("Hi! Automated gear check found: ")
+    local suffix = W(". Just a friendly heads-up, no stress :)")
     local body = table.concat(detailed, "; ")
     local candidates = {
-        WHISPER_PREFIX .. body .. WHISPER_SUFFIX,
-        WHISPER_PREFIX .. body,
-        WHISPER_PREFIX .. table.concat(counted, ", ") .. WHISPER_SUFFIX,
+        prefix .. body .. suffix,
+        prefix .. body,
+        prefix .. table.concat(counted, ", ") .. suffix,
     }
     for _, msg in ipairs(candidates) do
         if #msg <= WHISPER_MAX then

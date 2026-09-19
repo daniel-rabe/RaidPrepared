@@ -1,6 +1,5 @@
 local _, RP = ...
-if GetLocale() ~= "itIT" then return end
-local L = RP.L
+local L = RP.NewLocale("itIT")
 
 L["cat.hearth"] = "Pietra del Ritorno"
 L["cat.dungeon"] = "Spedizione"
@@ -25,6 +24,9 @@ L["Show enchant & socket indicators on the character panel"] = "Mostra indicator
 L["Icons next to item slots and a red border on items with a missing enchant or gem."] = "Icone accanto agli slot e un bordo rosso sugli oggetti senza incantamento o senza gemma."
 L["Required enchant & gem quality rank:"] = "Grado di qualità richiesto (incantamenti e gemme):"
 L["Enchants and gems below this crafting quality rank are reported as low quality."] = "Incantamenti e gemme sotto questo grado di qualità vengono segnalati come di bassa qualità."
+L["Send Raid Inspect whispers in my language"] = "Invia i sussurri di Ispeziona incursione nella mia lingua"
+L["Off: whispers are sent in the language chosen below, since the other player's game language is unknown."] = "Disattivato: i sussurri vengono inviati nella lingua scelta qui sotto, poiché la lingua di gioco dell'altro giocatore è sconosciuta."
+L["Whisper language:"] = "Lingua dei sussurri:"
 
 -- Gear scan
 L["Missing enchant"] = "Incantamento mancante"
@@ -149,3 +151,22 @@ L["Output"] = "Output"
 L["Last output"] = "Ultimo output"
 L["no output."] = "nessun output."
 L["nothing captured yet - run audit, scan or discover first."] = "niente di registrato - esegui prima audit, scan o discover."
+
+-- Equipment slots, for whispers in this language.
+L["Head"] = "Testa"
+L["Neck"] = "Collo"
+L["Shoulder"] = "Spalle"
+L["Shirt"] = "Camicia"
+L["Chest"] = "Torso"
+L["Waist"] = "Vita"
+L["Legs"] = "Gambe"
+L["Feet"] = "Piedi"
+L["Wrist"] = "Polsi"
+L["Hands"] = "Mani"
+L["Finger 1"] = "Dito 1"
+L["Finger 2"] = "Dito 2"
+L["Trinket 1"] = "Monile 1"
+L["Trinket 2"] = "Monile 2"
+L["Back"] = "Schiena"
+L["Main Hand"] = "Mano Primaria"
+L["Off Hand"] = "Mano Secondaria"
