@@ -46,7 +46,7 @@ RP.ENCHANTABLE_OFFHAND = {
 -- Can be changed in-game with /rp quality <n> (stored in SavedVariables).
 RP.DEFAULT_MAX_QUALITY_TIER = 2
 RP.MIN_QUALITY_RANK_OPTION = 1 -- range selectable in the options tab / slash command
-RP.MAX_QUALITY_RANK_OPTION = 3
+RP.MAX_QUALITY_RANK_OPTION = 2 -- enchants and gems are crafted in two quality ranks this season
 
 -- Optional whitelist of current-season enchant IDs (the second field of an item link).
 -- When non-empty, any enchant not listed here is reported as "outdated".
@@ -73,6 +73,7 @@ RP.EPIC_GEM_ICON_ID = 240967 -- icon shown for the missing epic gem warning
 RP.MIN_HEALING_POTIONS = 1
 RP.MIN_MANA_POTIONS = 1
 RP.MIN_WEAPON_BUFFS = 1
+RP.MIN_POWER_POTIONS = 1
 
 RP.HEALING_POTION_IDS = {
     [241304] = true, [241305] = true, -- Silvermoon Health Potion
@@ -81,6 +82,22 @@ RP.HEALING_POTION_IDS = {
 
 RP.MANA_POTION_IDS = {
     [241300] = true, [241301] = true, -- Lightfused Mana Potion
+}
+
+-- Combat potions that grant a temporary burst of power ("Light's Potential" and friends).
+-- The "Fleeting" versions are the soulbound crafts of the same potion.
+RP.POWER_POTION_IDS = {
+    [241308] = true, [241309] = true, -- Light's Potential
+    [245897] = true, [245898] = true, -- Fleeting Light's Potential
+    [241292] = true, [241293] = true, -- Draught of Rampant Abandon
+    [241288] = true, [241289] = true, -- Potion of Recklessness
+    [245902] = true, [245903] = true, -- Fleeting Potion of Recklessness
+    [241296] = true, [241297] = true, -- Potion of Zealotry
+    [245900] = true, [245901] = true, -- Fleeting Potion of Zealotry
+    [271886] = true, [271887] = true, -- Liquid Luster
+    [274763] = true, [274764] = true, -- Fleeting Liquid Luster
+    [271889] = true, [271890] = true, -- Alluring Nostrum
+    [274765] = true, [274766] = true, -- Fleeting Alluring Nostrum
 }
 
 -- Temporary weapon buffs: oils, sharpening stones, weightstones and hunter ammo.

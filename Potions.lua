@@ -2,12 +2,13 @@ local _, RP = ...
 local L = RP.L
 
 -- Counts raid consumables in the bags by item ID (see Data.lua): healing potions,
--- mana potions and temporary weapon buffs (oils, stones, hunter ammo).
+-- mana potions, power potions and temporary weapon buffs (oils, stones, hunter ammo).
 
 local DEFAULT_ICONS = {
     heal = 134830,   -- INV_Potion_54
     mana = 134851,   -- INV_Potion_76
     weapon = 135255, -- INV_Stone_02
+    power = 7548911, -- inv_12_profession_alchemy_lightpotion_yellow
 }
 
 -- Label and problem texts per consumable kind (full sentences, so they translate cleanly).
@@ -21,6 +22,11 @@ local TEXTS = {
         label = L["Mana Potions"],
         none = L["No mana potions in your bags!"],
         few = L["Only %d mana potions (minimum %d)"],
+    },
+    power = {
+        label = L["Power Potions"],
+        none = L["No power potions in your bags!"],
+        few = L["Only %d power potions (minimum %d)"],
     },
     weapon = {
         label = L["Weapon Buffs"],
@@ -135,10 +141,14 @@ end
 function RP.ScanPotions()
     local heal = NewEntry("heal", RP.HEALING_POTION_IDS, RP.MIN_HEALING_POTIONS, true)
     local mana = NewEntry("mana", RP.MANA_POTION_IDS, RP.MIN_MANA_POTIONS, IsManaPotionRequired())
+    local power = NewEntry("power", RP.POWER_POTION_IDS, RP.MIN_POWER_POTIONS, true)
     local weapon = NewEntry("weapon", RP.WEAPON_BUFF_IDS, RP.MIN_WEAPON_BUFFS, IsWeaponBuffRequired())
     weapon.activeTime = GetActiveWeaponBuffTime()
 
-    local consumables = { heal, mana, weapon, heal = heal, mana = mana, weapon = weapon }
+    local consumables = {
+        heal, mana, power, weapon,
+        heal = heal, mana = mana, power = power, weapon = weapon,
+    }
 
     ForEachBagItem(function(_, _, info)
         for _, entry in ipairs(consumables) do

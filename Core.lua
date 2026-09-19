@@ -41,14 +41,18 @@ local function FormatPotionCount(entry)
     return text
 end
 
+-- Clamped on read as well: a rank saved before the selectable range shrank must not
+-- flag every enchant and gem as low quality.
 function RP.GetMaxQualityTier()
-    return RaidPreparedDB.maxQualityTier or RP.DEFAULT_MAX_QUALITY_TIER
+    local tier = RaidPreparedDB.maxQualityTier or RP.DEFAULT_MAX_QUALITY_TIER
+    return math.max(RP.MIN_QUALITY_RANK_OPTION, math.min(RP.MAX_QUALITY_RANK_OPTION, tier))
 end
 
 function RP.SetMaxQualityTier(tier)
     tier = math.max(RP.MIN_QUALITY_RANK_OPTION, math.min(RP.MAX_QUALITY_RANK_OPTION, math.floor(tier)))
     RaidPreparedDB.maxQualityTier = tier
     RP.CharacterPanel:RequestUpdate()
+    RP.Dialog:RefreshQuality()
     return tier
 end
 
@@ -65,9 +69,11 @@ function RP.RunCheck(manual)
             end
 
             if #issues > 0 then
-                Print(L["%d problem(s) found. %s, %s, %s"]:format(#issues,
-                    FormatPotionCount(potions.heal), FormatPotionCount(potions.mana),
-                    FormatPotionCount(potions.weapon)))
+                local counts = {}
+                for _, entry in ipairs(potions) do
+                    counts[#counts + 1] = FormatPotionCount(entry)
+                end
+                Print(L["%d problem(s) found. %s"]:format(#issues, table.concat(counts, ", ")))
                 RP.Dialog:Show(issues, potions)
             elseif manual then
                 RP.Dialog:Show(issues, potions)

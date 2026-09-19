@@ -8,8 +8,18 @@ local ROW_HEIGHT = 34
 -- Consumable summary: one icon per kind with its stack count, details in the tooltip.
 local POTION_ICON_SIZE = 34
 local POTION_ICON_GAP = 26
-local POTION_KINDS = { "heal", "mana", "weapon" }
+local POTION_KINDS = { "heal", "mana", "power", "weapon" }
 local TOOLTIP_ICON = "|T%s:16:16:0:0:64:64:5:59:5:59|t"
+
+-- Quality option: the crafting quality icons the game itself uses, instead of a bare number.
+-- The "-12-" set is one symbol per rank; the older set repeats the symbol (rank 2 = two of them).
+local QUALITY_ATLASES = {
+    "Professions-ChatIcon-Quality-12-Tier%d",
+    "Professions-ChatIcon-Quality-Tier%d",
+}
+local QUALITY_BUTTON_SIZE = 32
+local QUALITY_BUTTON_GAP = 6
+local QUALITY_ICON_HEIGHT = 24
 
 local PROBLEM_COLORS = {
     missing  = { 1.0, 0.25, 0.25 },
@@ -27,7 +37,8 @@ Dialog.TAB_TRAVEL = 4
 Dialog.TAB_OPTIONS = 5
 
 local frame, scrollChild, summaryText, potionBar, okText
-local checkPanel, inspectPanel, talentsPanel, optionsPanel, travelPanel, indicatorsCheck, qualityValue
+local checkPanel, inspectPanel, talentsPanel, optionsPanel, travelPanel, indicatorsCheck
+local qualityButtons = {}
 local whisperCheck, whisperDrop
 local rows = {}
 local pendingIssues, pendingPotions -- waiting for combat to end
@@ -150,6 +161,71 @@ local function UpdatePotionIcon(button, entry)
     button:Show()
 end
 
+-- First atlas set the client actually knows, so an older client still shows an icon.
+local function GetQualityAtlas(tier)
+    local atlas
+    for _, pattern in ipairs(QUALITY_ATLASES) do
+        atlas = pattern:format(tier)
+        local info = C_Texture.GetAtlasInfo(atlas)
+        if info then return atlas, info end
+    end
+    return atlas, nil
+end
+
+-- Marks the selected quality; the others stay visible but dimmed.
+local function UpdateQualityButtons()
+    local selected = RP.GetMaxQualityTier()
+    for _, button in ipairs(qualityButtons) do
+        local isSelected = button.tier == selected
+        if isSelected then
+            button.selection:SetColorTexture(1, 0.82, 0, 0.9) -- gold frame on the chosen rank
+        else
+            button.selection:SetColorTexture(0.3, 0.3, 0.3, 0.8)
+        end
+        button.icon:SetAlpha(isSelected and 1 or 0.6) -- the rank 1 icon is grey, so do not dim it far
+    end
+end
+
+local function CreateQualityButton(parent, tier)
+    local button = CreateFrame("Button", nil, parent)
+    button.tier = tier
+    button:SetSize(QUALITY_BUTTON_SIZE, QUALITY_BUTTON_SIZE)
+    button:SetPoint("LEFT", (tier - RP.MIN_QUALITY_RANK_OPTION) * (QUALITY_BUTTON_SIZE + QUALITY_BUTTON_GAP), 0)
+
+    -- Frame around the button; UpdateQualityButtons colors it gold when selected.
+    button.selection = button:CreateTexture(nil, "BACKGROUND")
+    button.selection:SetAllPoints()
+
+    button.background = button:CreateTexture(nil, "BORDER")
+    button.background:SetPoint("TOPLEFT", 2, -2)
+    button.background:SetPoint("BOTTOMRIGHT", -2, 2)
+    button.background:SetColorTexture(0, 0, 0, 0.5)
+
+    -- Scaled to the atlas aspect ratio, so the quality icon is not squashed.
+    local atlas, info = GetQualityAtlas(tier)
+    button.icon = button:CreateTexture(nil, "ARTWORK")
+    button.icon:SetPoint("CENTER")
+    button.icon:SetAtlas(atlas)
+    local aspect = (info and info.height and info.height > 0) and (info.width / info.height) or 1
+    button.icon:SetSize(QUALITY_ICON_HEIGHT * aspect, QUALITY_ICON_HEIGHT)
+
+    button.highlight = button:CreateTexture(nil, "HIGHLIGHT")
+    button.highlight:SetAllPoints()
+    button.highlight:SetColorTexture(1, 1, 1, 0.15)
+
+    button:SetScript("OnClick", function(self)
+        RP.SetMaxQualityTier(self.tier)
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+    end)
+    button:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:AddLine(L["Quality rank %d"]:format(self.tier), 1, 1, 1)
+        GameTooltip:Show()
+    end)
+    button:SetScript("OnLeave", GameTooltip_Hide)
+    return button
+end
+
 local function CreateDialog()
     frame = CreateFrame("Frame", "RaidPreparedDialog", UIParent, "BackdropTemplate")
     frame:SetSize(FRAME_WIDTH, FRAME_HEIGHT)
@@ -218,7 +294,7 @@ local function CreateDialog()
     optionsPanel:Hide()
     optionsPanel:SetScript("OnShow", function()
         indicatorsCheck:SetChecked(RaidPreparedDB.characterIndicators)
-        qualityValue:SetText(RP.GetMaxQualityTier())
+        UpdateQualityButtons()
         whisperCheck:SetChecked(RaidPreparedDB.localizedWhisper)
         Dialog:UpdateWhisperLocale()
     end)
@@ -244,32 +320,27 @@ local function CreateDialog()
     indicatorsHint:SetJustifyH("LEFT")
     indicatorsHint:SetText(L["Icons next to item slots and a red border on items with a missing enchant or gem."])
 
-    local qualityLabel = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    qualityLabel:SetPoint("TOPLEFT", indicatorsCheck, "BOTTOMLEFT", 4, -34)
+    -- Label and buttons share a row frame, so the hint below clears the taller buttons.
+    local qualityRow = CreateFrame("Frame", nil, optionsPanel)
+    qualityRow:SetHeight(QUALITY_BUTTON_SIZE)
+    qualityRow:SetPoint("TOPLEFT", indicatorsCheck, "BOTTOMLEFT", 4, -28)
+    qualityRow:SetPoint("RIGHT", optionsPanel, "RIGHT", -24, 0)
+
+    local qualityLabel = qualityRow:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    qualityLabel:SetPoint("LEFT")
     qualityLabel:SetText(L["Required enchant & gem quality rank:"])
 
-    local function Step(delta)
-        qualityValue:SetText(RP.SetMaxQualityTier(RP.GetMaxQualityTier() + delta))
+    local ranks = RP.MAX_QUALITY_RANK_OPTION - RP.MIN_QUALITY_RANK_OPTION + 1
+    local qualityBar = CreateFrame("Frame", nil, qualityRow)
+    qualityBar:SetSize(ranks * QUALITY_BUTTON_SIZE + (ranks - 1) * QUALITY_BUTTON_GAP, QUALITY_BUTTON_SIZE)
+    qualityBar:SetPoint("LEFT", qualityLabel, "RIGHT", 10, 0)
+    for tier = RP.MIN_QUALITY_RANK_OPTION, RP.MAX_QUALITY_RANK_OPTION do
+        qualityButtons[#qualityButtons + 1] = CreateQualityButton(qualityBar, tier)
     end
-
-    local minus = CreateFrame("Button", nil, optionsPanel, "UIPanelButtonTemplate")
-    minus:SetSize(24, 22)
-    minus:SetPoint("LEFT", qualityLabel, "RIGHT", 10, 0)
-    minus:SetText("-")
-    minus:SetScript("OnClick", function() Step(-1) end)
-
-    qualityValue = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    qualityValue:SetPoint("LEFT", minus, "RIGHT", 6, 0)
-    qualityValue:SetWidth(20)
-
-    local plus = CreateFrame("Button", nil, optionsPanel, "UIPanelButtonTemplate")
-    plus:SetSize(24, 22)
-    plus:SetPoint("LEFT", qualityValue, "RIGHT", 6, 0)
-    plus:SetText("+")
-    plus:SetScript("OnClick", function() Step(1) end)
+    UpdateQualityButtons()
 
     local qualityHint = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
-    qualityHint:SetPoint("TOPLEFT", qualityLabel, "BOTTOMLEFT", 0, -6)
+    qualityHint:SetPoint("TOPLEFT", qualityRow, "BOTTOMLEFT", 0, -6)
     qualityHint:SetPoint("RIGHT", optionsPanel, "RIGHT", -24, 0)
     qualityHint:SetJustifyH("LEFT")
     qualityHint:SetText(L["Enchants and gems below this crafting quality rank are reported as low quality."])
@@ -453,6 +524,11 @@ function Dialog:UpdateWhisperLocale()
     whisperDrop:SetDefaultText(name)
     whisperDrop:SetEnabled(selectable)
     whisperDrop.label:SetFontObject(selectable and "GameFontHighlight" or "GameFontDisable")
+end
+
+-- Keeps the quality buttons in sync when the rank changes elsewhere (/rp quality).
+function Dialog:RefreshQuality()
+    if #qualityButtons > 0 then UpdateQualityButtons() end
 end
 
 function Dialog:OpenOptions()
