@@ -31,6 +31,7 @@ local function ShowTooltip(owner)
         GameTooltip:AddLine("Right-click: " .. RP.RaidCheck:GetTitle(), 1, 1, 1)
     end
     GameTooltip:AddLine("Shift-click: talent loadout flags", 1, 1, 1)
+    GameTooltip:AddLine("Ctrl-click: travel search", 1, 1, 1)
     GameTooltip:AddLine("Drag: move button", 1, 1, 1)
     GameTooltip:Show()
 end
@@ -63,7 +64,9 @@ function Minimap_:Create()
     border:SetPoint("TOPLEFT")
 
     button:SetScript("OnClick", function(_, mouseButton)
-        if IsShiftKeyDown() then
+        if IsControlKeyDown() then
+            RP.Travel:Toggle()
+        elseif IsShiftKeyDown() then
             RP.Talents:Toggle()
         elseif mouseButton == "RightButton" then
             RP.RaidCheck:Toggle()
@@ -98,7 +101,9 @@ end
 
 -- Addon compartment (retail minimap addon menu), referenced from the TOC.
 function RaidPrepared_OnAddonCompartmentClick(_, mouseButton)
-    if IsShiftKeyDown() then
+    if IsControlKeyDown() then
+        RP.Travel:Toggle()
+    elseif IsShiftKeyDown() then
         RP.Talents:Toggle()
     elseif mouseButton == "RightButton" then
         RP.RaidCheck:Toggle()

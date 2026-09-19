@@ -10,7 +10,7 @@ local DEFAULT_ICONS = {
 }
 
 local function IsManaPotionRequired()
-    local specIndex = GetSpecialization and GetSpecialization()
+    local specIndex = RP.GetSpecIndex()
     local role = specIndex and GetSpecializationRole(specIndex)
     return role ~= nil and RP.MANA_POTION_ROLES[role] == true
 end

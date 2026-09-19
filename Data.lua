@@ -2,6 +2,27 @@ local _, RP = ...
 
 -- Everything in this file is patch-specific. Review it when a new patch/season launches.
 
+-- Specialization API compat. The GetSpecialization / GetSpecializationInfo globals only exist
+-- while the "loadDeprecationFallbacks" CVar is on and Blizzard drops them next expansion;
+-- C_SpecializationInfo is the current home. Always go through these helpers.
+function RP.GetSpecIndex()
+    if C_SpecializationInfo and C_SpecializationInfo.GetSpecialization then
+        return C_SpecializationInfo.GetSpecialization()
+    end
+    if GetSpecialization then
+        return GetSpecialization()
+    end
+end
+
+function RP.GetSpecInfo(specIndex)
+    if C_SpecializationInfo and C_SpecializationInfo.GetSpecializationInfo then
+        return C_SpecializationInfo.GetSpecializationInfo(specIndex)
+    end
+    if GetSpecializationInfo then
+        return GetSpecializationInfo(specIndex)
+    end
+end
+
 -- Slots that are expected to carry an enchant (Midnight).
 RP.ENCHANT_SLOTS = {
     [INVSLOT_HEAD]      = true,

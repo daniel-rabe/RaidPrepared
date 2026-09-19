@@ -4,7 +4,7 @@
 
 # RaidPrepared
 
-A World of Warcraft (Retail – Midnight) addon that makes sure you and your raid show up prepared: it checks equipped gear for missing or low-quality **enchants** and **gems**, counts your **healing potions**, **mana potions** and **weapon buffs** (oils, stones), and can inspect the whole raid for missing enchants and gems.
+A World of Warcraft (Retail – Midnight) addon that makes sure you and your raid show up prepared: it checks equipped gear for missing or low-quality **enchants** and **gems**, counts your **healing potions**, **mana potions** and **weapon buffs** (oils, stones), can inspect the whole raid for missing enchants and gems, and searches every fast-travel option your character actually has.
 
 ## Features
 
@@ -40,6 +40,14 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 - Hover a player to see the full list of problems with item links.
 - Shows players who are out of range or offline.
 
+### Travel
+- Tab **Travel** (`/rp travel`, or Ctrl-click the minimap button): one search box for every fast-travel option this character can actually use right now.
+- Covers **Mythic+ dungeon teleports**, the Garrison and Dalaran hearthstones, every **hearthstone toy** you own, **class travel spells** and **engineering wormholes**.
+- Dungeon ports are found by **destination**: a port named "Path of the Warding Candles" is listed and searchable as *Darkflame Cleft*, because the destination is read out of the spell description. That keeps working across seasons and locales.
+- **M+** filters the list to dungeon ports for the current Mythic+ season.
+- **Left-click** a row to travel, **right-click** to favourite it. Favourites and recently used options sort to the top.
+- Travel abilities are unusable in combat anyway, so the tab greys out and says **Locked in combat**, then fills back in when combat ends.
+
 ## Usage
 
 | Action | Result |
@@ -47,6 +55,12 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 | `/rp` or `/raidprepared` | Check your own gear and consumables |
 | `/rp inspect` (or `/rp raid`, `/rp party`) | Open the Raid/Party Inspect tab (raid: lead/assist only) |
 | `/rp talents` | Open the Talents tab (flag loadouts for raid / Mythic dungeons) |
+| `/rp travel` | Open the Travel tab (search your fast-travel options) |
+| `/rp travel season` | List this season's Mythic+ maps and the ports that serve them |
+| `/rp travel audit` | Report travel entries whose ID does not resolve |
+| `/rp travel scan [text]` | Dump spellbook entries, used to harvest teleport IDs |
+| `/rp travel discover` | Show which spells the teleport patterns match |
+| `/rp travel copy` | Reopen the last diagnostic output for copying |
 | `/rp options` | Open the Options tab of the addon window |
 | `/rp indicators` | Toggle enchant/socket indicators on the character panel |
 | `/rp minimap` | Show/hide the minimap button |
@@ -55,6 +69,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 | Minimap button – left-click | Check your own gear |
 | Minimap button – right-click | Open the Raid/Party Inspect tab |
 | Minimap button – Shift-click | Open the Talents tab |
+| Minimap button – Ctrl-click | Open the Travel tab |
 | Minimap button – drag | Move the button |
 
 The same actions are available from the addon compartment menu on the minimap.
@@ -96,8 +111,16 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 | `Scanner.lua` | Gear scanning (enchants, gems) for any unit |
 | `Potions.lua` | Potion and weapon buff counting |
 | `RaidCheck.lua` | Raid/Party Inspect queue and tab |
-| `Dialog.lua` | Main window with Check, Inspect, Talents and Options tabs |
+| `Dialog.lua` | Main window with Check, Inspect, Talents, Options and Travel tabs |
 | `Minimap.lua` | Minimap button and addon compartment |
 | `Talents.lua` | Talent loadout flags, instance/ready check warning, talent frame checkboxes |
 | `CharacterPanel.lua` | Enchant/socket indicators on the character panel |
 | `Core.lua` | Events, raid join detection, slash commands |
+| `Travel/Core.lua` | Travel namespace, strings, event dispatch, diagnostic output capture |
+| `Travel/Data.lua` | Curated travel candidates: hearthstones, toys, class spells, professions |
+| `Travel/Portals.lua` | Name patterns used to auto-discover Mythic+ teleports |
+| `Travel/Collector.lua` | Filters candidates down to what you own; audit, scan and discovery |
+| `Travel/Search.lua` | Tokenized scoring and ranking for the travel search |
+| `Travel/Season.lua` | Maps dungeon ports to the current Mythic+ season |
+| `Travel/CopyFrame.lua` | Copyable window for diagnostic output |
+| `Travel/Panel.lua` | Travel tab: search box and secure action button pool |

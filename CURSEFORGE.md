@@ -28,6 +28,13 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 - Warns when you enter a raid or Mythic/Mythic+ dungeon – or on a ready check – with the wrong loadout
 - No flags for a content type, no warning
 
+### 🧭 Travel
+- One search box for every **fast-travel option** this character can actually use
+- **Mythic+ dungeon teleports**, hearthstone toys, class travel spells, engineering wormholes
+- Dungeon ports are searchable by **destination** – "Path of the Warding Candles" is found by typing *Darkflame Cleft*
+- **M+** filters to the current season's dungeon ports
+- Favourites and recently used options sort to the top
+
 ### 🛡️ Raid / Party Inspect
 - **Raid Inspect** for raid leaders and assistants, **Party Inspect** for everyone in a party
 - Lists **every raid member** with their enchant and gem status
@@ -51,6 +58,8 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 | `/rp` | Check your own gear and consumables |
 | `/rp inspect` | Raid/Party Inspect |
 | `/rp talents` | Flag talent loadouts |
+| `/rp travel` | Search your fast-travel options |
+| `/rp travel season` | This season's M+ maps and their ports |
 | `/rp options` | Open the options tab |
 | `/rp indicators` | Toggle character panel indicators |
 | `/rp minimap` | Show/hide the minimap button |
@@ -58,6 +67,7 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 | **Minimap left-click** | Check your gear |
 | **Minimap right-click** | Raid/Party Inspect |
 | **Minimap Shift-click** | Talent loadout flags |
+| **Minimap Ctrl-click** | Travel search |
 
 Also available in the minimap **addon compartment** menu.
 

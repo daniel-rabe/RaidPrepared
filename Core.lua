@@ -7,6 +7,12 @@ local DEFAULTS = {
     maxQualityTier = nil, -- nil = RP.DEFAULT_MAX_QUALITY_TIER
     minimap = { hide = false, angle = 225 },
     characterIndicators = true, -- enchant/socket indicators on the character panel
+    travel = {                  -- fast-travel tab
+        closeOnUse = true,
+        maxRecent  = 15,
+        recent     = {},        -- array of entry keys, most recently used first
+        favorites  = {},        -- [entryKey] = true
+    },
 }
 
 local function Print(msg)
@@ -88,6 +94,7 @@ events:SetScript("OnEvent", function(_, event, arg1, arg2)
         if arg1 ~= addonName then return end
         RaidPreparedDB = RaidPreparedDB or {}
         ApplyDefaults(RaidPreparedDB, DEFAULTS)
+        RP.Travel.db = RaidPreparedDB.travel
         RaidPreparedCharDB = RaidPreparedCharDB or {}
         RaidPreparedCharDB.loadoutFlags = RaidPreparedCharDB.loadoutFlags or {}
         RP.Minimap:Create()
@@ -116,6 +123,24 @@ SlashCmdList.RAIDPREPARED = function(input)
         RP.RaidCheck:Open()
     elseif cmd == "talents" then
         RP.Talents:Open()
+    elseif cmd == "travel" then
+        local sub, rest = arg:match("^(%S*)%s*(.-)$")
+        local Travel = RP.Travel
+        if sub == "" then
+            Travel:Toggle()
+        elseif sub == "audit" then
+            Travel:RunCaptured("Audit", Travel.Collector.Audit)
+        elseif sub == "scan" then
+            Travel:RunCaptured("Spellbook scan", Travel.Collector.ScanSpellbook, rest)
+        elseif sub == "discover" then
+            Travel:RunCaptured("Discovery", Travel.Collector.ReportDiscovery)
+        elseif sub == "season" then
+            Travel:RunCaptured("Current season", Travel.Season.Report)
+        elseif sub == "copy" then
+            Travel:ShowLastOutput()
+        else
+            Print("Usage: /rp travel [audit | scan <text> | discover | season | copy]")
+        end
     elseif cmd == "debug" then
         RP.Debug()
         RP.DebugPotions()
@@ -137,6 +162,7 @@ SlashCmdList.RAIDPREPARED = function(input)
         print("  /rp - check enchants, gems, potions and weapon buffs")
         print("  /rp inspect - raid/party inspect of all group members (also /rp raid, /rp party)")
         print("  /rp talents - flag talent loadouts for raid / Mythic dungeons")
+        print("  /rp travel - search your fast-travel options (also /rp travel season)")
         print("  /rp options - open the options tab")
         print("  /rp indicators - toggle enchant/socket indicators on the character panel")
         print("  /rp minimap - toggle minimap button")
