@@ -1,4 +1,5 @@
 local _, RP = ...
+local L = RP.L
 
 -- Counts raid consumables in the bags by item ID (see Data.lua): healing potions,
 -- mana potions and temporary weapon buffs (oils, stones, hunter ammo).
@@ -7,6 +8,25 @@ local DEFAULT_ICONS = {
     heal = 134830,   -- INV_Potion_54
     mana = 134851,   -- INV_Potion_76
     weapon = 135255, -- INV_Stone_02
+}
+
+-- Label and problem texts per consumable kind (full sentences, so they translate cleanly).
+local TEXTS = {
+    heal = {
+        label = L["Healing Potions"],
+        none = L["No healing potions in your bags!"],
+        few = L["Only %d healing potions (minimum %d)"],
+    },
+    mana = {
+        label = L["Mana Potions"],
+        none = L["No mana potions in your bags!"],
+        few = L["Only %d mana potions (minimum %d)"],
+    },
+    weapon = {
+        label = L["Weapon Buffs"],
+        none = L["No weapon buffs in your bags!"],
+        few = L["Only %d weapon buffs (minimum %d)"],
+    },
 }
 
 local function IsManaPotionRequired()
@@ -29,10 +49,10 @@ local function GetActiveWeaponBuffTime()
     return nil
 end
 
-local function NewEntry(kind, label, ids, minimum, required)
+local function NewEntry(kind, ids, minimum, required)
     return {
         kind = kind,
-        label = label,
+        label = TEXTS[kind].label,
         ids = ids,
         minimum = minimum,
         required = required,
@@ -45,11 +65,12 @@ local function BuildIssues(consumables)
     local issues = {}
     for i, entry in ipairs(consumables) do
         if entry.required and entry.count < entry.minimum then
+            local texts = TEXTS[entry.kind]
             local detail
             if entry.count == 0 then
-                detail = ("No %s in your bags!"):format(entry.label:lower())
+                detail = texts.none
             else
-                detail = ("Only %d %s (minimum %d)"):format(entry.count, entry.label:lower(), entry.minimum)
+                detail = texts.few:format(entry.count, entry.minimum)
             end
             issues[#issues + 1] = {
                 slot = 100 + i,
@@ -78,9 +99,9 @@ end
 
 -- Returns consumables ({heal, mana, weapon} entries, also as array) and issues.
 function RP.ScanPotions()
-    local heal = NewEntry("heal", "Healing Potions", RP.HEALING_POTION_IDS, RP.MIN_HEALING_POTIONS, true)
-    local mana = NewEntry("mana", "Mana Potions", RP.MANA_POTION_IDS, RP.MIN_MANA_POTIONS, IsManaPotionRequired())
-    local weapon = NewEntry("weapon", "Weapon Buffs", RP.WEAPON_BUFF_IDS, RP.MIN_WEAPON_BUFFS, IsWeaponBuffRequired())
+    local heal = NewEntry("heal", RP.HEALING_POTION_IDS, RP.MIN_HEALING_POTIONS, true)
+    local mana = NewEntry("mana", RP.MANA_POTION_IDS, RP.MIN_MANA_POTIONS, IsManaPotionRequired())
+    local weapon = NewEntry("weapon", RP.WEAPON_BUFF_IDS, RP.MIN_WEAPON_BUFFS, IsWeaponBuffRequired())
     weapon.activeTime = GetActiveWeaponBuffTime()
 
     local consumables = { heal, mana, weapon, heal = heal, mana = mana, weapon = weapon }

@@ -24,32 +24,9 @@ function T:Print(fmt, ...)
     DEFAULT_CHAT_FRAME:AddMessage(PREFIX .. tostring(msg))
 end
 
--- ============================================================================
--- STRINGS
--- ============================================================================
--- Missing keys fall back to the key itself, so a new string never renders as
--- nil while translations catch up.
-
-local L = setmetatable({}, { __index = function(_, k) return k end })
+-- Strings come from the addon-wide locale table (Locales/).
+local L = RP.L
 T.L = L
-
-L["Search travel options..."] = "Search travel options..."
-L["No matching travel options."] = "No matching travel options."
-L["Nothing available yet."] = "Nothing available yet."
-L["Locked in combat"] = "Locked in combat"
-
-L["No current-season ports available."] = "No current-season ports available."
-L["Current season Mythic+"] = "Current season Mythic+"
-L["Show only dungeon ports for this season's keys."] = "Show only dungeon ports for this season's keys."
-L["Season data not loaded yet."] = "Season data not loaded yet."
-
--- Category labels shown as the grey suffix on each row, and searchable.
-L["cat.hearth"] = "Hearthstone"
-L["cat.dungeon"] = "Dungeon"
-L["cat.class"] = "Class"
-L["cat.zone"] = "Zone"
-L["cat.profession"] = "Profession"
-L["cat.other"] = "Other"
 
 -- ============================================================================
 -- CAPTURED OUTPUT
@@ -95,7 +72,7 @@ function T:EndCapture(title)
     lastOutput = table.concat(lines, "\n")
 
     if lastOutput == "" then
-        T:Print("no output.")
+        T:Print(L["no output."])
         return
     end
     T.UI.ShowCopy(title, lastOutput)
@@ -113,10 +90,10 @@ end
 
 function T:ShowLastOutput()
     if lastOutput == "" then
-        T:Print("nothing captured yet - run audit, scan or discover first.")
+        T:Print(L["nothing captured yet - run audit, scan or discover first."])
         return
     end
-    T.UI.ShowCopy("Last output", lastOutput)
+    T.UI.ShowCopy(L["Last output"], lastOutput)
 end
 
 -- ============================================================================

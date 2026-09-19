@@ -1,4 +1,5 @@
 local _, RP = ...
+local L = RP.L
 
 local MAX_GEMS = 4
 
@@ -131,7 +132,7 @@ local function CheckEnchant(issues, unit, slot, link, checkQuality)
 
     local enchantID = GetEnchantID(link)
     if enchantID == 0 then
-        AddIssue(issues, slot, link, "enchant", "missing", "Missing enchant")
+        AddIssue(issues, slot, link, "enchant", "missing", L["Missing enchant"])
         return
     end
     if not checkQuality then return end
@@ -147,7 +148,7 @@ local function CheckEnchant(issues, unit, slot, link, checkQuality)
 
     if tier and tier < maxTier then
         AddIssue(issues, slot, link, "enchant", "low",
-            ("Low quality enchant (rank %d/%d)%s"):format(tier, maxTier, name and (": " .. name) or ""))
+            L["Low quality enchant (rank %d/%d)%s"]:format(tier, maxTier, name and (": " .. name) or ""))
         local issue = issues[#issues]
         issue.tier, issue.maxTier = tier, maxTier
         issue.itemLevel = C_Item.GetDetailedItemLevelInfo(link)
@@ -157,13 +158,13 @@ local function CheckEnchant(issues, unit, slot, link, checkQuality)
 
     if next(RP.KNOWN_CURRENT_ENCHANTS) and not RP.KNOWN_CURRENT_ENCHANTS[enchantID] then
         AddIssue(issues, slot, link, "enchant", "outdated",
-            ("Outdated enchant%s"):format(name and (": " .. name) or (" (ID " .. enchantID .. ")")))
+            L["Outdated enchant%s"]:format(name and (": " .. name) or (" (ID " .. enchantID .. ")")))
     end
 end
 
 local function GetGemDisplay(gemID)
     local _, gemLink = C_Item.GetItemInfo(gemID)
-    return gemLink or ("item " .. gemID)
+    return gemLink or L["item %d"]:format(gemID)
 end
 
 local function CheckGems(issues, unit, slot, link, checkQuality)
@@ -175,7 +176,8 @@ local function CheckGems(issues, unit, slot, link, checkQuality)
     local empty = numSockets - filled
     if empty > 0 then
         AddIssue(issues, slot, link, "gem", "missing",
-            empty == 1 and "Empty gem socket" or ("%d empty gem sockets"):format(empty))
+            empty == 1 and L["Empty gem socket"] or L["%d empty gem sockets"]:format(empty))
+        issues[#issues].empty = empty
     end
 
     if checkQuality ~= true then return end
@@ -188,12 +190,12 @@ local function CheckGems(issues, unit, slot, link, checkQuality)
         end
         if tier and tier > 0 and tier < maxTier then
             AddIssue(issues, slot, link, "gem", "low",
-                ("Low quality gem (rank %d/%d): %s"):format(tier, maxTier, GetGemDisplay(gemID)))
+                L["Low quality gem (rank %d/%d): %s"]:format(tier, maxTier, GetGemDisplay(gemID)))
         end
 
         local expacID = select(15, C_Item.GetItemInfo(gemID))
         if expacID and RP.MIN_GEM_EXPANSION and expacID < RP.MIN_GEM_EXPANSION then
-            AddIssue(issues, slot, link, "gem", "outdated", "Outdated gem: " .. GetGemDisplay(gemID))
+            AddIssue(issues, slot, link, "gem", "outdated", L["Outdated gem: %s"]:format(GetGemDisplay(gemID)))
         end
     end
 end
@@ -218,11 +220,11 @@ local function CheckEpicGem(issues, unit)
 
     issues[#issues + 1] = {
         slot = EPIC_GEM_SLOT,
-        slotName = "Epic Gem",
+        slotName = L["Epic Gem"],
         icon = C_Item.GetItemIconByID(RP.EPIC_GEM_ICON_ID),
         kind = "epicgem",
         problem = "missing",
-        detail = "No Eversong Diamond socketed",
+        detail = L["No Eversong Diamond socketed"],
     }
 end
 

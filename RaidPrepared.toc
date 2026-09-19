@@ -9,6 +9,27 @@
 ## AddonCompartmentFunc: RaidPrepared_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: RaidPrepared_OnAddonCompartmentEnter
 ## AddonCompartmentFuncOnLeave: RaidPrepared_OnAddonCompartmentLeave
+## Notes-deDE: Prüft deine Ausrüstung auf fehlende oder minderwertige Verzauberungen und Edelsteine sowie deine Heil- und Manatränke, wenn du einem Schlachtzug beitrittst, und durchsucht deine Schnellreiseoptionen.
+## Notes-frFR: Vérifie les enchantements et gemmes manquants ou de faible qualité ainsi que vos potions de soins et de mana lorsque vous rejoignez un raid, et recherche vos options de voyage rapide.
+## Notes-esES: Revisa tu equipo en busca de encantamientos y gemas que falten o sean de baja calidad, y tus pociones de sanación y maná al unirte a una banda. También busca tus opciones de viaje rápido.
+## Notes-esMX: Revisa tu equipo en busca de encantamientos y gemas que falten o sean de baja calidad, y tus pociones de sanación y maná al unirte a una banda. También busca tus opciones de viaje rápido.
+## Notes-itIT: Controlla incantamenti e gemme mancanti o di bassa qualità e le tue pozioni curative e di mana quando entri in un'incursione, e cerca le tue opzioni di viaggio rapido.
+## Notes-ptBR: Verifica encantamentos e gemas ausentes ou de baixa qualidade e suas poções de cura e mana ao entrar em uma raide, e busca suas opções de viagem rápida.
+## Notes-ruRU: Проверяет экипировку на отсутствующие или низкокачественные чары и самоцветы, а также лечебные зелья и зелья маны при входе в рейд, и ищет способы быстрого перемещения.
+## Notes-koKR: 공격대에 참여할 때 누락되었거나 품질이 낮은 마법부여와 보석, 치유 및 마나 물약을 점검하고, 빠른 이동 수단을 검색합니다.
+## Notes-zhCN: 加入团队时检查装备是否缺少附魔和宝石或品质过低，以及治疗和法力药水，并可搜索快速传送方式。
+## Notes-zhTW: 加入團隊時檢查裝備是否缺少附魔與寶石或品質過低，以及治療與法力藥水，並可搜尋快速傳送方式。
+
+Locales\Locales.lua
+Locales\deDE.lua
+Locales\frFR.lua
+Locales\esES.lua
+Locales\itIT.lua
+Locales\ptBR.lua
+Locales\ruRU.lua
+Locales\koKR.lua
+Locales\zhCN.lua
+Locales\zhTW.lua
 
 Data.lua
 Scanner.lua

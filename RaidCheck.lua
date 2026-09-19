@@ -1,4 +1,5 @@
 local _, RP = ...
+local L = RP.L
 
 -- Inspects every group member (one at a time) and lists missing enchants / empty gem sockets.
 
@@ -11,12 +12,12 @@ local ROW_HEIGHT = 24
 local NAME_WIDTH = 150
 
 local STATUS_TEXT = {
-    pending    = "|cffaaaaaaWaiting...|r",
-    inspecting = "|cffffff00Inspecting...|r",
-    ok         = "|cff40ff40OK|r",
-    offline    = "|cffaaaaaaOffline|r",
-    range      = "|cffaaaaaaOut of range|r",
-    failed     = "|cffff9919Inspect failed - try refresh|r",
+    pending    = "|cffaaaaaa" .. L["Waiting..."] .. "|r",
+    inspecting = "|cffffff00" .. L["Inspecting..."] .. "|r",
+    ok         = "|cff40ff40" .. L["OK"] .. "|r",
+    offline    = "|cffaaaaaa" .. L["Offline"] .. "|r",
+    range      = "|cffaaaaaa" .. L["Out of range"] .. "|r",
+    failed     = "|cffff9919" .. L["Inspect failed - try refresh"] .. "|r",
 }
 
 local RaidCheck = {}
@@ -31,7 +32,7 @@ function RaidCheck:IsAllowed()
 end
 
 function RaidCheck:GetTitle()
-    return IsInRaid() and "Raid Inspect" or "Party Inspect"
+    return IsInRaid() and L["Raid Inspect"] or L["Party Inspect"]
 end
 
 local members = {} -- guid -> { guid, name, classFile, status, issues }
@@ -294,16 +295,23 @@ local function ColoredName(entry)
 end
 
 local function ShortIssue(issue)
+    local color, text = "ffff4040"
     if issue.kind == "enchant" and issue.problem == "low" then
-        local quality = issue.tier == 1 and "low" or "mid"
-        local ilvl = issue.itemLevel and (" (ilvl %d)"):format(issue.itemLevel) or ""
-        return ("|cffff9919%s: %s quality enchant%s|r"):format(issue.slotName, quality, ilvl)
+        color = "ffff9919"
+        text = issue.tier == 1 and L["low quality enchant"] or L["mid quality enchant"]
+        if issue.itemLevel then
+            text = text .. " " .. L["(ilvl %d)"]:format(issue.itemLevel)
+        end
     elseif issue.kind == "enchant" then
-        return "|cffff4040" .. issue.slotName .. ": no enchant|r"
+        text = L["no enchant"]
     elseif issue.kind == "epicgem" then
-        return "|cffff4040" .. issue.slotName .. ": missing|r"
+        text = L["missing"]
+    elseif issue.kind == "gem" and issue.empty then
+        text = issue.empty == 1 and L["empty gem socket"] or L["%d empty gem sockets"]:format(issue.empty)
+    else
+        text = issue.detail
     end
-    return "|cffff4040" .. issue.slotName .. ": " .. issue.detail:lower() .. "|r"
+    return ("|c%s%s: %s|r"):format(color, issue.slotName, text)
 end
 
 local function StatusText(entry)
@@ -322,22 +330,34 @@ end
 ---------------------------------------------------------------------------
 
 local WHISPER_MAX = 255 -- chat message length limit
-local WHISPER_PREFIX = "[RaidPrepared] Hi! Automated gear check found: "
-local WHISPER_SUFFIX = ". Just a friendly heads-up, no stress :)"
+local WHISPER_PREFIX = "[RaidPrepared] " .. L["Hi! Automated gear check found: "]
+local WHISPER_SUFFIX = L[". Just a friendly heads-up, no stress :)"]
 
--- Issue groups in message order: label, count label (singular, plural) and matcher.
+-- Issue groups in message order: label, count format (singular, plural) and matcher.
 local WHISPER_GROUPS = {
-    { label = "missing enchant", one = "missing enchant", many = "missing enchants",
+    { label = L["missing enchant"], one = L["%d missing enchant"], many = L["%d missing enchants"],
       match = function(i) return i.kind == "enchant" and i.problem == "missing" end },
-    { label = "lower rank enchant", one = "lower rank enchant", many = "lower rank enchants",
+    { label = L["lower rank enchant"], one = L["%d lower rank enchant"], many = L["%d lower rank enchants"],
       match = function(i) return i.kind == "enchant" and i.problem == "low" end },
-    { label = "empty socket", one = "empty socket", many = "empty sockets",
+    { label = L["empty socket"], one = L["%d empty socket"], many = L["%d empty sockets"],
       match = function(i) return i.kind == "gem" and i.problem == "missing" end },
-    { label = "gem", one = "gem to check", many = "gems to check",
+    { label = L["gem"], one = L["%d gem to check"], many = L["%d gems to check"],
       match = function(i) return i.kind == "gem" end },
-    { label = "enchant", one = "enchant to check", many = "enchants to check",
+    { label = L["enchant"], one = L["%d enchant to check"], many = L["%d enchants to check"],
       match = function(i) return i.kind == "enchant" end },
 }
+
+-- Cuts a string to at most maxBytes without splitting a UTF-8 character.
+local function TruncateUTF8(text, maxBytes)
+    if #text <= maxBytes then return text end
+    local cut = maxBytes
+    while cut > 0 do
+        local byte = text:byte(cut + 1)
+        if byte < 0x80 or byte >= 0xC0 then break end -- the next byte starts a character
+        cut = cut - 1
+    end
+    return text:sub(1, cut)
+end
 
 local function BuildWhisper(entry)
     local slots = {}
@@ -361,12 +381,12 @@ local function BuildWhisper(entry)
         local list = slots[g]
         if list then
             detailed[#detailed + 1] = group.label .. ": " .. table.concat(list, ", ")
-            counted[#counted + 1] = ("%d %s"):format(#list, #list == 1 and group.one or group.many)
+            counted[#counted + 1] = (#list == 1 and group.one or group.many):format(#list)
         end
     end
     if epicGem then
-        detailed[#detailed + 1] = "no Eversong Diamond socketed"
-        counted[#counted + 1] = "no Eversong Diamond"
+        detailed[#detailed + 1] = L["no Eversong Diamond socketed"]
+        counted[#counted + 1] = L["no Eversong Diamond"]
     end
 
     local body = table.concat(detailed, "; ")
@@ -380,7 +400,7 @@ local function BuildWhisper(entry)
             return msg
         end
     end
-    return candidates[3]:sub(1, WHISPER_MAX)
+    return TruncateUTF8(candidates[3], WHISPER_MAX)
 end
 
 local function CanWhisper(entry)
@@ -400,6 +420,18 @@ function RaidCheck:Whisper(guid)
     send(BuildWhisper(entry), "WHISPER", nil, target)
     entry.whispered = true
     self:Refresh()
+end
+
+-- Widens a button so each of its (localized) labels fits; keeps the first label set.
+local function FitButton(button, minWidth, ...)
+    local labels = { ... }
+    local width = minWidth
+    for _, text in ipairs(labels) do
+        button:SetText(text)
+        width = math.max(width, math.ceil(button:GetFontString():GetStringWidth()) + 20)
+    end
+    button:SetText(labels[1])
+    button:SetWidth(width)
 end
 
 local function CreateRow(index)
@@ -422,7 +454,7 @@ local function CreateRow(index)
     row.refresh = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
     row.refresh:SetSize(70, 20)
     row.refresh:SetPoint("RIGHT", -2, 0)
-    row.refresh:SetText("Refresh")
+    FitButton(row.refresh, 70, L["Refresh"])
     row.refresh:SetScript("OnClick", function()
         RaidCheck:Queue(row.guid)
     end)
@@ -430,7 +462,7 @@ local function CreateRow(index)
     row.whisper = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
     row.whisper:SetSize(70, 20)
     row.whisper:SetPoint("RIGHT", row.refresh, "LEFT", -4, 0)
-    row.whisper:SetText("Whisper")
+    FitButton(row.whisper, 70, L["Whisper"], L["Sent"])
     row.whisper:SetMotionScriptsWhileDisabled(true)
     row.whisper:SetScript("OnClick", function()
         RaidCheck:Whisper(row.guid)
@@ -440,9 +472,9 @@ local function CreateRow(index)
         if not entry or entry.status ~= "issues" then return end
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         if entry.whispered then
-            GameTooltip:AddLine("Already whispered. Refresh this member to whisper again.", 1, 1, 1, true)
+            GameTooltip:AddLine(L["Already whispered. Refresh this member to whisper again."], 1, 1, 1, true)
         else
-            GameTooltip:AddLine("Whisper " .. ColoredName(entry) .. ":")
+            GameTooltip:AddLine(L["Whisper %s:"]:format(ColoredName(entry)))
             GameTooltip:AddLine(BuildWhisper(entry), 1, 1, 1, true)
         end
         GameTooltip:Show()
@@ -463,7 +495,7 @@ local function CreateRow(index)
         for _, issue in ipairs(entry.issues) do
             local detail = issue.detail
             if issue.itemLevel then
-                detail = ("%s (ilvl %d)"):format(detail, issue.itemLevel)
+                detail = detail .. " " .. L["(ilvl %d)"]:format(issue.itemLevel)
             end
             local g = issue.problem == "missing" and 0.25 or 0.6
             GameTooltip:AddDoubleLine(issue.itemLink or issue.slotName, detail, 1, 1, 1, 1, g, 0.1)
@@ -500,7 +532,7 @@ function RaidCheck:CreatePanel(parent)
     local refreshAll = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
     refreshAll:SetSize(110, 24)
     refreshAll:SetPoint("BOTTOMLEFT", 20, 18)
-    refreshAll:SetText("Refresh All")
+    FitButton(refreshAll, 110, L["Refresh All"])
     refreshAll:SetScript("OnClick", function() RaidCheck:QueueAll() end)
     return frame
 end
@@ -516,7 +548,7 @@ function RaidCheck:Refresh()
         row.name:SetText(ColoredName(entry))
         row.status:SetText(StatusText(entry))
         row.refresh:SetEnabled(entry.status ~= "inspecting" and entry.status ~= "pending")
-        row.whisper:SetText(entry.whispered and "Sent" or "Whisper")
+        row.whisper:SetText(entry.whispered and L["Sent"] or L["Whisper"])
         row.whisper:SetEnabled(CanWhisper(entry))
         row:Show()
 
@@ -532,10 +564,10 @@ function RaidCheck:Refresh()
     end
     scrollChild:SetHeight(math.max(1, #order * ROW_HEIGHT))
 
-    local header = ("%d/%d inspected, %s%d with problems|r"):format(
+    local header = L["%d/%d inspected, %s%d with problems|r"]:format(
         done, #order, withIssues > 0 and "|cffff4040" or "|cff40ff40", withIssues)
     if InCombatLockdown() and (#queue > 0 or current) then
-        header = header .. " |cffff9919(paused in combat)|r"
+        header = header .. " |cffff9919" .. L["(paused in combat)"] .. "|r"
     end
     headerText:SetText(header)
 end
@@ -550,7 +582,7 @@ end
 
 function RaidCheck:Open()
     if not self:IsAllowed() then
-        print("|cff33ccffRaidPrepared|r: Raid Inspect requires raid lead or assist; Party Inspect requires a party.")
+        print("|cff33ccffRaidPrepared|r: " .. L["Raid Inspect requires raid lead or assist; Party Inspect requires a party."])
         return
     end
     RP.Dialog:OpenTab(RP.Dialog.TAB_INSPECT)

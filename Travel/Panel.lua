@@ -176,7 +176,7 @@ local function CreateRow(index)
             GameTooltip:AddLine(self.opt.name, 0.6, 0.6, 0.6)
         end
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine("Right-click to favourite", 0.6, 0.6, 0.6)
+        GameTooltip:AddLine(L["Right-click to favourite"], 0.6, 0.6, 0.6)
         GameTooltip:Show()
     end)
 
@@ -284,8 +284,8 @@ function UI.Refresh()
     end
 
     if #results > MAX_ROWS then
-        footerText:SetText(("|cff808080+%d more - keep typing to narrow|r")
-            :format(#results - MAX_ROWS))
+        footerText:SetText("|cff808080" .. L["+%d more - keep typing to narrow"]
+            :format(#results - MAX_ROWS) .. "|r")
         footerText:Show()
     else
         footerText:Hide()

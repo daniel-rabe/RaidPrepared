@@ -1,4 +1,5 @@
 local _, RP = ...
+local L = RP.L
 
 local ICON = "Interface\\Icons\\INV_Misc_Gem_Diamond_02"
 
@@ -26,13 +27,13 @@ end
 local function ShowTooltip(owner)
     GameTooltip:SetOwner(owner, "ANCHOR_LEFT")
     GameTooltip:AddLine("RaidPrepared")
-    GameTooltip:AddLine("Left-click: check enchants, gems & consumables", 1, 1, 1)
+    GameTooltip:AddLine(L["Left-click: check enchants, gems & consumables"], 1, 1, 1)
     if RP.RaidCheck:IsAllowed() then
-        GameTooltip:AddLine("Right-click: " .. RP.RaidCheck:GetTitle(), 1, 1, 1)
+        GameTooltip:AddLine(L["Right-click: %s"]:format(RP.RaidCheck:GetTitle()), 1, 1, 1)
     end
-    GameTooltip:AddLine("Shift-click: talent loadout flags", 1, 1, 1)
-    GameTooltip:AddLine("Ctrl-click: travel search", 1, 1, 1)
-    GameTooltip:AddLine("Drag: move button", 1, 1, 1)
+    GameTooltip:AddLine(L["Shift-click: talent loadout flags"], 1, 1, 1)
+    GameTooltip:AddLine(L["Ctrl-click: travel search"], 1, 1, 1)
+    GameTooltip:AddLine(L["Drag: move button"], 1, 1, 1)
     GameTooltip:Show()
 end
 

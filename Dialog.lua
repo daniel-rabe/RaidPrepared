@@ -1,4 +1,5 @@
 local addonName, RP = ...
+local L = RP.L
 
 local FRAME_WIDTH = 580
 local FRAME_HEIGHT = 390
@@ -113,7 +114,7 @@ local function CreateDialog()
 
     okText = checkPanel:CreateFontString(nil, "OVERLAY", "GameFontGreenLarge")
     okText:SetPoint("CENTER", scroll, "CENTER")
-    okText:SetText("Everything looks good!")
+    okText:SetText(L["Everything looks good!"])
 
     -- Tab 2: raid / party inspect
     inspectPanel = RP.RaidCheck:CreatePanel(frame)
@@ -132,7 +133,7 @@ local function CreateDialog()
 
     local optionsHeader = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     optionsHeader:SetPoint("TOPLEFT", 24, -56)
-    optionsHeader:SetText(OPTIONS or "Options")
+    optionsHeader:SetText(OPTIONS or L["Options"])
 
     indicatorsCheck = CreateFrame("CheckButton", nil, optionsPanel, "UICheckButtonTemplate")
     indicatorsCheck:SetSize(26, 26)
@@ -143,17 +144,17 @@ local function CreateDialog()
 
     local indicatorsLabel = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     indicatorsLabel:SetPoint("LEFT", indicatorsCheck, "RIGHT", 2, 1)
-    indicatorsLabel:SetText("Show enchant & socket indicators on the character panel")
+    indicatorsLabel:SetText(L["Show enchant & socket indicators on the character panel"])
 
     local indicatorsHint = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     indicatorsHint:SetPoint("TOPLEFT", indicatorsLabel, "BOTTOMLEFT", 0, -4)
     indicatorsHint:SetPoint("RIGHT", optionsPanel, "RIGHT", -24, 0)
     indicatorsHint:SetJustifyH("LEFT")
-    indicatorsHint:SetText("Icons next to item slots and a red border on items with a missing enchant or gem.")
+    indicatorsHint:SetText(L["Icons next to item slots and a red border on items with a missing enchant or gem."])
 
     local qualityLabel = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     qualityLabel:SetPoint("TOPLEFT", indicatorsCheck, "BOTTOMLEFT", 4, -34)
-    qualityLabel:SetText("Required enchant & gem quality rank:")
+    qualityLabel:SetText(L["Required enchant & gem quality rank:"])
 
     local function Step(delta)
         qualityValue:SetText(RP.SetMaxQualityTier(RP.GetMaxQualityTier() + delta))
@@ -179,14 +180,14 @@ local function CreateDialog()
     qualityHint:SetPoint("TOPLEFT", qualityLabel, "BOTTOMLEFT", 0, -6)
     qualityHint:SetPoint("RIGHT", optionsPanel, "RIGHT", -24, 0)
     qualityHint:SetJustifyH("LEFT")
-    qualityHint:SetText("Enchants and gems below this crafting quality rank are reported as low quality.")
+    qualityHint:SetText(L["Enchants and gems below this crafting quality rank are reported as low quality."])
 
     -- Tab 4: fast-travel search
     travelPanel = RP.Travel:CreatePanel(frame)
 
     -- Tabs below the frame
     frame.Tabs = {}
-    for i, label in ipairs({ "Check", "Raid Inspect", TALENTS or "Talents", "Travel", OPTIONS or "Options" }) do
+    for i, label in ipairs({ L["Check"], L["Raid Inspect"], TALENTS or L["Talents"], L["Travel"], OPTIONS or L["Options"] }) do
         local tab = CreateFrame("Button", "RaidPreparedDialogTab" .. i, frame, "PanelTabButtonTemplate")
         tab:SetID(i)
         tab:SetText(label)
@@ -232,7 +233,7 @@ local function ColorPotionCount(entry)
     end
     local text = ("%s: |c%s%d|r"):format(entry.label, color, entry.count)
     if entry.activeTime then
-        text = text .. (" |cff40ff40(active %dm)|r"):format(math.floor(entry.activeTime / 60))
+        text = text .. " |cff40ff40" .. L["(active %dm)"]:format(math.floor(entry.activeTime / 60)) .. "|r"
     end
     return text
 end
@@ -273,7 +274,7 @@ local function Populate(issues, potions)
         summaryText:SetText("")
         okText:Show()
     else
-        summaryText:SetText(("%d problem(s) found, %d missing"):format(#issues, missing))
+        summaryText:SetText(L["%d problem(s) found, %d missing"]:format(#issues, missing))
         okText:Hide()
     end
 end
@@ -317,7 +318,7 @@ function Dialog:OpenTab(index)
         CreateDialog()
         Populate({}, nil)
         okText:Hide()
-        summaryText:SetText("No check run yet - use /rp or the minimap button.")
+        summaryText:SetText(L["No check run yet - use /rp or the minimap button."])
     end
     self:UpdateInspectAccess()
     self:SelectTab(index)

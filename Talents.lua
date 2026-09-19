@@ -1,4 +1,5 @@
 local _, RP = ...
+local L = RP.L
 
 -- Talent loadout check: players flag their saved loadouts as "raid" and/or "dungeon".
 -- Inside a raid or Mythic/Mythic+ dungeon a warning appears when the active loadout is not
@@ -9,8 +10,8 @@ local DIFFICULTY_MYTHIC_DUNGEON = 23
 local DIFFICULTY_MYTHIC_KEYSTONE = 8
 
 local CONTENT_LABELS = {
-    raid = "raid",
-    dungeon = "Mythic dungeon",
+    raid = L["raid"],
+    dungeon = L["Mythic dungeon"],
 }
 
 local FRAME_WIDTH = 380 -- width of the hint text
@@ -117,12 +118,12 @@ function Talents:Check()
     local _, icon = GetSpecNameAndIcon()
     return {
         slot = 98,
-        slotName = "Talents",
+        slotName = TALENTS or L["Talents"],
         icon = icon or 134400,
         kind = "talents",
         problem = "missing",
-        detail = ("Loadout '%s' is not flagged for %s (use: %s)"):format(
-            activeName or (activeID and "unsaved loadout" or "Starter Build"),
+        detail = L["Loadout '%s' is not flagged for %s (use: %s)"]:format(
+            activeName or (activeID and L["unsaved loadout"] or L["Starter Build"]),
             CONTENT_LABELS[content], table.concat(flagged, ", ")),
     }
 end
@@ -151,21 +152,26 @@ local function CreateCheckbox(parent, label, onClick)
     return check
 end
 
+-- Horizontal space a checkbox label needs (labels differ in length per language).
+local function LabelSpace(check)
+    return math.ceil(check.label:GetStringWidth()) + 12
+end
+
 local function CreateRow(index)
     local row = CreateFrame("Frame", nil, scrollChild)
     row:SetHeight(ROW_HEIGHT)
     row:SetPoint("TOPLEFT", 0, -(index - 1) * ROW_HEIGHT)
     row:SetPoint("RIGHT", scrollChild, "RIGHT", 0, 0)
 
-    row.dungeon = CreateCheckbox(row, "Dungeon", function(_, checked)
+    row.dungeon = CreateCheckbox(row, L["Dungeon"], function(_, checked)
         Talents:SetFlag(row.configID, "dungeon", checked)
     end)
-    row.dungeon:SetPoint("RIGHT", -60, 0)
+    row.dungeon:SetPoint("RIGHT", -math.max(60, LabelSpace(row.dungeon)), 0)
 
-    row.raid = CreateCheckbox(row, "Raid", function(_, checked)
+    row.raid = CreateCheckbox(row, L["Raid"], function(_, checked)
         Talents:SetFlag(row.configID, "raid", checked)
     end)
-    row.raid:SetPoint("RIGHT", row.dungeon, "LEFT", -40, 0)
+    row.raid:SetPoint("RIGHT", row.dungeon, "LEFT", -math.max(40, LabelSpace(row.raid)), 0)
 
     row.name = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     row.name:SetPoint("LEFT", 4, 0)
@@ -190,7 +196,7 @@ function Talents:CreatePanel(parent)
     local hint = frame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     hint:SetPoint("TOP", headerText, "BOTTOM", 0, -4)
     hint:SetWidth(FRAME_WIDTH)
-    hint:SetText("Flag the loadouts you use for raids and Mythic dungeons.")
+    hint:SetText(L["Flag the loadouts you use for raids and Mythic dungeons."])
 
     local scroll = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", 20, -80)
@@ -202,7 +208,7 @@ function Talents:CreatePanel(parent)
 
     emptyText = frame:CreateFontString(nil, "OVERLAY", "GameFontDisable")
     emptyText:SetPoint("CENTER", scroll, "CENTER")
-    emptyText:SetText("No saved loadouts for this specialization.")
+    emptyText:SetText(L["No saved loadouts for this specialization."])
     return frame
 end
 
@@ -218,7 +224,7 @@ function Talents:RefreshWindow()
         local row = rows[i] or CreateRow(i)
         row.configID = loadout.id
         if loadout.id == activeID then
-            row.name:SetText(loadout.name .. " |cff40ff40(active)|r")
+            row.name:SetText(loadout.name .. " |cff40ff40" .. L["(active)"] .. "|r")
         else
             row.name:SetText(loadout.name)
         end
@@ -270,17 +276,16 @@ local function HookTalentFrame()
         end
     end
 
-    local raid = CreateCheckbox(talentsFrame, "Raid", onClick("raid"))
+    local raid = CreateCheckbox(talentsFrame, L["Raid"], onClick("raid"))
     raid:SetPoint("BOTTOMLEFT", loadSystem, "TOPLEFT", 0, 2)
-    local dungeon = CreateCheckbox(talentsFrame, "Dungeon", onClick("dungeon"))
-    dungeon:SetPoint("LEFT", raid, "RIGHT", 40, 0)
+    local dungeon = CreateCheckbox(talentsFrame, L["Dungeon"], onClick("dungeon"))
+    dungeon:SetPoint("LEFT", raid, "RIGHT", math.max(40, LabelSpace(raid)), 0)
 
     for _, check in ipairs({ raid, dungeon }) do
         check:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_TOP")
             GameTooltip:AddLine("RaidPrepared")
-            GameTooltip:AddLine("Flag the selected loadout for this content. You are warned when "
-                .. "entering it with a loadout that is not flagged.", 1, 1, 1, true)
+            GameTooltip:AddLine(L["Flag the selected loadout for this content. You are warned when entering it with a loadout that is not flagged."], 1, 1, 1, true)
             GameTooltip:Show()
         end)
         check:SetScript("OnLeave", GameTooltip_Hide)

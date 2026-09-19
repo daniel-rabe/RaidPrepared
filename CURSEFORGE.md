@@ -49,6 +49,9 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 - Never opens in combat
 - Close the window with the X button or ESC
 
+### 🌍 Languages
+- Available in English, Deutsch, Français, Español, Italiano, Português (BR), Русский, 한국어, 简体中文 and 繁體中文
+
 ---
 
 ## 🎮 How to use

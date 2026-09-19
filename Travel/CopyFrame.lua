@@ -4,6 +4,7 @@
 
 local _, RP = ...
 local T = RP.Travel
+local L = RP.L
 
 T.UI = T.UI or {}
 local UI = T.UI
@@ -45,7 +46,7 @@ local function CreateCopyFrame()
 
     local hint = copyFrame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     hint:SetPoint("BOTTOMLEFT", 14, 10)
-    hint:SetText("Ctrl+C to copy, Esc to close")
+    hint:SetText(L["Ctrl+C to copy, Esc to close"])
 
     local scroll = CreateFrame("ScrollFrame", "RaidPreparedTravelCopyScroll", copyFrame, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", 14, -32)
@@ -69,7 +70,7 @@ function UI.ShowCopy(title, text)
     if not copyFrame then
         CreateCopyFrame()
     end
-    copyTitle:SetText("RaidPrepared travel - " .. (title or "Output"))
+    copyTitle:SetText(L["RaidPrepared travel - %s"]:format(title or L["Output"]))
     copyBox:SetText(text or "")
     copyFrame:Show()
     copyBox:SetFocus()

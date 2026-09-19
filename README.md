@@ -49,6 +49,11 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 - **Left-click** a row to travel, **right-click** to favourite it. Favourites and recently used options sort to the top.
 - Travel abilities are unusable in combat anyway, so the tab greys out and says **Locked in combat**, then fills back in when combat ends.
 
+### Languages
+- The interface is translated into every WoW client language: English, German, French, Spanish (EU/MX), Italian, Brazilian Portuguese, Russian, Korean and Chinese (Simplified/Traditional).
+- The **Whisper** message is sent in your own client language.
+- Translations live in `Locales/<locale>.lua`; anything not translated falls back to English. Corrections from native speakers are welcome.
+
 ## Usage
 
 | Action | Result |
@@ -116,8 +121,10 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 | `Minimap.lua` | Minimap button and addon compartment |
 | `Talents.lua` | Talent loadout flags, instance/ready check warning, talent frame checkboxes |
 | `CharacterPanel.lua` | Enchant/socket indicators on the character panel |
+| `Locales/Locales.lua` | Localization table (English keys, English fallback) |
+| `Locales/<locale>.lua` | Translations per client language |
 | `Core.lua` | Events, raid join detection, slash commands |
-| `Travel/Core.lua` | Travel namespace, strings, event dispatch, diagnostic output capture |
+| `Travel/Core.lua` | Travel namespace, event dispatch, diagnostic output capture |
 | `Travel/Data.lua` | Curated travel candidates: hearthstones, toys, class spells, professions |
 | `Travel/Portals.lua` | Name patterns used to auto-discover Mythic+ teleports |
 | `Travel/Collector.lua` | Filters candidates down to what you own; audit, scan and discovery |

@@ -1,4 +1,5 @@
 local addonName, RP = ...
+local L = RP.L
 
 local PREFIX = "|cff33ccffRaidPrepared|r: "
 local RAID_JOIN_DELAY = 2
@@ -33,7 +34,7 @@ end
 local function FormatPotionCount(entry)
     local text = ("%s: %d"):format(entry.label, entry.count)
     if entry.activeTime then
-        text = text .. (" (active %dm)"):format(math.floor(entry.activeTime / 60))
+        text = text .. " " .. L["(active %dm)"]:format(math.floor(entry.activeTime / 60))
     end
     return text
 end
@@ -62,7 +63,7 @@ function RP.RunCheck(manual)
             end
 
             if #issues > 0 then
-                Print(("%d problem(s) found. %s, %s, %s"):format(#issues,
+                Print(L["%d problem(s) found. %s, %s, %s"]:format(#issues,
                     FormatPotionCount(potions.heal), FormatPotionCount(potions.mana),
                     FormatPotionCount(potions.weapon)))
                 RP.Dialog:Show(issues, potions)
@@ -139,7 +140,7 @@ SlashCmdList.RAIDPREPARED = function(input)
         elseif sub == "copy" then
             Travel:ShowLastOutput()
         else
-            Print("Usage: /rp travel [audit | scan <text> | discover | season | copy]")
+            Print(L["Usage: /rp travel [audit | scan <text> | discover | season | copy]"])
         end
     elseif cmd == "debug" then
         RP.Debug()
@@ -147,26 +148,27 @@ SlashCmdList.RAIDPREPARED = function(input)
     elseif cmd == "options" then
         RP.Dialog:OpenOptions()
     elseif cmd == "indicators" then
-        Print("Character panel indicators " .. (RP.CharacterPanel:Toggle() and "enabled." or "disabled."))
+        Print(RP.CharacterPanel:Toggle() and L["Character panel indicators enabled."]
+            or L["Character panel indicators disabled."])
     elseif cmd == "minimap" then
-        Print("Minimap button " .. (RP.Minimap:Toggle() and "shown." or "hidden."))
+        Print(RP.Minimap:Toggle() and L["Minimap button shown."] or L["Minimap button hidden."])
     elseif cmd == "quality" then
         local tier = tonumber(arg)
         if tier then
-            Print("Required quality rank set to " .. RP.SetMaxQualityTier(tier) .. ".")
+            Print(L["Required quality rank set to %d."]:format(RP.SetMaxQualityTier(tier)))
         else
-            Print("Required quality rank is " .. RP.GetMaxQualityTier() .. ". Usage: /rp quality <rank>")
+            Print(L["Required quality rank is %d. Usage: /rp quality <rank>"]:format(RP.GetMaxQualityTier()))
         end
     else
-        Print("Commands:")
-        print("  /rp - check enchants, gems, potions and weapon buffs")
-        print("  /rp inspect - raid/party inspect of all group members (also /rp raid, /rp party)")
-        print("  /rp talents - flag talent loadouts for raid / Mythic dungeons")
-        print("  /rp travel - search your fast-travel options (also /rp travel season)")
-        print("  /rp options - open the options tab")
-        print("  /rp indicators - toggle enchant/socket indicators on the character panel")
-        print("  /rp minimap - toggle minimap button")
-        print("  /rp quality <rank> - required enchant/gem quality rank")
-        print("  /rp debug - print raw item/socket data")
+        Print(L["Commands:"])
+        print("  /rp - " .. L["check enchants, gems, potions and weapon buffs"])
+        print("  /rp inspect - " .. L["raid/party inspect of all group members (also /rp raid, /rp party)"])
+        print("  /rp talents - " .. L["flag talent loadouts for raid / Mythic dungeons"])
+        print("  /rp travel - " .. L["search your fast-travel options (also /rp travel season)"])
+        print("  /rp options - " .. L["open the options tab"])
+        print("  /rp indicators - " .. L["toggle enchant/socket indicators on the character panel"])
+        print("  /rp minimap - " .. L["toggle minimap button"])
+        print("  /rp quality <rank> - " .. L["required enchant/gem quality rank"])
+        print("  /rp debug - " .. L["print raw item/socket data"])
     end
 end
