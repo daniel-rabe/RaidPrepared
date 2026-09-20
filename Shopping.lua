@@ -207,8 +207,9 @@ local function BuildEntries(needs)
 
     -- Favourites are pinned to the top of their own section; catalog order is kept
     -- inside both blocks, so the list never reshuffles for any other reason. Under
-    -- "Only favourites" a section with no favourite is dropped header and all,
-    -- rather than left as a bare heading.
+    -- "Only favourites" a section with no favourite is dropped header and all, and
+    -- the remaining sections drop their heading too: what is left is a handful of
+    -- hand-picked items, and a heading per item is noise rather than structure.
     local function section(label, ids)
         local favorites, rest = {}, {}
         for _, itemID in ipairs(ids) do
@@ -218,7 +219,9 @@ local function BuildEntries(needs)
         if favoritesOnly then rest = {} end
         if #favorites + #rest == 0 then return end
 
-        entries[#entries + 1] = { kind = "header", label = label }
+        if not favoritesOnly then
+            entries[#entries + 1] = { kind = "header", label = label }
+        end
         for _, itemID in ipairs(favorites) do
             entries[#entries + 1] = { kind = "item", itemID = itemID }
         end

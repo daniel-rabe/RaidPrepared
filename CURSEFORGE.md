@@ -42,7 +42,7 @@ PullReady checks your gear the moment you join a raid group. Missing enchants, e
 - Lists only what your own check flagged, so it is a shopping list rather than a catalog
 - **Shift-click** a row to paste the item straight into the **auction house search bar**
 - **Right-click** to **favourite** an item; favourites pin to the top of their section, per character
-- **Only favourites** narrows the list to what you marked - your standing shopping list
+- **Only favourites** narrows the list to what you marked - a flat shopping list without section headings
 - **Show everything** switches to the full catalog when you want to browse
 
 ### 🛡️ Raid / Party Inspect

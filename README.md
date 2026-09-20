@@ -56,7 +56,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 - By default only the sections your own check flagged are listed, so the tab answers *what do I still have to buy* rather than *what exists*. **Show everything** turns it into the full catalog.
 - **Shift-click** a row to paste the item into the auction house search bar (or into chat when the auction house is closed); **Ctrl-click** opens the dressing room.
 - **Right-click** a row to favourite it. Favourites are pinned to the top of their section and are remembered **per character**, since which ring enchant or gem you want depends on the character.
-- Two independent toggles: **Show everything** widens the list from what you are missing to the whole catalog, and **Only favourites** narrows whichever of those two you are looking at down to your favourites.
+- Two independent toggles: **Show everything** widens the list from what you are missing to the whole catalog, and **Only favourites** narrows whichever of those two you are looking at down to your favourites - as one flat list, without the section headings.
 - Legs list spellthreads or armor kits depending on the armor type you actually wear.
 
 ### Languages
