@@ -1,5 +1,5 @@
-local _, RP = ...
-local L = RP.NewLocale("koKR")
+local _, PR = ...
+local L = PR.NewLocale("koKR")
 
 L["cat.hearth"] = "귀환석"
 L["cat.dungeon"] = "던전"
@@ -19,7 +19,7 @@ L["Options"] = "설정"
 L["Everything looks good!"] = "모두 준비되었습니다!"
 L["%d problem(s) found, %d missing"] = "문제 %d개 발견, 누락 %d개"
 L["%d problem(s) found. %s"] = "문제 %d개 발견. %s"
-L["No check run yet - use /rp or the minimap button."] = "아직 점검하지 않았습니다 - /rp 또는 미니맵 버튼을 사용하세요."
+L["No check run yet - use /pr or the minimap button."] = "아직 점검하지 않았습니다 - /pr 또는 미니맵 버튼을 사용하세요."
 L["(active %dm)"] = "(%d분 남음)"
 L["Show enchant & socket indicators on the character panel"] = "캐릭터 창에 마법부여 및 보석 홈 표시기 표시"
 L["Icons next to item slots and a red border on items with a missing enchant or gem."] = "장비 칸 옆에 아이콘을 표시하고, 마법부여나 보석이 없는 아이템에 빨간 테두리를 표시합니다."
@@ -125,9 +125,9 @@ L["Drag: move button"] = "드래그: 버튼 이동"
 -- Slash commands
 L["Commands:"] = "명령어:"
 L["check enchants, gems, potions and weapon buffs"] = "마법부여, 보석, 물약 및 무기 강화제 점검"
-L["raid/party inspect of all group members (also /rp raid, /rp party)"] = "모든 파티원 살펴보기 (/rp raid, /rp party도 가능)"
+L["raid/party inspect of all group members (also /pr raid, /pr party)"] = "모든 파티원 살펴보기 (/pr raid, /pr party도 가능)"
 L["flag talent loadouts for raid / Mythic dungeons"] = "공격대 / 신화 던전용 특성 구성 표시"
-L["search your fast-travel options (also /rp travel season)"] = "빠른 이동 수단 검색 (/rp travel season도 가능)"
+L["search your fast-travel options (also /pr travel season)"] = "빠른 이동 수단 검색 (/pr travel season도 가능)"
 L["list the enchants, gems and consumables you still need"] = "아직 필요한 마법부여, 보석, 소모품 목록"
 L["open the options tab"] = "설정 탭 열기"
 L["toggle enchant/socket indicators on the character panel"] = "캐릭터 창의 마법부여/보석 홈 표시기 켜기/끄기"
@@ -139,8 +139,8 @@ L["Character panel indicators disabled."] = "캐릭터 창 표시기를 껐습�
 L["Minimap button shown."] = "미니맵 버튼을 표시합니다."
 L["Minimap button hidden."] = "미니맵 버튼을 숨깁니다."
 L["Required quality rank set to %d."] = "필요한 품질 등급을 %d(으)로 설정했습니다."
-L["Required quality rank is %d. Usage: /rp quality <rank>"] = "필요한 품질 등급: %d. 사용법: /rp quality <등급>"
-L["Usage: /rp travel [audit | scan <text> | discover | season | copy]"] = "사용법: /rp travel [audit | scan <텍스트> | discover | season | copy]"
+L["Required quality rank is %d. Usage: /pr quality <rank>"] = "필요한 품질 등급: %d. 사용법: /pr quality <등급>"
+L["Usage: /pr travel [audit | scan <text> | discover | season | copy]"] = "사용법: /pr travel [audit | scan <텍스트> | discover | season | copy]"
 
 -- Travel
 L["Search travel options..."] = "이동 수단 검색..."
@@ -154,7 +154,7 @@ L["Season data not loaded yet."] = "시즌 데이터를 아직 불러오지 않�
 L["Right-click to favourite"] = "오른쪽 클릭으로 즐겨찾기"
 L["+%d more - keep typing to narrow"] = "+%d개 더 - 계속 입력해 좁히세요"
 L["Ctrl+C to copy, Esc to close"] = "Ctrl+C로 복사, Esc로 닫기"
-L["RaidPrepared travel - %s"] = "RaidPrepared 이동 - %s"
+L["PullReady travel - %s"] = "PullReady 이동 - %s"
 L["Output"] = "출력"
 L["Last output"] = "마지막 출력"
 L["no output."] = "출력 없음."

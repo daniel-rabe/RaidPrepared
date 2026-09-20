@@ -1,5 +1,5 @@
-local _, RP = ...
-local L = RP.NewLocale("zhTW")
+local _, PR = ...
+local L = PR.NewLocale("zhTW")
 
 L["cat.hearth"] = "爐石"
 L["cat.dungeon"] = "地城"
@@ -19,7 +19,7 @@ L["Options"] = "選項"
 L["Everything looks good!"] = "一切就緒！"
 L["%d problem(s) found, %d missing"] = "發現%d個問題，%d個缺失"
 L["%d problem(s) found. %s"] = "發現%d個問題。%s"
-L["No check run yet - use /rp or the minimap button."] = "尚未檢查 - 請使用/rp或小地圖按鈕。"
+L["No check run yet - use /pr or the minimap button."] = "尚未檢查 - 請使用/pr或小地圖按鈕。"
 L["(active %dm)"] = "（生效中，剩餘%d分鐘）"
 L["Show enchant & socket indicators on the character panel"] = "在角色面板上顯示附魔與插槽提示"
 L["Icons next to item slots and a red border on items with a missing enchant or gem."] = "在裝備欄旁顯示圖示，並為缺少附魔或寶石的物品加上紅色邊框。"
@@ -125,9 +125,9 @@ L["Drag: move button"] = "拖曳：移動按鈕"
 -- Slash commands
 L["Commands:"] = "指令："
 L["check enchants, gems, potions and weapon buffs"] = "檢查附魔、寶石、藥水與武器強化"
-L["raid/party inspect of all group members (also /rp raid, /rp party)"] = "觀察所有隊伍成員（也可用/rp raid、/rp party）"
+L["raid/party inspect of all group members (also /pr raid, /pr party)"] = "觀察所有隊伍成員（也可用/pr raid、/pr party）"
 L["flag talent loadouts for raid / Mythic dungeons"] = "為團隊副本/傳奇地城標記天賦配置"
-L["search your fast-travel options (also /rp travel season)"] = "搜尋你的快速傳送方式（也可用/rp travel season）"
+L["search your fast-travel options (also /pr travel season)"] = "搜尋你的快速傳送方式（也可用/pr travel season）"
 L["list the enchants, gems and consumables you still need"] = "列出你仍然缺少的附魔、寶石與消耗品"
 L["open the options tab"] = "開啟選項頁"
 L["toggle enchant/socket indicators on the character panel"] = "開關角色面板上的附魔/插槽提示"
@@ -139,8 +139,8 @@ L["Character panel indicators disabled."] = "已關閉角色面板提示。"
 L["Minimap button shown."] = "已顯示小地圖按鈕。"
 L["Minimap button hidden."] = "已隱藏小地圖按鈕。"
 L["Required quality rank set to %d."] = "最低品質等級已設為%d。"
-L["Required quality rank is %d. Usage: /rp quality <rank>"] = "目前最低品質等級為%d。用法：/rp quality <等級>"
-L["Usage: /rp travel [audit | scan <text> | discover | season | copy]"] = "用法：/rp travel [audit | scan <文字> | discover | season | copy]"
+L["Required quality rank is %d. Usage: /pr quality <rank>"] = "目前最低品質等級為%d。用法：/pr quality <等級>"
+L["Usage: /pr travel [audit | scan <text> | discover | season | copy]"] = "用法：/pr travel [audit | scan <文字> | discover | season | copy]"
 
 -- Travel
 L["Search travel options..."] = "搜尋傳送方式..."
@@ -154,7 +154,7 @@ L["Season data not loaded yet."] = "賽季資料尚未載入。"
 L["Right-click to favourite"] = "右鍵加入最愛"
 L["+%d more - keep typing to narrow"] = "還有%d項 - 繼續輸入以縮小範圍"
 L["Ctrl+C to copy, Esc to close"] = "Ctrl+C複製，Esc關閉"
-L["RaidPrepared travel - %s"] = "RaidPrepared傳送 - %s"
+L["PullReady travel - %s"] = "PullReady傳送 - %s"
 L["Output"] = "輸出"
 L["Last output"] = "上次輸出"
 L["no output."] = "無輸出。"

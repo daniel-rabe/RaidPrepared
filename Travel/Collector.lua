@@ -1,9 +1,9 @@
--- RaidPrepared - Travel/Collector.lua
+-- PullReady - Travel/Collector.lua
 -- Turns the candidate tables in Data/ into the list of travel options this
 -- character actually owns, with resolved names and icons.
 
-local _, RP = ...
-local T = RP.Travel
+local _, PR = ...
+local T = PR.Travel
 
 T.Collector = T.Collector or {}
 local Collector = T.Collector
@@ -197,7 +197,7 @@ local function ExpandFlyout(flyoutID, fn, lineName)
         local okSlot, spellID, _, isKnown, spellName = pcall(slotInfo, flyoutID, slot)
         if okSlot and spellID then
             -- Report unknown slots too: Build filters on IsPlayerSpell anyway,
-            -- and seeing them in /rp travel scan is how teleport IDs get harvested.
+            -- and seeing them in /pr travel scan is how teleport IDs get harvested.
             fn(spellID, spellName or tostring(spellID), isKnown and source or (source .. " [unknown]"))
         end
     end
@@ -407,7 +407,7 @@ function Collector.Audit()
     if bad == 0 then
         T:Out("audit: all %d entries resolve.", total)
     else
-        T:Out("audit: %d of %d did not resolve. Item data is fetched from the server on demand - wait a few seconds and run |cffffff00/rp travel audit|r again; whatever still fails is a bad ID.", bad, total)
+        T:Out("audit: %d of %d did not resolve. Item data is fetched from the server on demand - wait a few seconds and run |cffffff00/pr travel audit|r again; whatever still fails is a bad ID.", bad, total)
     end
     T:Out("audit: %d option(s) available on this character.", #Collector.Build())
 end
@@ -439,7 +439,7 @@ function Collector.ReportDiscovery()
             shown[#shown + 1] = rule.pattern
         end
         T:Out("Patterns tried: %s", table.concat(shown, ", "))
-        T:Out("Run |cffffff00/rp travel scan <part of the port name>|r to find what it is actually called.")
+        T:Out("Run |cffffff00/pr travel scan <part of the port name>|r to find what it is actually called.")
     end
 end
 

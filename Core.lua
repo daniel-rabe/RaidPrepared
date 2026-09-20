@@ -1,11 +1,11 @@
-local addonName, RP = ...
-local L = RP.L
+local addonName, PR = ...
+local L = PR.L
 
-local PREFIX = "|cff33ccffRaidPrepared|r: "
+local PREFIX = "|cff33ccffPullReady|r: "
 local RAID_JOIN_DELAY = 2
 
 local DEFAULTS = {
-    maxQualityTier = nil, -- nil = RP.DEFAULT_MAX_QUALITY_TIER
+    maxQualityTier = nil, -- nil = PR.DEFAULT_MAX_QUALITY_TIER
     minimap = { hide = false, angle = 225 },
     characterIndicators = true, -- enchant/socket indicators on the character panel
     localizedWhisper = false,   -- false = whisper in whisperLocale (recipient's language is unknown)
@@ -47,27 +47,27 @@ end
 
 -- Clamped on read as well: a rank saved before the selectable range shrank must not
 -- flag every enchant and gem as low quality.
-function RP.GetMaxQualityTier()
-    local tier = RaidPreparedDB.maxQualityTier or RP.DEFAULT_MAX_QUALITY_TIER
-    return math.max(RP.MIN_QUALITY_RANK_OPTION, math.min(RP.MAX_QUALITY_RANK_OPTION, tier))
+function PR.GetMaxQualityTier()
+    local tier = PullReadyDB.maxQualityTier or PR.DEFAULT_MAX_QUALITY_TIER
+    return math.max(PR.MIN_QUALITY_RANK_OPTION, math.min(PR.MAX_QUALITY_RANK_OPTION, tier))
 end
 
-function RP.SetMaxQualityTier(tier)
-    tier = math.max(RP.MIN_QUALITY_RANK_OPTION, math.min(RP.MAX_QUALITY_RANK_OPTION, math.floor(tier)))
-    RaidPreparedDB.maxQualityTier = tier
-    RP.CharacterPanel:RequestUpdate()
-    RP.Dialog:RefreshQuality()
+function PR.SetMaxQualityTier(tier)
+    tier = math.max(PR.MIN_QUALITY_RANK_OPTION, math.min(PR.MAX_QUALITY_RANK_OPTION, math.floor(tier)))
+    PullReadyDB.maxQualityTier = tier
+    PR.CharacterPanel:RequestUpdate()
+    PR.Dialog:RefreshQuality()
     return tier
 end
 
 -- manual = true: always show the dialog (also when everything is fine).
-function RP.RunCheck(manual)
-    RP.ScanAsync(function(issues)
-        RP.ScanPotionsAsync(function(potions, potionIssues)
+function PR.RunCheck(manual)
+    PR.ScanAsync(function(issues)
+        PR.ScanPotionsAsync(function(potions, potionIssues)
             for _, issue in ipairs(potionIssues) do
                 issues[#issues + 1] = issue
             end
-            local talentIssue = RP.Talents:Check()
+            local talentIssue = PR.Talents:Check()
             if talentIssue then
                 issues[#issues + 1] = talentIssue
             end
@@ -78,9 +78,9 @@ function RP.RunCheck(manual)
                     counts[#counts + 1] = FormatPotionCount(entry)
                 end
                 Print(L["%d problem(s) found. %s"]:format(#issues, table.concat(counts, ", ")))
-                RP.Dialog:Show(issues, potions)
+                PR.Dialog:Show(issues, potions)
             elseif manual then
-                RP.Dialog:Show(issues, potions)
+                PR.Dialog:Show(issues, potions)
             end
         end)
     end)
@@ -92,10 +92,25 @@ local function CheckRaidJoin()
     local inRaid = IsInRaid()
     if inRaid and not wasInRaid then
         C_Timer.After(RAID_JOIN_DELAY, function()
-            if IsInRaid() then RP.RunCheck(false) end
+            if IsInRaid() then PR.RunCheck(false) end
         end)
     end
     wasInRaid = inRaid
+end
+
+-- The addon was called RaidPrepared until 1.5.0. The folder name did not change
+-- with it, so the saved variables are still the same file and the old tables are
+-- simply handed over. Declaring the old names in the toc is what makes WoW load
+-- them at all; clearing them here stops them being written out again, so the toc
+-- entries can go away a release or two from now.
+local function AdoptRenamedVariables()
+    if PullReadyDB == nil and RaidPreparedDB ~= nil then
+        PullReadyDB = RaidPreparedDB
+    end
+    if PullReadyCharDB == nil and RaidPreparedCharDB ~= nil then
+        PullReadyCharDB = RaidPreparedCharDB
+    end
+    RaidPreparedDB, RaidPreparedCharDB = nil, nil
 end
 
 local events = CreateFrame("Frame")
@@ -105,15 +120,16 @@ events:RegisterEvent("GROUP_ROSTER_UPDATE")
 events:SetScript("OnEvent", function(_, event, arg1, arg2)
     if event == "ADDON_LOADED" then
         if arg1 ~= addonName then return end
-        RaidPreparedDB = RaidPreparedDB or {}
-        ApplyDefaults(RaidPreparedDB, DEFAULTS)
-        RP.Travel.db = RaidPreparedDB.travel
-        RaidPreparedCharDB = RaidPreparedCharDB or {}
-        RaidPreparedCharDB.loadoutFlags = RaidPreparedCharDB.loadoutFlags or {}
-        RaidPreparedCharDB.shoppingFavorites = RaidPreparedCharDB.shoppingFavorites or {}
-        RP.Minimap:Create()
-        RP.Talents:Init()
-        RP.CharacterPanel:Init()
+        AdoptRenamedVariables()
+        PullReadyDB = PullReadyDB or {}
+        ApplyDefaults(PullReadyDB, DEFAULTS)
+        PR.Travel.db = PullReadyDB.travel
+        PullReadyCharDB = PullReadyCharDB or {}
+        PullReadyCharDB.loadoutFlags = PullReadyCharDB.loadoutFlags or {}
+        PullReadyCharDB.shoppingFavorites = PullReadyCharDB.shoppingFavorites or {}
+        PR.Minimap:Create()
+        PR.Talents:Init()
+        PR.CharacterPanel:Init()
         events:UnregisterEvent("ADDON_LOADED")
     elseif event == "PLAYER_ENTERING_WORLD" then
         local isInitialLogin, isReloadingUi = arg1, arg2
@@ -127,21 +143,21 @@ events:SetScript("OnEvent", function(_, event, arg1, arg2)
     end
 end)
 
-SLASH_RAIDPREPARED1 = "/raidprepared"
-SLASH_RAIDPREPARED2 = "/rp"
-SlashCmdList.RAIDPREPARED = function(input)
+SLASH_PULLREADY1 = "/pullready"
+SLASH_PULLREADY2 = "/pr"
+SlashCmdList.PULLREADY = function(input)
     local cmd, arg = strtrim(input or ""):lower():match("^(%S*)%s*(.-)$")
     if cmd == "" or cmd == "check" then
-        RP.RunCheck(true)
+        PR.RunCheck(true)
     elseif cmd == "raid" or cmd == "party" or cmd == "inspect" then
-        RP.RaidCheck:Open()
+        PR.RaidCheck:Open()
     elseif cmd == "talents" then
-        RP.Talents:Open()
+        PR.Talents:Open()
     elseif cmd == "shop" or cmd == "shopping" then
-        RP.Shopping:Toggle()
+        PR.Shopping:Toggle()
     elseif cmd == "travel" then
         local sub, rest = arg:match("^(%S*)%s*(.-)$")
-        local Travel = RP.Travel
+        local Travel = PR.Travel
         if sub == "" then
             Travel:Toggle()
         elseif sub == "audit" then
@@ -155,36 +171,36 @@ SlashCmdList.RAIDPREPARED = function(input)
         elseif sub == "copy" then
             Travel:ShowLastOutput()
         else
-            Print(L["Usage: /rp travel [audit | scan <text> | discover | season | copy]"])
+            Print(L["Usage: /pr travel [audit | scan <text> | discover | season | copy]"])
         end
     elseif cmd == "debug" then
-        RP.Debug()
-        RP.DebugPotions()
+        PR.Debug()
+        PR.DebugPotions()
     elseif cmd == "options" then
-        RP.Dialog:OpenOptions()
+        PR.Dialog:OpenOptions()
     elseif cmd == "indicators" then
-        Print(RP.CharacterPanel:Toggle() and L["Character panel indicators enabled."]
+        Print(PR.CharacterPanel:Toggle() and L["Character panel indicators enabled."]
             or L["Character panel indicators disabled."])
     elseif cmd == "minimap" then
-        Print(RP.Minimap:Toggle() and L["Minimap button shown."] or L["Minimap button hidden."])
+        Print(PR.Minimap:Toggle() and L["Minimap button shown."] or L["Minimap button hidden."])
     elseif cmd == "quality" then
         local tier = tonumber(arg)
         if tier then
-            Print(L["Required quality rank set to %d."]:format(RP.SetMaxQualityTier(tier)))
+            Print(L["Required quality rank set to %d."]:format(PR.SetMaxQualityTier(tier)))
         else
-            Print(L["Required quality rank is %d. Usage: /rp quality <rank>"]:format(RP.GetMaxQualityTier()))
+            Print(L["Required quality rank is %d. Usage: /pr quality <rank>"]:format(PR.GetMaxQualityTier()))
         end
     else
         Print(L["Commands:"])
-        print("  /rp - " .. L["check enchants, gems, potions and weapon buffs"])
-        print("  /rp inspect - " .. L["raid/party inspect of all group members (also /rp raid, /rp party)"])
-        print("  /rp talents - " .. L["flag talent loadouts for raid / Mythic dungeons"])
-        print("  /rp travel - " .. L["search your fast-travel options (also /rp travel season)"])
-        print("  /rp shop - " .. L["list the enchants, gems and consumables you still need"])
-        print("  /rp options - " .. L["open the options tab"])
-        print("  /rp indicators - " .. L["toggle enchant/socket indicators on the character panel"])
-        print("  /rp minimap - " .. L["toggle minimap button"])
-        print("  /rp quality <rank> - " .. L["required enchant/gem quality rank"])
-        print("  /rp debug - " .. L["print raw item/socket data"])
+        print("  /pr - " .. L["check enchants, gems, potions and weapon buffs"])
+        print("  /pr inspect - " .. L["raid/party inspect of all group members (also /pr raid, /pr party)"])
+        print("  /pr talents - " .. L["flag talent loadouts for raid / Mythic dungeons"])
+        print("  /pr travel - " .. L["search your fast-travel options (also /pr travel season)"])
+        print("  /pr shop - " .. L["list the enchants, gems and consumables you still need"])
+        print("  /pr options - " .. L["open the options tab"])
+        print("  /pr indicators - " .. L["toggle enchant/socket indicators on the character panel"])
+        print("  /pr minimap - " .. L["toggle minimap button"])
+        print("  /pr quality <rank> - " .. L["required enchant/gem quality rank"])
+        print("  /pr debug - " .. L["print raw item/socket data"])
     end
 end

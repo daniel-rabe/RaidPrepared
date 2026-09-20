@@ -1,15 +1,15 @@
-local _, RP = ...
-local L = RP.L
+local _, PR = ...
+local L = PR.L
 
 local ICON = "Interface\\Icons\\INV_Misc_Gem_Diamond_02"
 
 local Minimap_ = {}
-RP.Minimap = Minimap_
+PR.Minimap = Minimap_
 
 local button
 
 local function UpdatePosition()
-    local angle = math.rad(RaidPreparedDB.minimap.angle or 225)
+    local angle = math.rad(PullReadyDB.minimap.angle or 225)
     local radius = (Minimap:GetWidth() / 2) + 5
     button:ClearAllPoints()
     button:SetPoint("CENTER", Minimap, "CENTER", math.cos(angle) * radius, math.sin(angle) * radius)
@@ -20,16 +20,16 @@ local function OnDragUpdate()
     local cx, cy = GetCursorPosition()
     local scale = Minimap:GetEffectiveScale()
     cx, cy = cx / scale, cy / scale
-    RaidPreparedDB.minimap.angle = math.deg(math.atan2(cy - my, cx - mx)) % 360
+    PullReadyDB.minimap.angle = math.deg(math.atan2(cy - my, cx - mx)) % 360
     UpdatePosition()
 end
 
 local function ShowTooltip(owner)
     GameTooltip:SetOwner(owner, "ANCHOR_LEFT")
-    GameTooltip:AddLine("RaidPrepared")
+    GameTooltip:AddLine("PullReady")
     GameTooltip:AddLine(L["Left-click: check enchants, gems & consumables"], 1, 1, 1)
-    if RP.RaidCheck:IsAllowed() then
-        GameTooltip:AddLine(L["Right-click: %s"]:format(RP.RaidCheck:GetTitle()), 1, 1, 1)
+    if PR.RaidCheck:IsAllowed() then
+        GameTooltip:AddLine(L["Right-click: %s"]:format(PR.RaidCheck:GetTitle()), 1, 1, 1)
     end
     GameTooltip:AddLine(L["Shift-click: talent loadout flags"], 1, 1, 1)
     GameTooltip:AddLine(L["Ctrl-click: travel search"], 1, 1, 1)
@@ -40,7 +40,7 @@ end
 function Minimap_:Create()
     if button then return end
 
-    button = CreateFrame("Button", "RaidPreparedMinimapButton", Minimap)
+    button = CreateFrame("Button", "PullReadyMinimapButton", Minimap)
     button:SetSize(31, 31)
     button:SetFrameStrata("MEDIUM")
     button:SetFrameLevel(8)
@@ -66,13 +66,13 @@ function Minimap_:Create()
 
     button:SetScript("OnClick", function(_, mouseButton)
         if IsControlKeyDown() then
-            RP.Travel:Toggle()
+            PR.Travel:Toggle()
         elseif IsShiftKeyDown() then
-            RP.Talents:Toggle()
+            PR.Talents:Toggle()
         elseif mouseButton == "RightButton" then
-            RP.RaidCheck:Toggle()
+            PR.RaidCheck:Toggle()
         else
-            RP.RunCheck(true)
+            PR.RunCheck(true)
         end
     end)
     button:SetScript("OnDragStart", function(self)
@@ -91,32 +91,32 @@ end
 
 function Minimap_:UpdateVisibility()
     if not button then return end
-    button:SetShown(not RaidPreparedDB.minimap.hide)
+    button:SetShown(not PullReadyDB.minimap.hide)
 end
 
 function Minimap_:Toggle()
-    RaidPreparedDB.minimap.hide = not RaidPreparedDB.minimap.hide
+    PullReadyDB.minimap.hide = not PullReadyDB.minimap.hide
     self:UpdateVisibility()
-    return not RaidPreparedDB.minimap.hide
+    return not PullReadyDB.minimap.hide
 end
 
 -- Addon compartment (retail minimap addon menu), referenced from the TOC.
-function RaidPrepared_OnAddonCompartmentClick(_, mouseButton)
+function PullReady_OnAddonCompartmentClick(_, mouseButton)
     if IsControlKeyDown() then
-        RP.Travel:Toggle()
+        PR.Travel:Toggle()
     elseif IsShiftKeyDown() then
-        RP.Talents:Toggle()
+        PR.Talents:Toggle()
     elseif mouseButton == "RightButton" then
-        RP.RaidCheck:Toggle()
+        PR.RaidCheck:Toggle()
     else
-        RP.RunCheck(true)
+        PR.RunCheck(true)
     end
 end
 
-function RaidPrepared_OnAddonCompartmentEnter(_, menuButtonFrame)
+function PullReady_OnAddonCompartmentEnter(_, menuButtonFrame)
     ShowTooltip(menuButtonFrame)
 end
 
-function RaidPrepared_OnAddonCompartmentLeave()
+function PullReady_OnAddonCompartmentLeave()
     GameTooltip:Hide()
 end

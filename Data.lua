@@ -1,11 +1,11 @@
-local _, RP = ...
+local _, PR = ...
 
 -- Everything in this file is patch-specific. Review it when a new patch/season launches.
 
 -- Specialization API compat. The GetSpecialization / GetSpecializationInfo globals only exist
 -- while the "loadDeprecationFallbacks" CVar is on and Blizzard drops them next expansion;
 -- C_SpecializationInfo is the current home. Always go through these helpers.
-function RP.GetSpecIndex()
+function PR.GetSpecIndex()
     if C_SpecializationInfo and C_SpecializationInfo.GetSpecialization then
         return C_SpecializationInfo.GetSpecialization()
     end
@@ -14,7 +14,7 @@ function RP.GetSpecIndex()
     end
 end
 
-function RP.GetSpecInfo(specIndex)
+function PR.GetSpecInfo(specIndex)
     if C_SpecializationInfo and C_SpecializationInfo.GetSpecializationInfo then
         return C_SpecializationInfo.GetSpecializationInfo(specIndex)
     end
@@ -24,7 +24,7 @@ function RP.GetSpecInfo(specIndex)
 end
 
 -- Slots that are expected to carry an enchant (Midnight).
-RP.ENCHANT_SLOTS = {
+PR.ENCHANT_SLOTS = {
     [INVSLOT_HEAD]      = true,
     [INVSLOT_SHOULDER]  = true,
     [INVSLOT_CHEST]     = true,
@@ -37,56 +37,56 @@ RP.ENCHANT_SLOTS = {
 }
 
 -- Off-hand equip locations that can be enchanted (shields / held-in-off-hand items cannot).
-RP.ENCHANTABLE_OFFHAND = {
+PR.ENCHANTABLE_OFFHAND = {
     INVTYPE_WEAPON = true,
     INVTYPE_WEAPONOFFHAND = true,
 }
 
 -- Highest crafted quality tier for enchants and gems. Anything below is reported as "low quality".
--- Can be changed in-game with /rp quality <n> (stored in SavedVariables).
-RP.DEFAULT_MAX_QUALITY_TIER = 2
-RP.MIN_QUALITY_RANK_OPTION = 1 -- range selectable in the options tab / slash command
-RP.MAX_QUALITY_RANK_OPTION = 2 -- enchants and gems are crafted in two quality ranks this season
+-- Can be changed in-game with /pr quality <n> (stored in SavedVariables).
+PR.DEFAULT_MAX_QUALITY_TIER = 2
+PR.MIN_QUALITY_RANK_OPTION = 1 -- range selectable in the options tab / slash command
+PR.MAX_QUALITY_RANK_OPTION = 2 -- enchants and gems are crafted in two quality ranks this season
 
 -- Optional whitelist of current-season enchant IDs (the second field of an item link).
 -- When non-empty, any enchant not listed here is reported as "outdated".
 -- Leave empty to skip the check. Example: [7985] = true,
-RP.KNOWN_CURRENT_ENCHANTS = {
+PR.KNOWN_CURRENT_ENCHANTS = {
 }
 
 -- Gems whose expansion ID is lower than this are reported as "outdated".
-RP.MIN_GEM_EXPANSION = LE_EXPANSION_LEVEL_CURRENT
+PR.MIN_GEM_EXPANSION = LE_EXPANSION_LEVEL_CURRENT
 
 -- Unique epic gems; one of them should be socketed somewhere in the gear.
 -- Matched by item ID (one ID per quality rank). Leave empty to skip the check.
-RP.EPIC_GEM_IDS = {
+PR.EPIC_GEM_IDS = {
     [240982] = true, [240983] = true, -- Indecipherable Eversong Diamond
     [240966] = true, [240967] = true, -- Powerful Eversong Diamond
     [240970] = true, [240971] = true, -- Stoic Eversong Diamond
     [240968] = true, [240969] = true, -- Telluric Eversong Diamond
 }
-RP.EPIC_GEM_ICON_ID = 240967 -- icon shown for the missing epic gem warning
+PR.EPIC_GEM_ICON_ID = 240967 -- icon shown for the missing epic gem warning
 
 -- Consumable check. Items are matched by item ID, so it works with every client language.
 -- Each crafting quality rank is a separate item ID - list all of them. Update each season.
 -- Warn when fewer than the minimum are in the bags.
-RP.MIN_HEALING_POTIONS = 1
-RP.MIN_MANA_POTIONS = 1
-RP.MIN_WEAPON_BUFFS = 1
-RP.MIN_POWER_POTIONS = 1
+PR.MIN_HEALING_POTIONS = 1
+PR.MIN_MANA_POTIONS = 1
+PR.MIN_WEAPON_BUFFS = 1
+PR.MIN_POWER_POTIONS = 1
 
-RP.HEALING_POTION_IDS = {
+PR.HEALING_POTION_IDS = {
     [241304] = true, [241305] = true, -- Silvermoon Health Potion
     [271883] = true, [271884] = true, -- Concentrated Silvermoon Health Potion
 }
 
-RP.MANA_POTION_IDS = {
+PR.MANA_POTION_IDS = {
     [241300] = true, [241301] = true, -- Lightfused Mana Potion
 }
 
 -- Combat potions that grant a temporary burst of power ("Light's Potential" and friends).
 -- The "Fleeting" versions are the soulbound crafts of the same potion.
-RP.POWER_POTION_IDS = {
+PR.POWER_POTION_IDS = {
     [241308] = true, [241309] = true, -- Light's Potential
     [245897] = true, [245898] = true, -- Fleeting Light's Potential
     [241292] = true, [241293] = true, -- Draught of Rampant Abandon
@@ -101,7 +101,7 @@ RP.POWER_POTION_IDS = {
 }
 
 -- Temporary weapon buffs: oils, sharpening stones, weightstones and hunter ammo.
-RP.WEAPON_BUFF_IDS = {
+PR.WEAPON_BUFF_IDS = {
     [243733] = true, [243734] = true, -- Thalassian Phoenix Oil
     [243735] = true, [243736] = true, -- Oil of Dawn
     [243737] = true, [243738] = true, -- Smuggler's Enchanted Edge
@@ -113,13 +113,13 @@ RP.WEAPON_BUFF_IDS = {
 
 -- Specialization roles that need mana potions ("HEALER", "DAMAGER", "TANK").
 -- Mana potion counts are still shown for other roles, but never reported as a problem.
-RP.MANA_POTION_ROLES = {
+PR.MANA_POTION_ROLES = {
     HEALER = true,
 }
 
 -- Classes that use their own weapon imbues/poisons/runes instead of oils or stones.
 -- Their weapon buff count is still shown, but never reported as a problem.
-RP.WEAPON_BUFF_EXEMPT_CLASSES = {
+PR.WEAPON_BUFF_EXEMPT_CLASSES = {
     DEATHKNIGHT = true,
     ROGUE = true,
     SHAMAN = true,
@@ -139,8 +139,8 @@ RP.WEAPON_BUFF_EXEMPT_CLASSES = {
 -- Heliotrope gems (PvP items sharing the Thalassian Diamond unique-equipped family).
 
 -- Enchants keyed by the inventory slot they apply to. FINGER2 reuses the FINGER1 list
--- and OFFHAND reuses the MAINHAND list (see RP.GetEnchantShopSlot).
-RP.ENCHANT_ITEMS = {
+-- and OFFHAND reuses the MAINHAND list (see PR.GetEnchantShopSlot).
+PR.ENCHANT_ITEMS = {
     [INVSLOT_HEAD] = {
         243979, -- Enchant Helm - Blessing of Speed
         243981, -- Enchant Helm - Empowered Blessing of Speed
@@ -194,7 +194,7 @@ RP.ENCHANT_ITEMS = {
 }
 
 -- Legs take a spellthread (cloth) or an armor kit (leather/mail/plate), not an enchant.
-RP.LEG_ARMOR_ITEMS = {
+PR.LEG_ARMOR_ITEMS = {
     cloth = {
         240157, -- Bright Linen Spellthread
         240133, -- Sunfire Silk Spellthread
@@ -210,15 +210,15 @@ RP.LEG_ARMOR_ITEMS = {
 -- Gems grouped by mineral. The mineral sets the primary stat, the cut adjective the
 -- secondary one. "Flawless" is a strictly better tier of the same gem (+17 versus +13
 -- Versatility at the same item level), so the plain line is only shown under "Show all".
-RP.GEM_ITEMS = {
+PR.GEM_ITEMS = {
     { mineral = "Lapis",    flawless = { 240912, 240916, 240914, 240918 }, plain = { 240880, 240884, 240882, 240886 } },
     { mineral = "Peridot",  flawless = { 240888, 240894, 240890, 240892 }, plain = { 240856, 240862, 240858, 240860 } },
     { mineral = "Garnet",   flawless = { 240904, 240910, 240906, 240908 }, plain = { 240872, 240878, 240874, 240876 } },
     { mineral = "Amethyst", flawless = { 240896, 240902, 240900, 240898 }, plain = { 240864, 240870, 240868, 240866 } },
 }
 
--- The unique epic diamonds, one row each (rank 2 of every pair in RP.EPIC_GEM_IDS).
-RP.EPIC_GEM_SHOP_IDS = {
+-- The unique epic diamonds, one row each (rank 2 of every pair in PR.EPIC_GEM_IDS).
+PR.EPIC_GEM_SHOP_IDS = {
     240983, -- Indecipherable Eversong Diamond
     240967, -- Powerful Eversong Diamond
     240971, -- Stoic Eversong Diamond
@@ -227,8 +227,8 @@ RP.EPIC_GEM_SHOP_IDS = {
 
 -- The consumable tables above are sets, and pairs() order is not stable, so the shopping
 -- list needs its own ordered copy. Both crafting ranks are listed; the tab keeps one row
--- per item name and drops the lower-item-level rank (see RP.BuildShopItems).
-RP.CONSUMABLE_SHOP_IDS = {
+-- per item name and drops the lower-item-level rank (see PR.BuildShopItems).
+PR.CONSUMABLE_SHOP_IDS = {
     heal   = { 241304, 241305, 271883, 271884 },
     mana   = { 241300, 241301 },
     power  = { 241308, 241309, 245897, 245898, 241292, 241293, 241288, 241289, 245902, 245903,
@@ -240,13 +240,13 @@ RP.CONSUMABLE_SHOP_IDS = {
 
 -- The enchant list a slot shops from: the two ring slots share one list, as do the two
 -- weapon slots. Legs are handled separately (spellthread / armor kit).
-function RP.GetEnchantShopSlot(slot)
+function PR.GetEnchantShopSlot(slot)
     if slot == INVSLOT_FINGER2 then return INVSLOT_FINGER1 end
     if slot == INVSLOT_OFFHAND then return INVSLOT_MAINHAND end
     return slot
 end
 
-RP.SLOT_NAMES = {
+PR.SLOT_NAMES = {
     [INVSLOT_HEAD]      = HEADSLOT,
     [INVSLOT_NECK]      = NECKSLOT,
     [INVSLOT_SHOULDER]  = SHOULDERSLOT,
@@ -267,7 +267,7 @@ RP.SLOT_NAMES = {
 }
 
 -- English slot names for whispers: the recipient's client language is unknown.
-RP.SLOT_NAMES_EN = {
+PR.SLOT_NAMES_EN = {
     [INVSLOT_HEAD]      = "Head",
     [INVSLOT_NECK]      = "Neck",
     [INVSLOT_SHOULDER]  = "Shoulder",

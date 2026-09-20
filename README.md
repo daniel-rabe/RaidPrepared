@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="media/logo.png" alt="RaidPrepared" width="200">
+  <img src="media/logo.png" alt="PullReady" width="200">
 </p>
 
-# RaidPrepared
+# PullReady
 
-A World of Warcraft (Retail – Midnight) addon that makes sure you and your raid show up prepared: it checks equipped gear for missing or low-quality **enchants** and **gems**, counts your **healing potions**, **mana potions** and **weapon buffs** (oils, stones), can inspect the whole raid for missing enchants and gems, and searches every fast-travel option your character actually has.
+A World of Warcraft (Retail – Midnight) addon that makes sure you and your raid are ready before the pull: it checks equipped gear for missing or low-quality **enchants** and **gems**, counts your **healing potions**, **mana potions** and **weapon buffs** (oils, stones), can inspect the whole raid for missing enchants and gems, and searches every fast-travel option your character actually has.
 
 ## Features
 
@@ -23,10 +23,10 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
   - Consumables are matched by item ID (all quality ranks), so the check works with every client language.
 - Shows a dialog listing every problem (close with the X button or ESC). Nothing pops up when everything is fine.
 - Never opens in combat – it waits until combat ends.
-- Optional **indicators on the character panel** item slots: enchant icon and socket icon next to each slot – red = missing, orange = low quality/outdated; items with a missing enchant or gem get a red border. Hover for details, toggle in the **Options** tab of the addon window or with `/rp indicators`.
+- Optional **indicators on the character panel** item slots: enchant icon and socket icon next to each slot – red = missing, orange = low quality/outdated; items with a missing enchant or gem get a red border. Hover for details, toggle in the **Options** tab of the addon window or with `/pr indicators`.
 
 ### Talent loadout check
-- Flag your saved talent loadouts as **Raid** and/or **Dungeon** – in the **Talents** tab of the addon window (`/rp talents`) or with the checkboxes above the loadout dropdown in the talent frame.
+- Flag your saved talent loadouts as **Raid** and/or **Dungeon** – in the **Talents** tab of the addon window (`/pr talents`) or with the checkboxes above the loadout dropdown in the talent frame.
 - When you enter a **raid** or a **Mythic / Mythic+ dungeon**, and on every **ready check** inside, you are warned if your active loadout is not flagged for that content.
 - If no loadout of your current spec is flagged for the content, no warning appears.
 - Flags are saved per character.
@@ -42,7 +42,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 - Shows players who are out of range or offline.
 
 ### Travel
-- Tab **Travel** (`/rp travel`, or Ctrl-click the minimap button): one search box for every fast-travel option this character can actually use right now.
+- Tab **Travel** (`/pr travel`, or Ctrl-click the minimap button): one search box for every fast-travel option this character can actually use right now.
 - Covers **Mythic+ dungeon teleports**, the Garrison and Dalaran hearthstones, every **hearthstone toy** you own, **class travel spells** and **engineering wormholes**.
 - Dungeon ports are found by **destination**: a port named "Path of the Warding Candles" is listed and searchable as *Darkflame Cleft*, because the destination is read out of the spell description. That keeps working across seasons and locales.
 - **M+** filters the list to dungeon ports for the current Mythic+ season.
@@ -50,7 +50,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 - Travel abilities are unusable in combat anyway, so the tab greys out and says **Locked in combat**, then fills back in when combat ends.
 
 ### Shopping
-- Tab **Shopping** (`/rp shop`): this season's enchants, leg armor, gems and consumables as real item rows.
+- Tab **Shopping** (`/pr shop`): this season's enchants, leg armor, gems and consumables as real item rows.
 - By default only the sections your own check flagged are listed, so the tab answers *what do I still have to buy* rather than *what exists*. **Show everything** turns it into the full catalog.
 - **Shift-click** a row to paste the item into the auction house search bar (or into chat when the auction house is closed); **Ctrl-click** opens the dressing room.
 - **Right-click** a row to favourite it. Favourites are pinned to the top of their section and are remembered **per character**, since which ring enchant or gem you want depends on the character.
@@ -66,21 +66,21 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 
 | Action | Result |
 | --- | --- |
-| `/rp` or `/raidprepared` | Check your own gear and consumables |
-| `/rp inspect` (or `/rp raid`, `/rp party`) | Open the Raid/Party Inspect tab (raid: lead/assist only) |
-| `/rp talents` | Open the Talents tab (flag loadouts for raid / Mythic dungeons) |
-| `/rp travel` | Open the Travel tab (search your fast-travel options) |
-| `/rp shop` | Open the Shopping tab (enchants, gems and consumables you still need) |
-| `/rp travel season` | List this season's Mythic+ maps and the ports that serve them |
-| `/rp travel audit` | Report travel entries whose ID does not resolve |
-| `/rp travel scan [text]` | Dump spellbook entries, used to harvest teleport IDs |
-| `/rp travel discover` | Show which spells the teleport patterns match |
-| `/rp travel copy` | Reopen the last diagnostic output for copying |
-| `/rp options` | Open the Options tab of the addon window |
-| `/rp indicators` | Toggle enchant/socket indicators on the character panel |
-| `/rp minimap` | Show/hide the minimap button |
-| `/rp quality <rank>` | Set the required enchant/gem quality rank (default 2, also in the Options tab) |
-| `/rp debug` | Print raw item, socket and consumable data (for bug reports) |
+| `/pr` or `/pullready` | Check your own gear and consumables |
+| `/pr inspect` (or `/pr raid`, `/pr party`) | Open the Raid/Party Inspect tab (raid: lead/assist only) |
+| `/pr talents` | Open the Talents tab (flag loadouts for raid / Mythic dungeons) |
+| `/pr travel` | Open the Travel tab (search your fast-travel options) |
+| `/pr shop` | Open the Shopping tab (enchants, gems and consumables you still need) |
+| `/pr travel season` | List this season's Mythic+ maps and the ports that serve them |
+| `/pr travel audit` | Report travel entries whose ID does not resolve |
+| `/pr travel scan [text]` | Dump spellbook entries, used to harvest teleport IDs |
+| `/pr travel discover` | Show which spells the teleport patterns match |
+| `/pr travel copy` | Reopen the last diagnostic output for copying |
+| `/pr options` | Open the Options tab of the addon window |
+| `/pr indicators` | Toggle enchant/socket indicators on the character panel |
+| `/pr minimap` | Show/hide the minimap button |
+| `/pr quality <rank>` | Set the required enchant/gem quality rank (default 2, also in the Options tab) |
+| `/pr debug` | Print raw item, socket and consumable data (for bug reports) |
 | Minimap button – left-click | Check your own gear |
 | Minimap button – right-click | Open the Raid/Party Inspect tab |
 | Minimap button – Shift-click | Open the Talents tab |
@@ -92,8 +92,13 @@ The same actions are available from the addon compartment menu on the minimap.
 ## Installation
 
 1. Download the latest release (or clone this repository).
-2. Copy the `RaidPrepared` folder to `World of Warcraft\_retail_\Interface\AddOns\`.
+2. Copy the folder to `World of Warcraft\_retail_\Interface\AddOns\RaidPrepared`.
 3. Restart the game or type `/reload`.
+
+The addon folder is still called `RaidPrepared`: the addon was renamed in 1.5.0
+but the folder was deliberately left alone, so existing installs update in place
+and keep their settings. WoW names the saved-variables file after the folder, not
+after the addon, which is the whole reason for that.
 
 ## Configuration
 

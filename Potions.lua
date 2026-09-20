@@ -1,5 +1,5 @@
-local _, RP = ...
-local L = RP.L
+local _, PR = ...
+local L = PR.L
 
 -- Counts raid consumables in the bags by item ID (see Data.lua): healing potions,
 -- mana potions, power potions and temporary weapon buffs (oils, stones, hunter ammo).
@@ -36,14 +36,14 @@ local TEXTS = {
 }
 
 local function IsManaPotionRequired()
-    local specIndex = RP.GetSpecIndex()
+    local specIndex = PR.GetSpecIndex()
     local role = specIndex and GetSpecializationRole(specIndex)
-    return role ~= nil and RP.MANA_POTION_ROLES[role] == true
+    return role ~= nil and PR.MANA_POTION_ROLES[role] == true
 end
 
 local function IsWeaponBuffRequired()
     local _, classFile = UnitClass("player")
-    return not RP.WEAPON_BUFF_EXEMPT_CLASSES[classFile]
+    return not PR.WEAPON_BUFF_EXEMPT_CLASSES[classFile]
 end
 
 -- Remaining time of the currently applied main-hand temporary enchant in seconds, or nil.
@@ -138,11 +138,11 @@ local function ForEachBagItem(func)
 end
 
 -- Returns consumables ({heal, mana, weapon} entries, also as array) and issues.
-function RP.ScanPotions()
-    local heal = NewEntry("heal", RP.HEALING_POTION_IDS, RP.MIN_HEALING_POTIONS, true)
-    local mana = NewEntry("mana", RP.MANA_POTION_IDS, RP.MIN_MANA_POTIONS, IsManaPotionRequired())
-    local power = NewEntry("power", RP.POWER_POTION_IDS, RP.MIN_POWER_POTIONS, true)
-    local weapon = NewEntry("weapon", RP.WEAPON_BUFF_IDS, RP.MIN_WEAPON_BUFFS, IsWeaponBuffRequired())
+function PR.ScanPotions()
+    local heal = NewEntry("heal", PR.HEALING_POTION_IDS, PR.MIN_HEALING_POTIONS, true)
+    local mana = NewEntry("mana", PR.MANA_POTION_IDS, PR.MIN_MANA_POTIONS, IsManaPotionRequired())
+    local power = NewEntry("power", PR.POWER_POTION_IDS, PR.MIN_POWER_POTIONS, true)
+    local weapon = NewEntry("weapon", PR.WEAPON_BUFF_IDS, PR.MIN_WEAPON_BUFFS, IsWeaponBuffRequired())
     weapon.activeTime = GetActiveWeaponBuffTime()
 
     local consumables = {
@@ -166,13 +166,13 @@ function RP.ScanPotions()
 end
 
 -- Item IDs need no item cache, so this completes immediately; kept async for the caller.
-function RP.ScanPotionsAsync(callback)
-    callback(RP.ScanPotions())
+function PR.ScanPotionsAsync(callback)
+    callback(PR.ScanPotions())
 end
 
--- /rp debug output for consumables.
-function RP.DebugPotions()
-    local consumables = RP.ScanPotions()
+-- /pr debug output for consumables.
+function PR.DebugPotions()
+    local consumables = PR.ScanPotions()
     ForEachBagItem(function(_, _, info)
         for _, entry in ipairs(consumables) do
             if entry.ids[info.itemID] then

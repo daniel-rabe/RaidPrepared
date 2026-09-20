@@ -1,8 +1,8 @@
-# RaidPrepared
+# PullReady
 
-**Show up to raid prepared – and make sure everyone else does too.**
+**Be ready before the pull – and make sure everyone else is too.**
 
-RaidPrepared checks your gear the moment you join a raid group. Missing enchants, empty gem sockets, low-quality gems or no potions in your bags? A short dialog tells you exactly what's missing, before the pull timer does.
+PullReady checks your gear the moment you join a raid group. Missing enchants, empty gem sockets, low-quality gems or no potions in your bags? A short dialog tells you exactly what's missing, before the pull timer does.
 
 ---
 
@@ -67,16 +67,16 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 | | |
 |---|---|
 | **Join a raid** | Automatic check |
-| `/rp` | Check your own gear and consumables |
-| `/rp inspect` | Raid/Party Inspect |
-| `/rp talents` | Flag talent loadouts |
-| `/rp travel` | Search your fast-travel options |
-| `/rp travel season` | This season's M+ maps and their ports |
-| `/rp shop` | What you still need to buy |
-| `/rp options` | Open the options tab |
-| `/rp indicators` | Toggle character panel indicators |
-| `/rp minimap` | Show/hide the minimap button |
-| `/rp quality <rank>` | Set the required quality rank |
+| `/pr` | Check your own gear and consumables |
+| `/pr inspect` | Raid/Party Inspect |
+| `/pr talents` | Flag talent loadouts |
+| `/pr travel` | Search your fast-travel options |
+| `/pr travel season` | This season's M+ maps and their ports |
+| `/pr shop` | What you still need to buy |
+| `/pr options` | Open the options tab |
+| `/pr indicators` | Toggle character panel indicators |
+| `/pr minimap` | Show/hide the minimap button |
+| `/pr quality <rank>` | Set the required quality rank |
 | **Minimap left-click** | Check your gear |
 | **Minimap right-click** | Raid/Party Inspect |
 | **Minimap Shift-click** | Talent loadout flags |
@@ -95,4 +95,4 @@ Advanced settings (enchantable slots, consumable item IDs, minimum counts, class
 
 ---
 
-Found a bug or have a suggestion? Please open an issue and include the output of `/rp debug`.
+Found a bug or have a suggestion? Please open an issue and include the output of `/pr debug`.

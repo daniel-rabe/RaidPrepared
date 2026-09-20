@@ -1,5 +1,5 @@
-local _, RP = ...
-local L = RP.L
+local _, PR = ...
+local L = PR.L
 
 -- Inspects every group member (one at a time) and lists missing enchants / empty gem sockets.
 
@@ -21,7 +21,7 @@ local STATUS_TEXT = {
 }
 
 local RaidCheck = {}
-RP.RaidCheck = RaidCheck
+PR.RaidCheck = RaidCheck
 
 -- In a raid the inspect is only available to the leader and assistants; in a party to everyone.
 function RaidCheck:IsAllowed()
@@ -156,7 +156,7 @@ local function CountEquippedItems(unit)
 end
 
 local function ScanMember(guid, unit)
-    RP.ScanUnitAsync(unit, "enchant", function(issues)
+    PR.ScanUnitAsync(unit, "enchant", function(issues)
         if current and current.guid == guid then
             Finish(guid, #issues > 0 and "issues" or "ok", issues)
         end
@@ -178,7 +178,7 @@ local function OnInspectReady(guid)
 
     local function TryScan()
         if not current or current.guid ~= guid then return end
-        if (CountEquippedItems(unit) == 0 or not RP.HasAllItemLinks(unit)) and tries < LINK_RETRIES then
+        if (CountEquippedItems(unit) == 0 or not PR.HasAllItemLinks(unit)) and tries < LINK_RETRIES then
             tries = tries + 1
             C_Timer.After(LINK_RETRY_DELAY, TryScan)
             return
@@ -279,7 +279,7 @@ ticker:SetScript("OnEvent", function(_, event, arg1)
             UpdateRoster()
             RaidCheck:Refresh()
         end
-        RP.Dialog:UpdateInspectAccess()
+        PR.Dialog:UpdateInspectAccess()
     else
         RaidCheck:Refresh()
     end
@@ -334,20 +334,20 @@ local WHISPER_MAX = 255 -- chat message length limit
 -- whispers go out in the language picked in the options (English by default), unless the
 -- player opts into their own.
 local function WhisperLocale()
-    if RaidPreparedDB.localizedWhisper then return RP.CLIENT_LOCALE end
-    return RaidPreparedDB.whisperLocale or "enUS"
+    if PullReadyDB.localizedWhisper then return PR.CLIENT_LOCALE end
+    return PullReadyDB.whisperLocale or "enUS"
 end
 
 local function W(key)
-    return RP.GetString(key, WhisperLocale())
+    return PR.GetString(key, WhisperLocale())
 end
 
 -- Slot names come from the game client, so they are only right in the client's language.
 local function WhisperSlotName(issue)
     local locale = WhisperLocale()
-    if locale == RP.CLIENT_LOCALE then return issue.slotName end
-    local english = RP.SLOT_NAMES_EN[issue.slot]
-    return english and RP.GetString(english, locale) or issue.slotName
+    if locale == PR.CLIENT_LOCALE then return issue.slotName end
+    local english = PR.SLOT_NAMES_EN[issue.slot]
+    return english and PR.GetString(english, locale) or issue.slotName
 end
 
 -- Issue groups in message order: label, count format (singular, plural) and matcher.
@@ -406,7 +406,7 @@ local function BuildWhisper(entry)
         counted[#counted + 1] = W("no Eversong Diamond")
     end
 
-    local prefix = "[RaidPrepared] " .. W("Hi! Automated gear check found: ")
+    local prefix = "[PullReady] " .. W("Hi! Automated gear check found: ")
     local suffix = W(". Just a friendly heads-up, no stress :)")
     local body = table.concat(detailed, "; ")
     local candidates = {
@@ -595,16 +595,16 @@ end
 function RaidCheck:Stop()
     wipe(queue)
     if frame and frame:IsVisible() then
-        RP.Dialog:SelectTab(RP.Dialog.TAB_CHECK)
+        PR.Dialog:SelectTab(PR.Dialog.TAB_CHECK)
     end
 end
 
 function RaidCheck:Open()
     if not self:IsAllowed() then
-        print("|cff33ccffRaidPrepared|r: " .. L["Raid Inspect requires raid lead or assist; Party Inspect requires a party."])
+        print("|cff33ccffPullReady|r: " .. L["Raid Inspect requires raid lead or assist; Party Inspect requires a party."])
         return
     end
-    RP.Dialog:OpenTab(RP.Dialog.TAB_INSPECT)
+    PR.Dialog:OpenTab(PR.Dialog.TAB_INSPECT)
 end
 
 function RaidCheck:Toggle()
@@ -612,5 +612,5 @@ function RaidCheck:Toggle()
         self:Open()
         return
     end
-    RP.Dialog:ToggleTab(RP.Dialog.TAB_INSPECT)
+    PR.Dialog:ToggleTab(PR.Dialog.TAB_INSPECT)
 end

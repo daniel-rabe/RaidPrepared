@@ -1,5 +1,5 @@
-local _, RP = ...
-local L = RP.NewLocale("ruRU")
+local _, PR = ...
+local L = PR.NewLocale("ruRU")
 
 L["cat.hearth"] = "Камень возвращения"
 L["cat.dungeon"] = "Подземелье"
@@ -19,7 +19,7 @@ L["Options"] = "Настройки"
 L["Everything looks good!"] = "Всё в порядке!"
 L["%d problem(s) found, %d missing"] = "Найдено проблем: %d, отсутствует: %d"
 L["%d problem(s) found. %s"] = "Найдено проблем: %d. %s"
-L["No check run yet - use /rp or the minimap button."] = "Проверка ещё не выполнялась - используйте /rp или кнопку у миникарты."
+L["No check run yet - use /pr or the minimap button."] = "Проверка ещё не выполнялась - используйте /pr или кнопку у миникарты."
 L["(active %dm)"] = "(активно %d мин)"
 L["Show enchant & socket indicators on the character panel"] = "Показывать значки чар и гнёзд в окне персонажа"
 L["Icons next to item slots and a red border on items with a missing enchant or gem."] = "Значки рядом с ячейками экипировки и красная рамка у предметов без чар или самоцвета."
@@ -125,9 +125,9 @@ L["Drag: move button"] = "Перетаскивание: переместить �
 -- Slash commands
 L["Commands:"] = "Команды:"
 L["check enchants, gems, potions and weapon buffs"] = "проверить чары, самоцветы, зелья и усиления оружия"
-L["raid/party inspect of all group members (also /rp raid, /rp party)"] = "осмотреть всех членов группы (также /rp raid, /rp party)"
+L["raid/party inspect of all group members (also /pr raid, /pr party)"] = "осмотреть всех членов группы (также /pr raid, /pr party)"
 L["flag talent loadouts for raid / Mythic dungeons"] = "отметить наборы талантов для рейдов / эпохальных подземелий"
-L["search your fast-travel options (also /rp travel season)"] = "поиск способов быстрого перемещения (также /rp travel season)"
+L["search your fast-travel options (also /pr travel season)"] = "поиск способов быстрого перемещения (также /pr travel season)"
 L["list the enchants, gems and consumables you still need"] = "список недостающих чар, самоцветов и расходуемых предметов"
 L["open the options tab"] = "открыть вкладку настроек"
 L["toggle enchant/socket indicators on the character panel"] = "вкл/выкл значки чар и гнёзд в окне персонажа"
@@ -139,8 +139,8 @@ L["Character panel indicators disabled."] = "Значки в окне персо
 L["Minimap button shown."] = "Кнопка у миникарты показана."
 L["Minimap button hidden."] = "Кнопка у миникарты скрыта."
 L["Required quality rank set to %d."] = "Требуемый ранг качества: %d."
-L["Required quality rank is %d. Usage: /rp quality <rank>"] = "Требуемый ранг качества: %d. Использование: /rp quality <ранг>"
-L["Usage: /rp travel [audit | scan <text> | discover | season | copy]"] = "Использование: /rp travel [audit | scan <текст> | discover | season | copy]"
+L["Required quality rank is %d. Usage: /pr quality <rank>"] = "Требуемый ранг качества: %d. Использование: /pr quality <ранг>"
+L["Usage: /pr travel [audit | scan <text> | discover | season | copy]"] = "Использование: /pr travel [audit | scan <текст> | discover | season | copy]"
 
 -- Travel
 L["Search travel options..."] = "Поиск перемещений..."
@@ -154,7 +154,7 @@ L["Season data not loaded yet."] = "Данные сезона ещё не заг
 L["Right-click to favourite"] = "ПКМ - добавить в избранное"
 L["+%d more - keep typing to narrow"] = "ещё %d - уточните запрос"
 L["Ctrl+C to copy, Esc to close"] = "Ctrl+C - копировать, Esc - закрыть"
-L["RaidPrepared travel - %s"] = "RaidPrepared перемещение - %s"
+L["PullReady travel - %s"] = "PullReady перемещение - %s"
 L["Output"] = "Вывод"
 L["Last output"] = "Последний вывод"
 L["no output."] = "нет вывода."

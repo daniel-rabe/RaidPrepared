@@ -1,11 +1,11 @@
--- RaidPrepared - Travel/Data.lua
+-- PullReady - Travel/Data.lua
 -- Curated travel options. Every entry is a CANDIDATE: Modules/Collector.lua
 -- filters this list down to what your character actually owns and knows, so an
 -- entry you do not have simply never appears.
 --
 -- Verify the list on your own account with:
---   /rp travel audit   - reports entries whose name will not resolve (bad ID)
---   /rp travel scan    - dumps your spellbook so real IDs can be harvested
+--   /pr travel audit   - reports entries whose name will not resolve (bad ID)
+--   /pr travel scan    - dumps your spellbook so real IDs can be harvested
 --
 -- kind: "spell" | "toy" | "item"
 --   For anything that is not a spell this is only a HINT. Blizzard converts
@@ -15,8 +15,8 @@
 -- cat : "hearth" | "dungeon" | "class" | "zone" | "profession" | "other"
 -- keywords: extra English search terms, always lowercase
 
-local _, RP = ...
-local T = RP.Travel
+local _, PR = ...
+local T = PR.Travel
 
 T.Data = T.Data or {}
 local entries = {}

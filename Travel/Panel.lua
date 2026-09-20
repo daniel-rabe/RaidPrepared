@@ -1,8 +1,8 @@
-local _, RP = ...
-local T = RP.Travel
+local _, PR = ...
+local T = PR.Travel
 local L = T.L
 
--- RaidPrepared - Travel/Panel.lua
+-- PullReady - Travel/Panel.lua
 -- The travel tab: one edit box, and a pool of secure action buttons underneath
 -- it that get rebound to whatever the search currently matches.
 --
@@ -119,7 +119,7 @@ end
 -- ============================================================================
 
 local function CreateRow(index)
-    local row = CreateFrame("Button", "RaidPreparedTravelRow" .. index, panel, "SecureActionButtonTemplate")
+    local row = CreateFrame("Button", "PullReadyTravelRow" .. index, panel, "SecureActionButtonTemplate")
     row:SetSize(rowWidth, ROW_HEIGHT)
     -- Both edges: with "action button use key down" enabled (the retail
     -- default) the secure handler fires on the down edge, so a button
@@ -202,7 +202,7 @@ local function CreateRow(index)
 
         T:RememberUse(self.opt.key)
         if T.db.closeOnUse then
-            RP.Dialog:Hide()
+            PR.Dialog:Hide()
         end
     end)
 
@@ -364,7 +364,7 @@ function T:CreatePanel(parent)
     end)
     editBox:SetScript("OnEscapePressed", function(self)
         self:ClearFocus()
-        RP.Dialog:Hide()
+        PR.Dialog:Hide()
     end)
     -- Enter cannot activate a secure button from insecure code, so it just
     -- releases focus. Click a row to travel.
@@ -415,11 +415,11 @@ function T:CreatePanel(parent)
 end
 
 function T:Open()
-    RP.Dialog:OpenTab(RP.Dialog.TAB_TRAVEL)
+    PR.Dialog:OpenTab(PR.Dialog.TAB_TRAVEL)
 end
 
 function T:Toggle()
-    RP.Dialog:ToggleTab(RP.Dialog.TAB_TRAVEL)
+    PR.Dialog:ToggleTab(PR.Dialog.TAB_TRAVEL)
 end
 
 -- ============================================================================

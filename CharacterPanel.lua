@@ -1,7 +1,7 @@
-local _, RP = ...
+local _, PR = ...
 
 -- Optional indicators on the character panel item slots: missing/low-quality enchant and
--- empty/low-quality gem sockets. Toggle with /rp indicators.
+-- empty/low-quality gem sockets. Toggle with /pr indicators.
 
 local ICON_SIZE = 14
 local ICON_GAP = 2
@@ -38,7 +38,7 @@ local SLOT_BUTTONS = {
 }
 
 local CharacterPanel = {}
-RP.CharacterPanel = CharacterPanel
+PR.CharacterPanel = CharacterPanel
 
 local indicators = {} -- slotID -> { enchant = frame, gem = frame }
 local updatePending = false
@@ -63,7 +63,7 @@ local function CreateIndicator(button, icon, texCoordInset)
     indicator:SetScript("OnEnter", function(self)
         if not self.text then return end
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:AddLine("RaidPrepared")
+        GameTooltip:AddLine("PullReady")
         GameTooltip:AddLine(self.text, 1, 1, 1, true)
         GameTooltip:Show()
     end)
@@ -134,15 +134,15 @@ end
 
 local function Update()
     updatePending = false
-    if not RaidPreparedDB.characterIndicators then
+    if not PullReadyDB.characterIndicators then
         HideAll()
         return
     end
     if not (PaperDollFrame and PaperDollFrame:IsVisible()) then return end
 
-    RP.ScanUnitAsync("player", true, function(issues)
+    PR.ScanUnitAsync("player", true, function(issues)
         -- The scan is async: the option may have been turned off or the panel closed meanwhile.
-        if not RaidPreparedDB.characterIndicators then
+        if not PullReadyDB.characterIndicators then
             HideAll()
             return
         end
@@ -182,13 +182,13 @@ function CharacterPanel:RequestUpdate()
 end
 
 function CharacterPanel:SetEnabled(enabled)
-    RaidPreparedDB.characterIndicators = enabled and true or false
+    PullReadyDB.characterIndicators = enabled and true or false
     self:RequestUpdate()
 end
 
 function CharacterPanel:Toggle()
-    self:SetEnabled(not RaidPreparedDB.characterIndicators)
-    return RaidPreparedDB.characterIndicators
+    self:SetEnabled(not PullReadyDB.characterIndicators)
+    return PullReadyDB.characterIndicators
 end
 
 function CharacterPanel:Init()
@@ -202,7 +202,7 @@ events:RegisterEvent("PLAYER_EQUIPMENT_CHANGED")
 events:RegisterEvent("SOCKET_INFO_UPDATE")
 events:RegisterUnitEvent("UNIT_INVENTORY_CHANGED", "player")
 events:SetScript("OnEvent", function()
-    if RaidPreparedDB and PaperDollFrame and PaperDollFrame:IsVisible() then
+    if PullReadyDB and PaperDollFrame and PaperDollFrame:IsVisible() then
         CharacterPanel:RequestUpdate()
     end
 end)

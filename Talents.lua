@@ -1,5 +1,5 @@
-local _, RP = ...
-local L = RP.L
+local _, PR = ...
+local L = PR.L
 
 -- Talent loadout check: players flag their saved loadouts as "raid" and/or "dungeon".
 -- Inside a raid or Mythic/Mythic+ dungeon a warning appears when the active loadout is not
@@ -18,7 +18,7 @@ local FRAME_WIDTH = 380 -- width of the hint text
 local ROW_HEIGHT = 26
 
 local Talents = {}
-RP.Talents = Talents
+PR.Talents = Talents
 
 local frame, scrollChild, headerText, emptyText
 local rows = {}
@@ -33,14 +33,14 @@ local function GetSpecID()
     if PlayerUtil and PlayerUtil.GetCurrentSpecID then
         return PlayerUtil.GetCurrentSpecID()
     end
-    local specIndex = RP.GetSpecIndex()
-    return specIndex and (RP.GetSpecInfo(specIndex))
+    local specIndex = PR.GetSpecIndex()
+    return specIndex and (PR.GetSpecInfo(specIndex))
 end
 
 local function GetSpecNameAndIcon()
-    local specIndex = RP.GetSpecIndex()
+    local specIndex = PR.GetSpecIndex()
     if not specIndex then return nil, nil end
-    local _, name, _, icon = RP.GetSpecInfo(specIndex)
+    local _, name, _, icon = PR.GetSpecInfo(specIndex)
     return name, icon
 end
 
@@ -68,12 +68,12 @@ function Talents:GetActiveLoadoutID()
 end
 
 function Talents:GetFlag(configID, content)
-    local flags = RaidPreparedCharDB.loadoutFlags[configID]
+    local flags = PullReadyCharDB.loadoutFlags[configID]
     return flags ~= nil and flags[content] == true
 end
 
 function Talents:SetFlag(configID, content, value)
-    local all = RaidPreparedCharDB.loadoutFlags
+    local all = PullReadyCharDB.loadoutFlags
     all[configID] = all[configID] or {}
     all[configID][content] = value and true or nil
     if not next(all[configID]) then
@@ -128,11 +128,11 @@ function Talents:Check()
     }
 end
 
-function RP.RunTalentCheck()
+function PR.RunTalentCheck()
     local issue = Talents:Check()
     if issue then
-        print("|cffff4040RaidPrepared|r: " .. issue.detail)
-        RP.Dialog:Show({ issue })
+        print("|cffff4040PullReady|r: " .. issue.detail)
+        PR.Dialog:Show({ issue })
     end
 end
 
@@ -240,11 +240,11 @@ function Talents:RefreshWindow()
 end
 
 function Talents:Open()
-    RP.Dialog:OpenTab(RP.Dialog.TAB_TALENTS)
+    PR.Dialog:OpenTab(PR.Dialog.TAB_TALENTS)
 end
 
 function Talents:Toggle()
-    RP.Dialog:ToggleTab(RP.Dialog.TAB_TALENTS)
+    PR.Dialog:ToggleTab(PR.Dialog.TAB_TALENTS)
 end
 
 ---------------------------------------------------------------------------
@@ -284,7 +284,7 @@ local function HookTalentFrame()
     for _, check in ipairs({ raid, dungeon }) do
         check:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_TOP")
-            GameTooltip:AddLine("RaidPrepared")
+            GameTooltip:AddLine("PullReady")
             GameTooltip:AddLine(L["Flag the selected loadout for this content. You are warned when entering it with a loadout that is not flagged."], 1, 1, 1, true)
             GameTooltip:Show()
         end)
@@ -320,7 +320,7 @@ end
 
 events:SetScript("OnEvent", function(_, event, arg1)
     if event == "ADDON_LOADED" then
-        if arg1 == "Blizzard_PlayerSpells" and RaidPreparedCharDB then
+        if arg1 == "Blizzard_PlayerSpells" and PullReadyCharDB then
             HookTalentFrame()
         end
     elseif event == "PLAYER_ENTERING_WORLD" then
@@ -332,12 +332,12 @@ events:SetScript("OnEvent", function(_, event, arg1)
             local instanceID = select(8, GetInstanceInfo())
             if instanceID ~= lastCheckedInstanceID then
                 lastCheckedInstanceID = instanceID
-                RP.RunTalentCheck()
+                PR.RunTalentCheck()
             end
         end)
     elseif event == "READY_CHECK" then
         if Talents:GetContent() then
-            RP.RunTalentCheck()
+            PR.RunTalentCheck()
         end
     else
         Talents:NotifyChanged()

@@ -1,5 +1,5 @@
-local addonName, RP = ...
-local L = RP.L
+local addonName, PR = ...
+local L = PR.L
 
 local FRAME_WIDTH = 580
 local FRAME_HEIGHT = 390
@@ -28,7 +28,7 @@ local PROBLEM_COLORS = {
 }
 
 local Dialog = {}
-RP.Dialog = Dialog
+PR.Dialog = Dialog
 
 Dialog.TAB_CHECK = 1
 Dialog.TAB_INSPECT = 2
@@ -176,7 +176,7 @@ end
 
 -- Marks the selected quality; the others stay visible but dimmed.
 local function UpdateQualityButtons()
-    local selected = RP.GetMaxQualityTier()
+    local selected = PR.GetMaxQualityTier()
     for _, button in ipairs(qualityButtons) do
         local isSelected = button.tier == selected
         if isSelected then
@@ -192,7 +192,7 @@ local function CreateQualityButton(parent, tier)
     local button = CreateFrame("Button", nil, parent)
     button.tier = tier
     button:SetSize(QUALITY_BUTTON_SIZE, QUALITY_BUTTON_SIZE)
-    button:SetPoint("LEFT", (tier - RP.MIN_QUALITY_RANK_OPTION) * (QUALITY_BUTTON_SIZE + QUALITY_BUTTON_GAP), 0)
+    button:SetPoint("LEFT", (tier - PR.MIN_QUALITY_RANK_OPTION) * (QUALITY_BUTTON_SIZE + QUALITY_BUTTON_GAP), 0)
 
     -- Frame around the button; UpdateQualityButtons colors it gold when selected.
     button.selection = button:CreateTexture(nil, "BACKGROUND")
@@ -216,7 +216,7 @@ local function CreateQualityButton(parent, tier)
     button.highlight:SetColorTexture(1, 1, 1, 0.15)
 
     button:SetScript("OnClick", function(self)
-        RP.SetMaxQualityTier(self.tier)
+        PR.SetMaxQualityTier(self.tier)
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end)
     button:SetScript("OnEnter", function(self)
@@ -229,7 +229,7 @@ local function CreateQualityButton(parent, tier)
 end
 
 local function CreateDialog()
-    frame = CreateFrame("Frame", "RaidPreparedDialog", UIParent, "BackdropTemplate")
+    frame = CreateFrame("Frame", "PullReadyDialog", UIParent, "BackdropTemplate")
     frame:SetSize(FRAME_WIDTH, FRAME_HEIGHT)
     frame:SetPoint("CENTER")
     frame:SetFrameStrata("DIALOG")
@@ -251,7 +251,7 @@ local function CreateDialog()
 
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -18)
-    title:SetText("RaidPrepared")
+    title:SetText("PullReady")
 
     -- Tab 1: check results
     checkPanel = CreateFrame("Frame", nil, frame)
@@ -285,19 +285,19 @@ local function CreateDialog()
     okText:SetText(L["Everything looks good!"])
 
     -- Tab 2: raid / party inspect
-    inspectPanel = RP.RaidCheck:CreatePanel(frame)
+    inspectPanel = PR.RaidCheck:CreatePanel(frame)
 
     -- Tab 3: talent loadouts
-    talentsPanel = RP.Talents:CreatePanel(frame)
+    talentsPanel = PR.Talents:CreatePanel(frame)
 
     -- Tab 6: options
     optionsPanel = CreateFrame("Frame", nil, frame)
     optionsPanel:SetAllPoints()
     optionsPanel:Hide()
     optionsPanel:SetScript("OnShow", function()
-        indicatorsCheck:SetChecked(RaidPreparedDB.characterIndicators)
+        indicatorsCheck:SetChecked(PullReadyDB.characterIndicators)
         UpdateQualityButtons()
-        whisperCheck:SetChecked(RaidPreparedDB.localizedWhisper)
+        whisperCheck:SetChecked(PullReadyDB.localizedWhisper)
         Dialog:UpdateWhisperLocale()
     end)
 
@@ -309,7 +309,7 @@ local function CreateDialog()
     indicatorsCheck:SetSize(26, 26)
     indicatorsCheck:SetPoint("TOPLEFT", optionsHeader, "BOTTOMLEFT", -4, -10)
     indicatorsCheck:SetScript("OnClick", function(self)
-        RP.CharacterPanel:SetEnabled(self:GetChecked())
+        PR.CharacterPanel:SetEnabled(self:GetChecked())
     end)
 
     local indicatorsLabel = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -332,11 +332,11 @@ local function CreateDialog()
     qualityLabel:SetPoint("LEFT")
     qualityLabel:SetText(L["Required enchant & gem quality rank:"])
 
-    local ranks = RP.MAX_QUALITY_RANK_OPTION - RP.MIN_QUALITY_RANK_OPTION + 1
+    local ranks = PR.MAX_QUALITY_RANK_OPTION - PR.MIN_QUALITY_RANK_OPTION + 1
     local qualityBar = CreateFrame("Frame", nil, qualityRow)
     qualityBar:SetSize(ranks * QUALITY_BUTTON_SIZE + (ranks - 1) * QUALITY_BUTTON_GAP, QUALITY_BUTTON_SIZE)
     qualityBar:SetPoint("LEFT", qualityLabel, "RIGHT", 10, 0)
-    for tier = RP.MIN_QUALITY_RANK_OPTION, RP.MAX_QUALITY_RANK_OPTION do
+    for tier = PR.MIN_QUALITY_RANK_OPTION, PR.MAX_QUALITY_RANK_OPTION do
         qualityButtons[#qualityButtons + 1] = CreateQualityButton(qualityBar, tier)
     end
     UpdateQualityButtons()
@@ -351,7 +351,7 @@ local function CreateDialog()
     whisperCheck:SetSize(26, 26)
     whisperCheck:SetPoint("TOPLEFT", qualityHint, "BOTTOMLEFT", -4, -24)
     whisperCheck:SetScript("OnClick", function(self)
-        RaidPreparedDB.localizedWhisper = self:GetChecked() and true or false
+        PullReadyDB.localizedWhisper = self:GetChecked() and true or false
         Dialog:UpdateWhisperLocale()
     end)
 
@@ -373,11 +373,11 @@ local function CreateDialog()
     whisperDrop:SetWidth(160)
     whisperDrop:SetPoint("LEFT", whisperLangLabel, "RIGHT", 10, 0)
     whisperDrop:SetupMenu(function(_, rootDescription)
-        for _, entry in ipairs(RP.WHISPER_LOCALES) do
+        for _, entry in ipairs(PR.WHISPER_LOCALES) do
             rootDescription:CreateRadio(entry.name,
-                function() return RaidPreparedDB.whisperLocale == entry.locale end,
+                function() return PullReadyDB.whisperLocale == entry.locale end,
                 function()
-                    RaidPreparedDB.whisperLocale = entry.locale
+                    PullReadyDB.whisperLocale = entry.locale
                     Dialog:UpdateWhisperLocale()
                 end)
         end
@@ -385,16 +385,16 @@ local function CreateDialog()
     whisperDrop.label = whisperLangLabel
 
     -- Tab 4: fast-travel search
-    travelPanel = RP.Travel:CreatePanel(frame)
+    travelPanel = PR.Travel:CreatePanel(frame)
 
     -- Tab 5: shopping list
-    shoppingPanel = RP.Shopping:CreatePanel(frame)
+    shoppingPanel = PR.Shopping:CreatePanel(frame)
 
     -- Tabs below the frame
     frame.Tabs = {}
     for i, label in ipairs({ L["Check"], L["Raid Inspect"], TALENTS or L["Talents"], L["Travel"], L["Shopping"],
             OPTIONS or L["Options"] }) do
-        local tab = CreateFrame("Button", "RaidPreparedDialogTab" .. i, frame, "PanelTabButtonTemplate")
+        local tab = CreateFrame("Button", "PullReadyDialogTab" .. i, frame, "PanelTabButtonTemplate")
         tab:SetID(i)
         tab:SetText(label)
         PanelTemplates_TabResize(tab, 0)
@@ -482,8 +482,8 @@ end
 -- Updates title and availability of the inspect tab and button (raid lead/assist or party).
 function Dialog:UpdateInspectAccess()
     if not frame then return end
-    local allowed = RP.RaidCheck:IsAllowed()
-    local title = RP.RaidCheck:GetTitle()
+    local allowed = PR.RaidCheck:IsAllowed()
+    local title = PR.RaidCheck:GetTitle()
 
     local tab = frame.Tabs[Dialog.TAB_INSPECT]
     tab:SetText(title)
@@ -503,7 +503,7 @@ function Dialog:OpenTab(index)
         CreateDialog()
         Populate({}, nil)
         okText:Hide()
-        summaryText:SetText(L["No check run yet - use /rp or the minimap button."])
+        summaryText:SetText(L["No check run yet - use /pr or the minimap button."])
     end
     self:UpdateInspectAccess()
     self:SelectTab(index)
@@ -521,10 +521,10 @@ end
 -- The whisper language only applies when whispers are not sent in the client's language.
 function Dialog:UpdateWhisperLocale()
     if not whisperDrop then return end
-    local selectable = not RaidPreparedDB.localizedWhisper
-    local name = RP.CLIENT_LOCALE
-    for _, entry in ipairs(RP.WHISPER_LOCALES) do
-        if entry.locale == (selectable and RaidPreparedDB.whisperLocale or RP.CLIENT_LOCALE) then
+    local selectable = not PullReadyDB.localizedWhisper
+    local name = PR.CLIENT_LOCALE
+    for _, entry in ipairs(PR.WHISPER_LOCALES) do
+        if entry.locale == (selectable and PullReadyDB.whisperLocale or PR.CLIENT_LOCALE) then
             name = entry.name
         end
     end
@@ -533,7 +533,7 @@ function Dialog:UpdateWhisperLocale()
     whisperDrop.label:SetFontObject(selectable and "GameFontHighlight" or "GameFontDisable")
 end
 
--- Keeps the quality buttons in sync when the rank changes elsewhere (/rp quality).
+-- Keeps the quality buttons in sync when the rank changes elsewhere (/pr quality).
 function Dialog:RefreshQuality()
     if #qualityButtons > 0 then UpdateQualityButtons() end
 end

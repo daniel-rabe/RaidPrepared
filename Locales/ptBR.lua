@@ -1,5 +1,5 @@
-local _, RP = ...
-local L = RP.NewLocale("ptBR")
+local _, PR = ...
+local L = PR.NewLocale("ptBR")
 
 L["cat.hearth"] = "Pedra de Regresso"
 L["cat.dungeon"] = "Masmorra"
@@ -19,7 +19,7 @@ L["Options"] = "Opções"
 L["Everything looks good!"] = "Tudo certo!"
 L["%d problem(s) found, %d missing"] = "%d problema(s) encontrado(s), %d faltando"
 L["%d problem(s) found. %s"] = "%d problema(s) encontrado(s). %s"
-L["No check run yet - use /rp or the minimap button."] = "Nenhuma verificação feita ainda - use /rp ou o botão do minimapa."
+L["No check run yet - use /pr or the minimap button."] = "Nenhuma verificação feita ainda - use /pr ou o botão do minimapa."
 L["(active %dm)"] = "(ativo %d min)"
 L["Show enchant & socket indicators on the character panel"] = "Mostrar indicadores de encantamentos e engastes no painel do personagem"
 L["Icons next to item slots and a red border on items with a missing enchant or gem."] = "Ícones ao lado dos espaços de equipamento e uma borda vermelha em itens sem encantamento ou sem gema."
@@ -125,9 +125,9 @@ L["Drag: move button"] = "Arrastar: mover botão"
 -- Slash commands
 L["Commands:"] = "Comandos:"
 L["check enchants, gems, potions and weapon buffs"] = "verificar encantamentos, gemas, poções e aprimoramentos de arma"
-L["raid/party inspect of all group members (also /rp raid, /rp party)"] = "inspecionar todos os membros do grupo (também /rp raid, /rp party)"
+L["raid/party inspect of all group members (also /pr raid, /pr party)"] = "inspecionar todos os membros do grupo (também /pr raid, /pr party)"
 L["flag talent loadouts for raid / Mythic dungeons"] = "marcar configurações de talentos para raides / masmorras míticas"
-L["search your fast-travel options (also /rp travel season)"] = "buscar suas opções de viagem rápida (também /rp travel season)"
+L["search your fast-travel options (also /pr travel season)"] = "buscar suas opções de viagem rápida (também /pr travel season)"
 L["list the enchants, gems and consumables you still need"] = "lista os encantamentos, gemas e consumíveis que ainda faltam"
 L["open the options tab"] = "abrir a aba de opções"
 L["toggle enchant/socket indicators on the character panel"] = "ativar/desativar os indicadores no painel do personagem"
@@ -139,8 +139,8 @@ L["Character panel indicators disabled."] = "Indicadores do painel do personagem
 L["Minimap button shown."] = "Botão do minimapa visível."
 L["Minimap button hidden."] = "Botão do minimapa oculto."
 L["Required quality rank set to %d."] = "Grau de qualidade exigido definido para %d."
-L["Required quality rank is %d. Usage: /rp quality <rank>"] = "O grau de qualidade exigido é %d. Uso: /rp quality <grau>"
-L["Usage: /rp travel [audit | scan <text> | discover | season | copy]"] = "Uso: /rp travel [audit | scan <texto> | discover | season | copy]"
+L["Required quality rank is %d. Usage: /pr quality <rank>"] = "O grau de qualidade exigido é %d. Uso: /pr quality <grau>"
+L["Usage: /pr travel [audit | scan <text> | discover | season | copy]"] = "Uso: /pr travel [audit | scan <texto> | discover | season | copy]"
 
 -- Travel
 L["Search travel options..."] = "Buscar opções de viagem..."
@@ -154,7 +154,7 @@ L["Season data not loaded yet."] = "Dados da temporada ainda não carregados."
 L["Right-click to favourite"] = "Clique direito para favoritar"
 L["+%d more - keep typing to narrow"] = "+%d mais - continue digitando para filtrar"
 L["Ctrl+C to copy, Esc to close"] = "Ctrl+C para copiar, Esc para fechar"
-L["RaidPrepared travel - %s"] = "RaidPrepared viagem - %s"
+L["PullReady travel - %s"] = "PullReady viagem - %s"
 L["Output"] = "Saída"
 L["Last output"] = "Última saída"
 L["no output."] = "sem saída."

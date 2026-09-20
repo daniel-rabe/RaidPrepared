@@ -1,5 +1,5 @@
-local _, RP = ...
-local L = RP.L
+local _, PR = ...
+local L = PR.L
 
 local MAX_GEMS = 4
 
@@ -15,7 +15,7 @@ do
 end
 
 local function GetMaxQualityTier()
-    return RP.GetMaxQualityTier()
+    return PR.GetMaxQualityTier()
 end
 
 local function GetEnchantID(link)
@@ -30,12 +30,12 @@ local function GetQualityTierFromText(text)
 end
 
 local function IsEnchantableSlot(slot, link)
-    if not RP.ENCHANT_SLOTS[slot] then
+    if not PR.ENCHANT_SLOTS[slot] then
         return false
     end
     if slot == INVSLOT_OFFHAND then
         local _, _, _, equipLoc = C_Item.GetItemInfoInstant(link)
-        return RP.ENCHANTABLE_OFFHAND[equipLoc] == true
+        return PR.ENCHANTABLE_OFFHAND[equipLoc] == true
     end
     return true
 end
@@ -119,7 +119,7 @@ end
 local function AddIssue(issues, slot, link, kind, problem, detail)
     issues[#issues + 1] = {
         slot = slot,
-        slotName = RP.SLOT_NAMES[slot] or tostring(slot),
+        slotName = PR.SLOT_NAMES[slot] or tostring(slot),
         itemLink = link,
         kind = kind,          -- "enchant" | "gem"
         problem = problem,    -- "missing" | "low" | "outdated"
@@ -156,7 +156,7 @@ local function CheckEnchant(issues, unit, slot, link, checkQuality)
 
     if checkQuality ~= true then return end -- "enchant": enchant quality only
 
-    if next(RP.KNOWN_CURRENT_ENCHANTS) and not RP.KNOWN_CURRENT_ENCHANTS[enchantID] then
+    if next(PR.KNOWN_CURRENT_ENCHANTS) and not PR.KNOWN_CURRENT_ENCHANTS[enchantID] then
         AddIssue(issues, slot, link, "enchant", "outdated",
             L["Outdated enchant%s"]:format(name and (": " .. name) or (" (ID " .. enchantID .. ")")))
     end
@@ -194,7 +194,7 @@ local function CheckGems(issues, unit, slot, link, checkQuality)
         end
 
         local expacID = select(15, C_Item.GetItemInfo(gemID))
-        if expacID and RP.MIN_GEM_EXPANSION and expacID < RP.MIN_GEM_EXPANSION then
+        if expacID and PR.MIN_GEM_EXPANSION and expacID < PR.MIN_GEM_EXPANSION then
             AddIssue(issues, slot, link, "gem", "outdated", L["Outdated gem: %s"]:format(GetGemDisplay(gemID)))
         end
     end
@@ -202,16 +202,16 @@ end
 
 local EPIC_GEM_SLOT = 99 -- sort position of the epic gem issue (after gear slots)
 
--- Reports a missing epic gem when the unit has sockets but none holds one of RP.EPIC_GEM_IDS.
+-- Reports a missing epic gem when the unit has sockets but none holds one of PR.EPIC_GEM_IDS.
 local function CheckEpicGem(issues, unit)
-    if not next(RP.EPIC_GEM_IDS) then return end
+    if not next(PR.EPIC_GEM_IDS) then return end
 
     local sockets = 0
     for slot = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
         local link = GetInventoryItemLink(unit, slot)
         if link then
             for _, gemID in ipairs(GetGemIDs(link)) do
-                if RP.EPIC_GEM_IDS[gemID] then return end
+                if PR.EPIC_GEM_IDS[gemID] then return end
             end
             sockets = sockets + math.max(GetNumSockets(link), (GetTooltipSocketInfo(unit, slot)))
         end
@@ -221,7 +221,7 @@ local function CheckEpicGem(issues, unit)
     issues[#issues + 1] = {
         slot = EPIC_GEM_SLOT,
         slotName = L["Epic Gem"],
-        icon = C_Item.GetItemIconByID(RP.EPIC_GEM_ICON_ID),
+        icon = C_Item.GetItemIconByID(PR.EPIC_GEM_ICON_ID),
         kind = "epicgem",
         problem = "missing",
         detail = L["No Eversong Diamond socketed"],
@@ -229,9 +229,9 @@ local function CheckEpicGem(issues, unit)
 end
 
 -- Synchronous scan of a unit ("player" or an inspected unit). Item data should be cached
--- (see RP.ScanUnitAsync). checkQuality: true = also report low-quality/outdated enchants and gems,
+-- (see PR.ScanUnitAsync). checkQuality: true = also report low-quality/outdated enchants and gems,
 -- "enchant" = also report low-quality enchants only, false = missing enchants/gems only.
-function RP.ScanUnit(unit, checkQuality)
+function PR.ScanUnit(unit, checkQuality)
     local issues = {}
     for slot = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
         if slot ~= INVSLOT_BODY and slot ~= INVSLOT_TABARD then
@@ -250,12 +250,12 @@ function RP.ScanUnit(unit, checkQuality)
     return issues
 end
 
-function RP.Scan()
-    return RP.ScanUnit("player", true)
+function PR.Scan()
+    return PR.ScanUnit("player", true)
 end
 
 -- Returns true if every equipped item of the unit has a link (inspect data complete).
-function RP.HasAllItemLinks(unit)
+function PR.HasAllItemLinks(unit)
     for slot = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
         if GetInventoryItemID(unit, slot) and not GetInventoryItemLink(unit, slot) then
             return false
@@ -265,7 +265,7 @@ function RP.HasAllItemLinks(unit)
 end
 
 -- Loads all equipped items of the unit and their gems into the cache, then scans.
-function RP.ScanUnitAsync(unit, checkQuality, callback)
+function PR.ScanUnitAsync(unit, checkQuality, callback)
     local items = ContinuableContainer:Create()
     for slot = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
         local itemID = GetInventoryItemID(unit, slot)
@@ -285,17 +285,17 @@ function RP.ScanUnitAsync(unit, checkQuality, callback)
             end
         end
         gems:ContinueOnLoad(function()
-            callback(RP.ScanUnit(unit, checkQuality))
+            callback(PR.ScanUnit(unit, checkQuality))
         end)
     end)
 end
 
-function RP.ScanAsync(callback)
-    RP.ScanUnitAsync("player", true, callback)
+function PR.ScanAsync(callback)
+    PR.ScanUnitAsync("player", true, callback)
 end
 
--- /rp debug: dump what the scanner sees for every equipped item.
-function RP.Debug()
+-- /pr debug: dump what the scanner sees for every equipped item.
+function PR.Debug()
     for slot = INVSLOT_FIRST_EQUIPPED, INVSLOT_LAST_EQUIPPED do
         local link = GetInventoryItemLink("player", slot)
         if link then

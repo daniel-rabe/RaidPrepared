@@ -1,4 +1,4 @@
-local _, RP = ...
+local _, PR = ...
 
 -- Fast-travel search, merged from the standalone GetAway addon.
 -- Namespace, strings, event dispatch, diagnostic output capture, recent list.
@@ -7,9 +7,9 @@ local _, RP = ...
 -- so they stay easy to diff against upstream GetAway.
 
 local T = {}
-RP.Travel = T
+PR.Travel = T
 
-local PREFIX = "|cff33ccffRaidPrepared|r: "
+local PREFIX = "|cff33ccffPullReady|r: "
 
 -- Set at ADDON_LOADED; every module reads travel settings through this.
 T.db = nil
@@ -25,7 +25,7 @@ function T:Print(fmt, ...)
 end
 
 -- Strings come from the addon-wide locale table (Locales/).
-local L = RP.L
+local L = PR.L
 T.L = L
 
 -- ============================================================================
@@ -136,7 +136,7 @@ end
 -- one-handler-per-frame style used elsewhere in this addon does not cover.
 
 local handlers = {}
-local eventFrame = CreateFrame("Frame", "RaidPreparedTravelEvents")
+local eventFrame = CreateFrame("Frame", "PullReadyTravelEvents")
 
 ---Register a callback for a game event. Multiple callbacks per event are fine.
 function T:RegisterEvent(event, fn)

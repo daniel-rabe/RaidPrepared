@@ -1,7 +1,7 @@
-local _, RP = ...
-local L = RP.L
+local _, PR = ...
+local L = PR.L
 
--- RaidPrepared - Shopping.lua
+-- PullReady - Shopping.lua
 -- The shopping tab: the enchants, leg armor, gems and consumables of the current
 -- season as real item rows. Shift-clicking a row pastes the item link into whatever
 -- edit box has focus - the auction house search bar when the auction house is open,
@@ -23,7 +23,7 @@ local L = RP.L
 -- What is on offer lives in Data.lua; this file only decides what to show and draws it.
 
 local Shopping = {}
-RP.Shopping = Shopping
+PR.Shopping = Shopping
 
 local ROW_HEIGHT     = 26
 local ICON_SIZE      = 22
@@ -41,12 +41,12 @@ local ENCHANT_ORDER = {
     INVSLOT_FINGER1, INVSLOT_MAINHAND,
 }
 
--- Section headers for the enchant slots. RP.SLOT_NAMES is not usable here: it numbers
+-- Section headers for the enchant slots. PR.SLOT_NAMES is not usable here: it numbers
 -- the paired slots ("Finger 1"), while one enchant list serves both of them.
 local function EnchantHeader(slot)
     if slot == INVSLOT_FINGER1 then return FINGER0SLOT or L["Rings"] end
     if slot == INVSLOT_MAINHAND then return WEAPON or L["Weapons"] end
-    return RP.SLOT_NAMES[slot] or tostring(slot)
+    return PR.SLOT_NAMES[slot] or tostring(slot)
 end
 
 -- The mineral name ("Lapis") is the gem family line of the item's own tooltip, so
@@ -77,7 +77,7 @@ local refreshQueued = false
 local lastNeeds -- the last scan result, so a favourite toggle need not rescan
 
 local function ShowAll()
-    return RaidPreparedDB and RaidPreparedDB.shoppingShowAll == true
+    return PullReadyDB and PullReadyDB.shoppingShowAll == true
 end
 
 -- ============================================================================
@@ -85,19 +85,19 @@ end
 -- ============================================================================
 
 local function FavoritesOnly()
-    return RaidPreparedDB and RaidPreparedDB.shoppingFavoritesOnly == true
+    return PullReadyDB and PullReadyDB.shoppingFavoritesOnly == true
 end
 
 local function IsFavorite(itemID)
-    local favorites = RaidPreparedCharDB and RaidPreparedCharDB.shoppingFavorites
+    local favorites = PullReadyCharDB and PullReadyCharDB.shoppingFavorites
     return (favorites and favorites[itemID]) == true
 end
 
 -- Cleared entries are removed rather than set to false, so the saved table only
 -- ever holds the items that are actually favourited.
 local function ToggleFavorite(itemID)
-    RaidPreparedCharDB.shoppingFavorites = RaidPreparedCharDB.shoppingFavorites or {}
-    local favorites = RaidPreparedCharDB.shoppingFavorites
+    PullReadyCharDB.shoppingFavorites = PullReadyCharDB.shoppingFavorites or {}
+    local favorites = PullReadyCharDB.shoppingFavorites
     favorites[itemID] = (not favorites[itemID]) or nil
 end
 
@@ -108,7 +108,7 @@ end
 -- One row per item name. The consumable tables list every crafting rank, and two rows
 -- for the same potion are just noise, so the lower item level is dropped. Needs the
 -- item cache to be warm; ids that are still unknown fall back to one row each.
-function RP.BuildShopItems(ids)
+function PR.BuildShopItems(ids)
     local best, order = {}, {}
     for _, itemID in ipairs(ids) do
         local key = C_Item.GetItemNameByID(itemID) or itemID
@@ -135,11 +135,11 @@ local function LegArmorIDs()
     if link then
         local subclassID = select(7, C_Item.GetItemInfoInstant(link))
         local cloth = Enum.ItemArmorSubclass and Enum.ItemArmorSubclass.Cloth or 1
-        return subclassID == cloth and RP.LEG_ARMOR_ITEMS.cloth or RP.LEG_ARMOR_ITEMS.physical
+        return subclassID == cloth and PR.LEG_ARMOR_ITEMS.cloth or PR.LEG_ARMOR_ITEMS.physical
     end
 
     local _, classFile = UnitClass("player")
-    return CLOTH_CLASSES[classFile] and RP.LEG_ARMOR_ITEMS.cloth or RP.LEG_ARMOR_ITEMS.physical
+    return CLOTH_CLASSES[classFile] and PR.LEG_ARMOR_ITEMS.cloth or PR.LEG_ARMOR_ITEMS.physical
 end
 
 -- What the scan says is still missing, reduced to the sections the tab can offer.
@@ -151,7 +151,7 @@ local function BuildNeeds(issues, consumables)
             if issue.slot == INVSLOT_LEGS then
                 needs.legs = true
             else
-                needs.enchant[RP.GetEnchantShopSlot(issue.slot)] = true
+                needs.enchant[PR.GetEnchantShopSlot(issue.slot)] = true
             end
         elseif issue.kind == "gem" then
             needs.gems = true
@@ -181,18 +181,18 @@ local function CollectIDs(needs)
     end
 
     for _, slot in ipairs(ENCHANT_ORDER) do
-        if showAll or needs.enchant[slot] then add(RP.ENCHANT_ITEMS[slot]) end
+        if showAll or needs.enchant[slot] then add(PR.ENCHANT_ITEMS[slot]) end
     end
     if showAll or needs.legs then add(LegArmorIDs()) end
     if showAll or needs.gems then
-        for _, group in ipairs(RP.GEM_ITEMS) do
+        for _, group in ipairs(PR.GEM_ITEMS) do
             add(group.flawless)
             if showAll then add(group.plain) end
         end
     end
-    if showAll or needs.epicGem then add(RP.EPIC_GEM_SHOP_IDS) end
+    if showAll or needs.epicGem then add(PR.EPIC_GEM_SHOP_IDS) end
     for _, kind in ipairs(CONSUMABLE_ORDER) do
-        if showAll or needs.consumable[kind] then add(RP.CONSUMABLE_SHOP_IDS[kind]) end
+        if showAll or needs.consumable[kind] then add(PR.CONSUMABLE_SHOP_IDS[kind]) end
     end
     return ids
 end
@@ -228,14 +228,14 @@ local function BuildEntries(needs)
 
     for _, slot in ipairs(ENCHANT_ORDER) do
         if showAll or needs.enchant[slot] then
-            section(EnchantHeader(slot), RP.ENCHANT_ITEMS[slot])
+            section(EnchantHeader(slot), PR.ENCHANT_ITEMS[slot])
         end
     end
     if showAll or needs.legs then
         section(L["Leg Armor"], LegArmorIDs())
     end
     if showAll or needs.gems then
-        for _, group in ipairs(RP.GEM_ITEMS) do
+        for _, group in ipairs(PR.GEM_ITEMS) do
             local ids = {}
             for _, itemID in ipairs(group.flawless) do ids[#ids + 1] = itemID end
             if showAll then
@@ -245,11 +245,11 @@ local function BuildEntries(needs)
         end
     end
     if showAll or needs.epicGem then
-        section(L["Epic Gem"], RP.EPIC_GEM_SHOP_IDS)
+        section(L["Epic Gem"], PR.EPIC_GEM_SHOP_IDS)
     end
     for _, kind in ipairs(CONSUMABLE_ORDER) do
         if showAll or needs.consumable[kind] then
-            section(CONSUMABLE_HEADERS[kind], RP.BuildShopItems(RP.CONSUMABLE_SHOP_IDS[kind]))
+            section(CONSUMABLE_HEADERS[kind], PR.BuildShopItems(PR.CONSUMABLE_SHOP_IDS[kind]))
         end
     end
 
@@ -410,11 +410,11 @@ end
 function Shopping:Refresh()
     if not Visible() then return end
 
-    RP.ScanUnitAsync("player", true, function(issues)
+    PR.ScanUnitAsync("player", true, function(issues)
         -- The scan is async: the tab may have been closed meanwhile.
         if not Visible() then return end
 
-        local consumables = RP.ScanPotions()
+        local consumables = PR.ScanPotions()
         local needs = BuildNeeds(issues, consumables)
         lastNeeds = needs
 
@@ -460,7 +460,7 @@ function Shopping:CreatePanel(parent)
     showAllCheck:SetSize(24, 24)
     showAllCheck:SetPoint("TOPLEFT", hintText, "BOTTOMLEFT", -4, -6)
     showAllCheck:SetScript("OnClick", function(self)
-        RaidPreparedDB.shoppingShowAll = self:GetChecked() and true or false
+        PullReadyDB.shoppingShowAll = self:GetChecked() and true or false
         Shopping:Refresh()
     end)
 
@@ -474,7 +474,7 @@ function Shopping:CreatePanel(parent)
     favoritesCheck:SetSize(24, 24)
     favoritesCheck:SetPoint("TOPLEFT", showAllCheck, "BOTTOMLEFT", 0, -2)
     favoritesCheck:SetScript("OnClick", function(self)
-        RaidPreparedDB.shoppingFavoritesOnly = self:GetChecked() and true or false
+        PullReadyDB.shoppingFavoritesOnly = self:GetChecked() and true or false
         Shopping:Reorder()
     end)
 
@@ -507,11 +507,11 @@ function Shopping:CreatePanel(parent)
 end
 
 function Shopping:Open()
-    RP.Dialog:OpenTab(RP.Dialog.TAB_SHOPPING)
+    PR.Dialog:OpenTab(PR.Dialog.TAB_SHOPPING)
 end
 
 function Shopping:Toggle()
-    RP.Dialog:ToggleTab(RP.Dialog.TAB_SHOPPING)
+    PR.Dialog:ToggleTab(PR.Dialog.TAB_SHOPPING)
 end
 
 local events = CreateFrame("Frame")

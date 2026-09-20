@@ -1,4 +1,4 @@
--- RaidPrepared - Travel/Season.lua
+-- PullReady - Travel/Season.lua
 -- Which dungeon ports belong to the current Mythic+ season.
 --
 -- There is no API linking a teleport spell to a challenge map, so the link is
@@ -8,8 +8,8 @@
 -- split dungeons like "Operation: Mechagon - Workshop" against a single
 -- "Operation: Mechagon" port.
 
-local _, RP = ...
-local T = RP.Travel
+local _, PR = ...
+local T = PR.Travel
 
 T.Season = T.Season or {}
 local Season = T.Season

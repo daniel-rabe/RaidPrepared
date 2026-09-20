@@ -1,4 +1,4 @@
--- RaidPrepared - Travel/Search.lua
+-- PullReady - Travel/Search.lua
 -- Scores the collected travel options against what you typed.
 --
 -- Every whitespace-separated token in the query must match something (a word in
@@ -6,8 +6,8 @@
 -- the total decides the order, so "mythic dawn" beats a row that only matches
 -- "dawn".
 
-local _, RP = ...
-local T = RP.Travel
+local _, PR = ...
+local T = PR.Travel
 
 T.Search = T.Search or {}
 local Search = T.Search
