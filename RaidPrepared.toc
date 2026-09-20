@@ -2,7 +2,7 @@
 ## Title: PullReady
 ## Notes: Checks your equipped gear for missing or low-quality enchants and gems and your healing/mana potions when you join a raid, and searches your fast-travel options.
 ## Author: duneking
-## Version: 1.5.0
+## Version: 2.2.0
 ## SavedVariables: PullReadyDB, RaidPreparedDB
 ## SavedVariablesPerCharacter: PullReadyCharDB, RaidPreparedCharDB
 ## IconTexture: Interface\Icons\INV_Misc_Gem_Diamond_02
@@ -35,6 +35,7 @@ Data.lua
 Scanner.lua
 Potions.lua
 RaidCheck.lua
+Comm.lua
 Talents.lua
 CharacterPanel.lua
 Shopping.lua

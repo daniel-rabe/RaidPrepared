@@ -9,7 +9,7 @@ local LINK_RETRIES = 6        -- retries while item links of an inspected unit a
 local LINK_RETRY_DELAY = 0.3
 
 local ROW_HEIGHT = 24
-local NAME_WIDTH = 150
+local NAME_WIDTH = 165
 
 local STATUS_TEXT = {
     pending    = "|cffaaaaaa" .. L["Waiting..."] .. "|r",
@@ -23,8 +23,14 @@ local STATUS_TEXT = {
 local RaidCheck = {}
 PR.RaidCheck = RaidCheck
 
--- In a raid the inspect is only available to the leader and assistants; in a party to everyone.
+-- Everyone in a group can look at the list.
 function RaidCheck:IsAllowed()
+    return IsInGroup()
+end
+
+-- Whispering the result is another matter: in a raid only the leader and assistants may
+-- do it, so twenty people don't whisper the same player about the same missing enchant.
+function RaidCheck:MayWhisper()
     if IsInRaid() then
         return UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")
     end
@@ -294,6 +300,22 @@ local function ColoredName(entry)
     return color and color:WrapTextInColorCode(entry.name) or entry.name
 end
 
+-- Members running PullReady themselves get an asterisk (see Comm.lua).
+local function MarkedName(entry)
+    local name = ColoredName(entry)
+    if PR.Comm:GetVersion(entry.guid) then
+        name = name .. " |cff33ccff*|r"
+    end
+    return name
+end
+
+local function AddonUserLine(entry)
+    local version = PR.Comm:GetVersion(entry.guid)
+    if not version then return nil end
+    if version == "?" then return L["Also using PullReady"] end
+    return L["Also using PullReady %s"]:format(version)
+end
+
 local function ShortIssue(issue)
     local color, text = "ffff4040"
     if issue.kind == "enchant" and issue.problem == "low" then
@@ -423,6 +445,7 @@ local function BuildWhisper(entry)
 end
 
 local function CanWhisper(entry)
+    if not RaidCheck:MayWhisper() then return false end
     if entry.status ~= "issues" or #entry.issues == 0 or entry.whispered then return false end
     if entry.guid == UnitGUID("player") or InCombatLockdown() then return false end
     local unit = FindUnit(entry.guid)
@@ -490,7 +513,9 @@ local function CreateRow(index)
         local entry = members[row.guid]
         if not entry or entry.status ~= "issues" then return end
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        if entry.whispered then
+        if not RaidCheck:MayWhisper() then
+            GameTooltip:AddLine(L["Whispering in a raid is limited to the raid leader and assistants."], 1, 1, 1, true)
+        elseif entry.whispered then
             GameTooltip:AddLine(L["Already whispered. Refresh this member to whisper again."], 1, 1, 1, true)
         else
             GameTooltip:AddLine(L["Whisper %s:"]:format(ColoredName(entry)))
@@ -508,9 +533,13 @@ local function CreateRow(index)
 
     row:SetScript("OnEnter", function(self)
         local entry = members[self.guid]
-        if not entry or #entry.issues == 0 then return end
+        local addonUser = entry and AddonUserLine(entry)
+        if not entry or (#entry.issues == 0 and not addonUser) then return end
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:AddLine(ColoredName(entry))
+        if addonUser then
+            GameTooltip:AddLine("|cff33ccff" .. addonUser .. "|r")
+        end
         for _, issue in ipairs(entry.issues) do
             local detail = issue.detail
             if issue.itemLevel then
@@ -564,7 +593,7 @@ function RaidCheck:Refresh()
         local entry = members[guid]
         local row = rows[i] or CreateRow(i)
         row.guid = guid
-        row.name:SetText(ColoredName(entry))
+        row.name:SetText(MarkedName(entry))
         row.status:SetText(StatusText(entry))
         row.refresh:SetEnabled(entry.status ~= "inspecting" and entry.status ~= "pending")
         row.whisper:SetText(entry.whispered and L["Sent"] or L["Whisper"])
@@ -591,7 +620,7 @@ function RaidCheck:Refresh()
     headerText:SetText(header)
 end
 
--- Cancels pending inspects and leaves the tab (e.g. after losing lead/assist in a raid).
+-- Cancels pending inspects and leaves the tab (e.g. after leaving the group).
 function RaidCheck:Stop()
     wipe(queue)
     if frame and frame:IsVisible() then
@@ -601,7 +630,7 @@ end
 
 function RaidCheck:Open()
     if not self:IsAllowed() then
-        print("|cff33ccffPullReady|r: " .. L["Raid Inspect requires raid lead or assist; Party Inspect requires a party."])
+        print("|cff33ccffPullReady|r: " .. L["Raid/Party Inspect requires a party or raid."])
         return
     end
     PR.Dialog:OpenTab(PR.Dialog.TAB_INSPECT)

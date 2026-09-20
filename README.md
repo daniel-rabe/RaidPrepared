@@ -34,13 +34,15 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 - Flags are saved per character.
 
 ### Raid / Party Inspect
-- Tab **Raid Inspect** (in a raid, leader and assistants only) or **Party Inspect** (in a party, available to everyone).
+- Tab **Raid Inspect** (in a raid) or **Party Inspect** (in a party), available to everyone in the group.
 - Lists **all group members** with their enchant/gem status (including a missing epic gem).
 - Shows **low or mid quality enchants** together with the item level of that gear slot.
 - Inspects players one after another (throttled, pauses in combat, doesn't interfere with your own inspect window).
 - Per-player **Refresh** button and a **Refresh All** button.
 - Per-player **Whisper** button: sends a short, friendly whisper listing the missing/low enchants and empty sockets (hover it to preview the text). Once per inspect result, so nobody gets spammed.
+  - In a **raid** only the leader and assistants can whisper, so a flagged player doesn't hear from twenty people at once. In a **party** everyone can.
 - Hover a player to see the full list of problems with item links.
+- Marks group members who run PullReady themselves with a blue **\***; hover them to see their version.
 - Shows players who are out of range or offline.
 
 ### Travel
@@ -69,7 +71,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 | Action | Result |
 | --- | --- |
 | `/pr` or `/pullready` | Check your own gear and consumables |
-| `/pr inspect` (or `/pr raid`, `/pr party`) | Open the Raid/Party Inspect tab (raid: lead/assist only) |
+| `/pr inspect` (or `/pr raid`, `/pr party`) | Open the Raid/Party Inspect tab |
 | `/pr talents` | Open the Talents tab (flag loadouts for raid / Mythic dungeons) |
 | `/pr travel` | Open the Travel tab (search your fast-travel options) |
 | `/pr shop` | Open the Shopping tab (enchants, gems and consumables you still need) |
@@ -137,6 +139,7 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 | `Scanner.lua` | Gear scanning (enchants, gems) for any unit |
 | `Potions.lua` | Flask, potion and weapon buff counting |
 | `RaidCheck.lua` | Raid/Party Inspect queue and tab |
+| `Comm.lua` | Addon channel handshake that finds the other PullReady users in the group |
 | `Dialog.lua` | Main window with Check, Inspect, Talents, Travel, Shopping and Options tabs |
 | `Minimap.lua` | Minimap button and addon compartment |
 | `Talents.lua` | Talent loadout flags, instance/ready check warning, talent frame checkboxes |

@@ -413,7 +413,7 @@ local function CreateDialog()
 end
 
 function Dialog:SelectTab(index)
-    -- Never land on a disabled tab (inspect without raid lead/assist).
+    -- Never land on a disabled tab (inspect while not in a group).
     local tab = frame.Tabs[index]
     if tab and tab.isDisabled then
         index = Dialog.TAB_CHECK
@@ -479,7 +479,7 @@ function Dialog:Show(issues, potions)
     end
 end
 
--- Updates title and availability of the inspect tab and button (raid lead/assist or party).
+-- Updates title and availability of the inspect tab and button (needs a party or raid).
 function Dialog:UpdateInspectAccess()
     if not frame then return end
     local allowed = PR.RaidCheck:IsAllowed()
