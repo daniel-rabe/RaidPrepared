@@ -9,6 +9,10 @@ local DEFAULTS = {
     minimap = { hide = false, angle = 225 },
     characterIndicators = true, -- enchant/socket indicators on the character panel
     localizedWhisper = false,   -- false = whisper in whisperLocale (recipient's language is unknown)
+    -- Shopping tab: the scope (missing only / whole catalog), then the favourites
+    -- filter applied on top of whichever scope is selected.
+    shoppingShowAll = false,
+    shoppingFavoritesOnly = false,
     whisperLocale = "enUS",     -- language of Raid Inspect whispers when localizedWhisper is off
     travel = {                  -- fast-travel tab
         closeOnUse = true,
@@ -106,6 +110,7 @@ events:SetScript("OnEvent", function(_, event, arg1, arg2)
         RP.Travel.db = RaidPreparedDB.travel
         RaidPreparedCharDB = RaidPreparedCharDB or {}
         RaidPreparedCharDB.loadoutFlags = RaidPreparedCharDB.loadoutFlags or {}
+        RaidPreparedCharDB.shoppingFavorites = RaidPreparedCharDB.shoppingFavorites or {}
         RP.Minimap:Create()
         RP.Talents:Init()
         RP.CharacterPanel:Init()
@@ -132,6 +137,8 @@ SlashCmdList.RAIDPREPARED = function(input)
         RP.RaidCheck:Open()
     elseif cmd == "talents" then
         RP.Talents:Open()
+    elseif cmd == "shop" or cmd == "shopping" then
+        RP.Shopping:Toggle()
     elseif cmd == "travel" then
         local sub, rest = arg:match("^(%S*)%s*(.-)$")
         local Travel = RP.Travel
@@ -173,6 +180,7 @@ SlashCmdList.RAIDPREPARED = function(input)
         print("  /rp inspect - " .. L["raid/party inspect of all group members (also /rp raid, /rp party)"])
         print("  /rp talents - " .. L["flag talent loadouts for raid / Mythic dungeons"])
         print("  /rp travel - " .. L["search your fast-travel options (also /rp travel season)"])
+        print("  /rp shop - " .. L["list the enchants, gems and consumables you still need"])
         print("  /rp options - " .. L["open the options tab"])
         print("  /rp indicators - " .. L["toggle enchant/socket indicators on the character panel"])
         print("  /rp minimap - " .. L["toggle minimap button"])

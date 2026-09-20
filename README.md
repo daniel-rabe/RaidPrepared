@@ -49,6 +49,14 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 - **Left-click** a row to travel, **right-click** to favourite it. Favourites and recently used options sort to the top.
 - Travel abilities are unusable in combat anyway, so the tab greys out and says **Locked in combat**, then fills back in when combat ends.
 
+### Shopping
+- Tab **Shopping** (`/rp shop`): this season's enchants, leg armor, gems and consumables as real item rows.
+- By default only the sections your own check flagged are listed, so the tab answers *what do I still have to buy* rather than *what exists*. **Show everything** turns it into the full catalog.
+- **Shift-click** a row to paste the item into the auction house search bar (or into chat when the auction house is closed); **Ctrl-click** opens the dressing room.
+- **Right-click** a row to favourite it. Favourites are pinned to the top of their section and are remembered **per character**, since which ring enchant or gem you want depends on the character.
+- Two independent toggles: **Show everything** widens the list from what you are missing to the whole catalog, and **Only favourites** narrows whichever of those two you are looking at down to your favourites.
+- Legs list spellthreads or armor kits depending on the armor type you actually wear.
+
 ### Languages
 - The interface is translated into every WoW client language: English, German, French, Spanish (EU/MX), Italian, Brazilian Portuguese, Russian, Korean and Chinese (Simplified/Traditional).
 - The **Whisper** message is sent in your own client language.
@@ -62,6 +70,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 | `/rp inspect` (or `/rp raid`, `/rp party`) | Open the Raid/Party Inspect tab (raid: lead/assist only) |
 | `/rp talents` | Open the Talents tab (flag loadouts for raid / Mythic dungeons) |
 | `/rp travel` | Open the Travel tab (search your fast-travel options) |
+| `/rp shop` | Open the Shopping tab (enchants, gems and consumables you still need) |
 | `/rp travel season` | List this season's Mythic+ maps and the ports that serve them |
 | `/rp travel audit` | Report travel entries whose ID does not resolve |
 | `/rp travel scan [text]` | Dump spellbook entries, used to harvest teleport IDs |
@@ -99,6 +108,9 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 | `EPIC_GEM_IDS` | Epic gem item IDs; warn if none is socketed (empty = no check) |
 | `HEALING_POTION_IDS` / `MANA_POTION_IDS` / `WEAPON_BUFF_IDS` | Item IDs that are counted (one ID per quality rank) |
 | `MIN_HEALING_POTIONS` / `MIN_MANA_POTIONS` / `MIN_WEAPON_BUFFS` | Warn below this amount |
+| `ENCHANT_ITEMS` / `LEG_ARMOR_ITEMS` | Enchants and leg armor the Shopping tab offers, per slot |
+| `GEM_ITEMS` / `EPIC_GEM_SHOP_IDS` | Gems the Shopping tab offers, grouped by mineral |
+| `CONSUMABLE_SHOP_IDS` | Ordered consumable IDs for the Shopping tab (the tables above are sets) |
 | `MANA_POTION_ROLES` | Spec roles that need mana potions |
 | `WEAPON_BUFF_EXEMPT_CLASSES` | Classes that use imbues/poisons/runes instead of oils |
 
@@ -117,10 +129,11 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 | `Scanner.lua` | Gear scanning (enchants, gems) for any unit |
 | `Potions.lua` | Potion and weapon buff counting |
 | `RaidCheck.lua` | Raid/Party Inspect queue and tab |
-| `Dialog.lua` | Main window with Check, Inspect, Talents, Options and Travel tabs |
+| `Dialog.lua` | Main window with Check, Inspect, Talents, Travel, Shopping and Options tabs |
 | `Minimap.lua` | Minimap button and addon compartment |
 | `Talents.lua` | Talent loadout flags, instance/ready check warning, talent frame checkboxes |
 | `CharacterPanel.lua` | Enchant/socket indicators on the character panel |
+| `Shopping.lua` | Shopping tab: what to buy, filtered to what the check flagged |
 | `Locales/Locales.lua` | Localization table (English keys, English fallback) |
 | `Locales/<locale>.lua` | Translations per client language |
 | `Core.lua` | Events, raid join detection, slash commands |

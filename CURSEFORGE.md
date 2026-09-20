@@ -35,6 +35,14 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 - **M+** filters to the current season's dungeon ports
 - Favourites and recently used options sort to the top
 
+### 🛒 Shopping
+- This season's **enchants, leg armor, gems and consumables** as real item rows
+- Lists only what your own check flagged, so it is a shopping list rather than a catalog
+- **Shift-click** a row to paste the item straight into the **auction house search bar**
+- **Right-click** to **favourite** an item; favourites pin to the top of their section, per character
+- **Only favourites** narrows the list to what you marked - your standing shopping list
+- **Show everything** switches to the full catalog when you want to browse
+
 ### 🛡️ Raid / Party Inspect
 - **Raid Inspect** for raid leaders and assistants, **Party Inspect** for everyone in a party
 - Lists **every raid member** with their enchant and gem status
@@ -64,6 +72,7 @@ RaidPrepared checks your gear the moment you join a raid group. Missing enchants
 | `/rp talents` | Flag talent loadouts |
 | `/rp travel` | Search your fast-travel options |
 | `/rp travel season` | This season's M+ maps and their ports |
+| `/rp shop` | What you still need to buy |
 | `/rp options` | Open the options tab |
 | `/rp indicators` | Toggle character panel indicators |
 | `/rp minimap` | Show/hide the minimap button |

@@ -34,10 +34,12 @@ Dialog.TAB_CHECK = 1
 Dialog.TAB_INSPECT = 2
 Dialog.TAB_TALENTS = 3
 Dialog.TAB_TRAVEL = 4
-Dialog.TAB_OPTIONS = 5
+Dialog.TAB_SHOPPING = 5
+Dialog.TAB_OPTIONS = 6
 
 local frame, scrollChild, summaryText, potionBar, okText
-local checkPanel, inspectPanel, talentsPanel, optionsPanel, travelPanel, indicatorsCheck
+local checkPanel, inspectPanel, talentsPanel, optionsPanel, travelPanel, shoppingPanel
+local indicatorsCheck
 local qualityButtons = {}
 local whisperCheck, whisperDrop
 local rows = {}
@@ -288,7 +290,7 @@ local function CreateDialog()
     -- Tab 3: talent loadouts
     talentsPanel = RP.Talents:CreatePanel(frame)
 
-    -- Tab 5: options
+    -- Tab 6: options
     optionsPanel = CreateFrame("Frame", nil, frame)
     optionsPanel:SetAllPoints()
     optionsPanel:Hide()
@@ -385,9 +387,13 @@ local function CreateDialog()
     -- Tab 4: fast-travel search
     travelPanel = RP.Travel:CreatePanel(frame)
 
+    -- Tab 5: shopping list
+    shoppingPanel = RP.Shopping:CreatePanel(frame)
+
     -- Tabs below the frame
     frame.Tabs = {}
-    for i, label in ipairs({ L["Check"], L["Raid Inspect"], TALENTS or L["Talents"], L["Travel"], OPTIONS or L["Options"] }) do
+    for i, label in ipairs({ L["Check"], L["Raid Inspect"], TALENTS or L["Talents"], L["Travel"], L["Shopping"],
+            OPTIONS or L["Options"] }) do
         local tab = CreateFrame("Button", "RaidPreparedDialogTab" .. i, frame, "PanelTabButtonTemplate")
         tab:SetID(i)
         tab:SetText(label)
@@ -418,6 +424,7 @@ function Dialog:SelectTab(index)
     talentsPanel:SetShown(index == Dialog.TAB_TALENTS)
     optionsPanel:SetShown(index == Dialog.TAB_OPTIONS)
     travelPanel:SetShown(index == Dialog.TAB_TRAVEL)
+    shoppingPanel:SetShown(index == Dialog.TAB_SHOPPING)
 end
 
 local function Populate(issues, potions)

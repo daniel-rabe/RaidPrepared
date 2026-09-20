@@ -37,6 +37,7 @@ Potions.lua
 RaidCheck.lua
 Talents.lua
 CharacterPanel.lua
+Shopping.lua
 
 Travel\Core.lua
 Travel\Data.lua

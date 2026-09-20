@@ -125,6 +125,127 @@ RP.WEAPON_BUFF_EXEMPT_CLASSES = {
     SHAMAN = true,
 }
 
+-- ============================================================================
+-- SHOPPING TAB CATALOG
+-- ============================================================================
+-- What the Shopping tab offers to buy. Item IDs only: name, icon, link and quality
+-- colour all come from C_Item at runtime, so the list is localized for free.
+--
+-- Enchants, leg armor and gems list the rank 2 (higher crafting quality) item; rank 1
+-- is always ID - 1. Rank 2 is what the default required quality asks for, and an
+-- auction house name search returns both ranks anyway.
+--
+-- Not listed on purpose: "Enchant Tool - ..." (profession tools, not gear) and the
+-- Heliotrope gems (PvP items sharing the Thalassian Diamond unique-equipped family).
+
+-- Enchants keyed by the inventory slot they apply to. FINGER2 reuses the FINGER1 list
+-- and OFFHAND reuses the MAINHAND list (see RP.GetEnchantShopSlot).
+RP.ENCHANT_ITEMS = {
+    [INVSLOT_HEAD] = {
+        243979, -- Enchant Helm - Blessing of Speed
+        243981, -- Enchant Helm - Empowered Blessing of Speed
+        243949, -- Enchant Helm - Hex of Leeching
+        243951, -- Enchant Helm - Empowered Hex of Leeching
+        244005, -- Enchant Helm - Rune of Avoidance
+        244007, -- Enchant Helm - Empowered Rune of Avoidance
+    },
+    [INVSLOT_SHOULDER] = {
+        243963, -- Enchant Shoulders - Akil'zon's Swiftness
+        243991, -- Enchant Shoulders - Amirdrassil's Grace
+        243961, -- Enchant Shoulders - Flight of the Eagle
+        243989, -- Enchant Shoulders - Nature's Grace
+        244021, -- Enchant Shoulders - Silvermoon's Mending
+        244019, -- Enchant Shoulders - Thalassian Recovery
+    },
+    [INVSLOT_CHEST] = {
+        243947, -- Enchant Chest - Mark of Nalorakk
+        244003, -- Enchant Chest - Mark of the Magister
+        243975, -- Enchant Chest - Mark of the Rootwarden
+        243977, -- Enchant Chest - Mark of the Worldsoul
+    },
+    [INVSLOT_FEET] = {
+        244009, -- Enchant Boots - Farstrider's Hunt
+        243953, -- Enchant Boots - Lynx's Dexterity
+        243983, -- Enchant Boots - Shaladrassil's Roots
+    },
+    [INVSLOT_FINGER1] = {
+        243955, -- Enchant Ring - Amani Mastery
+        243957, -- Enchant Ring - Eyes of the Eagle
+        243987, -- Enchant Ring - Nature's Fury
+        243985, -- Enchant Ring - Nature's Wrath
+        244015, -- Enchant Ring - Silvermoon's Alacrity
+        244017, -- Enchant Ring - Silvermoon's Tenacity
+        244011, -- Enchant Ring - Thalassian Haste
+        244013, -- Enchant Ring - Thalassian Versatility
+        243959, -- Enchant Ring - Zul'jin's Mastery
+    },
+    [INVSLOT_MAINHAND] = {
+        244029, -- Enchant Weapon - Acuity of the Ren'dorei
+        244031, -- Enchant Weapon - Arcane Mastery
+        243973, -- Enchant Weapon - Berserker's Rage
+        244027, -- Enchant Weapon - Flames of the Sin'dorei
+        243971, -- Enchant Weapon - Jan'alai's Precision
+        273072, -- Enchant Weapon - Rite of the Hash'ey
+        243969, -- Enchant Weapon - Strength of Halazzi
+        243999, -- Enchant Weapon - Worldsoul Aegis
+        243997, -- Enchant Weapon - Worldsoul Cradle
+        244001, -- Enchant Weapon - Worldsoul Tenacity
+    },
+}
+
+-- Legs take a spellthread (cloth) or an armor kit (leather/mail/plate), not an enchant.
+RP.LEG_ARMOR_ITEMS = {
+    cloth = {
+        240157, -- Bright Linen Spellthread
+        240133, -- Sunfire Silk Spellthread
+        240155, -- Arcanoweave Spellthread
+    },
+    physical = {
+        244641, -- Forest Hunter's Armor Kit
+        244643, -- Blood Knight's Armor Kit
+        244645, -- Thalassian Scout Armor Kit
+    },
+}
+
+-- Gems grouped by mineral. The mineral sets the primary stat, the cut adjective the
+-- secondary one. "Flawless" is a strictly better tier of the same gem (+17 versus +13
+-- Versatility at the same item level), so the plain line is only shown under "Show all".
+RP.GEM_ITEMS = {
+    { mineral = "Lapis",    flawless = { 240912, 240916, 240914, 240918 }, plain = { 240880, 240884, 240882, 240886 } },
+    { mineral = "Peridot",  flawless = { 240888, 240894, 240890, 240892 }, plain = { 240856, 240862, 240858, 240860 } },
+    { mineral = "Garnet",   flawless = { 240904, 240910, 240906, 240908 }, plain = { 240872, 240878, 240874, 240876 } },
+    { mineral = "Amethyst", flawless = { 240896, 240902, 240900, 240898 }, plain = { 240864, 240870, 240868, 240866 } },
+}
+
+-- The unique epic diamonds, one row each (rank 2 of every pair in RP.EPIC_GEM_IDS).
+RP.EPIC_GEM_SHOP_IDS = {
+    240983, -- Indecipherable Eversong Diamond
+    240967, -- Powerful Eversong Diamond
+    240971, -- Stoic Eversong Diamond
+    240969, -- Telluric Eversong Diamond
+}
+
+-- The consumable tables above are sets, and pairs() order is not stable, so the shopping
+-- list needs its own ordered copy. Both crafting ranks are listed; the tab keeps one row
+-- per item name and drops the lower-item-level rank (see RP.BuildShopItems).
+RP.CONSUMABLE_SHOP_IDS = {
+    heal   = { 241304, 241305, 271883, 271884 },
+    mana   = { 241300, 241301 },
+    power  = { 241308, 241309, 245897, 245898, 241292, 241293, 241288, 241289, 245902, 245903,
+               241296, 241297, 245900, 245901, 271886, 271887, 274763, 274764, 271889, 271890,
+               274765, 274766 },
+    weapon = { 243733, 243734, 243735, 243736, 243737, 243738, 237370, 237371, 237367, 237369,
+               257749, 257750, 257751, 257752 },
+}
+
+-- The enchant list a slot shops from: the two ring slots share one list, as do the two
+-- weapon slots. Legs are handled separately (spellthread / armor kit).
+function RP.GetEnchantShopSlot(slot)
+    if slot == INVSLOT_FINGER2 then return INVSLOT_FINGER1 end
+    if slot == INVSLOT_OFFHAND then return INVSLOT_MAINHAND end
+    return slot
+end
+
 RP.SLOT_NAMES = {
     [INVSLOT_HEAD]      = HEADSLOT,
     [INVSLOT_NECK]      = NECKSLOT,
