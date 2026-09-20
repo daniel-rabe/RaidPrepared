@@ -17,6 +17,7 @@ local DEFAULTS = {
     travel = {                  -- fast-travel tab
         closeOnUse = true,
         maxRecent  = 15,
+        seasonOnly = false,     -- "M+" filter on the travel tab, kept across reloads
         recent     = {},        -- array of entry keys, most recently used first
         favorites  = {},        -- [entryKey] = true
     },

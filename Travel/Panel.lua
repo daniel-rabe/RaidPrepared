@@ -315,12 +315,21 @@ end
 -- PANEL
 -- ============================================================================
 
----Turn the current-season dungeon filter on or off.
-function UI.SetSeasonOnly(on)
+---Set the filter flag and the button look, without touching the rows.
+local function ApplySeasonOnly(on)
     seasonOnly = on and true or false
     if seasonButton then
         -- Locked "pushed" look so the active filter is obvious.
         seasonButton:SetButtonState(seasonOnly and "PUSHED" or "NORMAL", seasonOnly)
+    end
+end
+
+---Turn the current-season dungeon filter on or off. The choice is saved, so
+---the tab opens with the same filter after a reload.
+function UI.SetSeasonOnly(on)
+    ApplySeasonOnly(on)
+    if T.db then
+        T.db.seasonOnly = seasonOnly
     end
     UI.Refresh()
 end
@@ -352,6 +361,10 @@ function T:CreatePanel(parent)
         GameTooltip:Show()
     end)
     seasonButton:SetScript("OnLeave", GameTooltip_Hide)
+
+    -- Restore the saved filter. No refresh here: the pool is built lazily, and
+    -- the panel refreshes on show anyway.
+    ApplySeasonOnly(T.db and T.db.seasonOnly)
 
     editBox = CreateFrame("EditBox", nil, panel, "InputBoxTemplate")
     editBox:SetPoint("TOPLEFT", SIDE_INSET + 6, -44)
