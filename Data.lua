@@ -216,14 +216,17 @@ PR.ENCHANT_ITEMS = {
     },
 }
 
--- Legs take a spellthread (cloth) or an armor kit (leather/mail/plate), not an enchant.
+-- Legs take a spellthread or an armor kit rather than an enchant.
+-- Keyed by the primary stat they grant, NOT by armor type: neither kind carries an
+-- armor restriction, so a mail-wearing Evoker or a plate-wearing Holy Paladin wants
+-- the Intellect spellthreads just as much as a clothie does.
 PR.LEG_ARMOR_ITEMS = {
-    cloth = {
+    intellect = {
         240157, -- Bright Linen Spellthread
         240133, -- Sunfire Silk Spellthread
         240155, -- Arcanoweave Spellthread
     },
-    physical = {
+    physical = { -- "Agility or Strength"
         244641, -- Forest Hunter's Armor Kit
         244643, -- Blood Knight's Armor Kit
         244645, -- Thalassian Scout Armor Kit

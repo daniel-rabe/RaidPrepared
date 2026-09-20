@@ -30,10 +30,6 @@ local ICON_SIZE      = 22
 local SIDE_INSET     = 20
 local REFRESH_DELAY  = 0.2
 
--- Cloth wearers get spellthreads, everyone else armor kits. Used only when no leg
--- item is equipped; otherwise the equipped item's own armor subclass decides.
-local CLOTH_CLASSES = { MAGE = true, PRIEST = true, WARLOCK = true }
-
 -- Enchantable slots in the order the tab lists them. Legs are not in here: they take
 -- a spellthread or an armor kit instead of an enchant and have their own section.
 local ENCHANT_ORDER = {
@@ -130,17 +126,31 @@ function PR.BuildShopItems(ids)
     return items
 end
 
--- Spellthreads for cloth legs, armor kits for everything else.
-local function LegArmorIDs()
-    local link = GetInventoryItemLink("player", INVSLOT_LEGS)
-    if link then
-        local subclassID = select(7, C_Item.GetItemInfoInstant(link))
-        local cloth = Enum.ItemArmorSubclass and Enum.ItemArmorSubclass.Cloth or 1
-        return subclassID == cloth and PR.LEG_ARMOR_ITEMS.cloth or PR.LEG_ARMOR_ITEMS.physical
+-- Spellthreads grant Intellect, armor kits Agility or Strength, and neither is
+-- restricted by armor type - so the spec's primary stat decides, not what the legs
+-- are made of. Without a usable spec (no specialization yet, or the API not
+-- answering) both lists are offered rather than guessing wrong.
+local INTELLECT = LE_UNIT_STAT_INTELLECT or 4
+
+local function LegArmorIDs(showAll)
+    local both = {}
+    local function append(list)
+        for _, itemID in ipairs(list) do both[#both + 1] = itemID end
     end
 
-    local _, classFile = UnitClass("player")
-    return CLOTH_CLASSES[classFile] and PR.LEG_ARMOR_ITEMS.cloth or PR.LEG_ARMOR_ITEMS.physical
+    if not showAll then
+        local specIndex = PR.GetSpecIndex()
+        local primaryStat = specIndex and select(6, PR.GetSpecInfo(specIndex))
+        if primaryStat == INTELLECT then
+            return PR.LEG_ARMOR_ITEMS.intellect
+        elseif primaryStat then
+            return PR.LEG_ARMOR_ITEMS.physical
+        end
+    end
+
+    append(PR.LEG_ARMOR_ITEMS.intellect)
+    append(PR.LEG_ARMOR_ITEMS.physical)
+    return both
 end
 
 -- What the scan says is still missing, reduced to the sections the tab can offer.
@@ -184,7 +194,7 @@ local function CollectIDs(needs)
     for _, slot in ipairs(ENCHANT_ORDER) do
         if showAll or needs.enchant[slot] then add(PR.ENCHANT_ITEMS[slot]) end
     end
-    if showAll or needs.legs then add(LegArmorIDs()) end
+    if showAll or needs.legs then add(LegArmorIDs(showAll)) end
     if showAll or needs.gems then
         for _, group in ipairs(PR.GEM_ITEMS) do
             add(group.flawless)
@@ -236,7 +246,7 @@ local function BuildEntries(needs)
         end
     end
     if showAll or needs.legs then
-        section(L["Leg Armor"], LegArmorIDs())
+        section(L["Leg Armor"], LegArmorIDs(showAll))
     end
     if showAll or needs.gems then
         for _, group in ipairs(PR.GEM_ITEMS) do
