@@ -4,7 +4,7 @@
 
 # PullReady
 
-A World of Warcraft (Retail – Midnight) addon that makes sure you and your raid are ready before the pull: it checks equipped gear for missing or low-quality **enchants** and **gems**, counts your **healing potions**, **mana potions** and **weapon buffs** (oils, stones), can inspect the whole raid for missing enchants and gems, and searches every fast-travel option your character actually has.
+A World of Warcraft (Retail – Midnight) addon that makes sure you and your raid are ready before the pull: it checks equipped gear for missing or low-quality **enchants** and **gems**, counts your **flasks**, **healing potions**, **mana potions**, **power potions** and **weapon buffs** (oils, stones), can inspect the whole raid for missing enchants and gems, and searches every fast-travel option your character actually has.
 
 ## Features
 
@@ -17,8 +17,10 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
   - **Low-quality** enchants and gems (below the highest crafting quality rank).
   - **Outdated** gems from previous expansions (and optionally enchants, see configuration).
 - Counts consumables in your bags:
+  - **Flasks**: Flask of Thalassian Resistance, Flask of the Magisters, Flask of the Blood Knights, Flask of the Shattered Sun – including the remaining time of the flask you are already running.
   - **Healing potions**: Silvermoon Health Potion, Concentrated Silvermoon Health Potion
   - **Mana potions**: Lightfused Mana Potion – required for healer specs only
+  - **Power potions**: Light's Potential, Draught of Rampant Abandon, Potion of Recklessness, Potion of Zealotry, Liquid Luster, Alluring Nostrum (and their Fleeting versions)
   - **Weapon buffs**: Thalassian Phoenix Oil, Oil of Dawn, Smuggler's Enchanted Edge, Refulgent Whetstone, Refulgent Weightstone, Laced Zoomshots, Weighted Boomshots – including remaining time of the active buff. Death Knights, Rogues and Shamans are not warned.
   - Consumables are matched by item ID (all quality ranks), so the check works with every client language.
 - Shows a dialog listing every problem (close with the X button or ESC). Nothing pops up when everything is fine.
@@ -111,8 +113,9 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 | `KNOWN_CURRENT_ENCHANTS` | Optional whitelist of enchant IDs; others are reported as outdated |
 | `MIN_GEM_EXPANSION` | Older gems count as outdated |
 | `EPIC_GEM_IDS` | Epic gem item IDs; warn if none is socketed (empty = no check) |
-| `HEALING_POTION_IDS` / `MANA_POTION_IDS` / `WEAPON_BUFF_IDS` | Item IDs that are counted (one ID per quality rank) |
-| `MIN_HEALING_POTIONS` / `MIN_MANA_POTIONS` / `MIN_WEAPON_BUFFS` | Warn below this amount |
+| `FLASK_IDS` / `HEALING_POTION_IDS` / `MANA_POTION_IDS` / `POWER_POTION_IDS` / `WEAPON_BUFF_IDS` | Item IDs that are counted (one ID per quality rank) |
+| `MIN_FLASKS` / `MIN_HEALING_POTIONS` / `MIN_MANA_POTIONS` / `MIN_POWER_POTIONS` / `MIN_WEAPON_BUFFS` | Warn below this amount |
+| `FLASK_AURA_IDS` / `FLASK_ICON_ID` | Flask buff spell IDs (remaining time) and the item the flask icon comes from |
 | `ENCHANT_ITEMS` / `LEG_ARMOR_ITEMS` | Enchants and leg armor the Shopping tab offers, per slot |
 | `GEM_ITEMS` / `EPIC_GEM_SHOP_IDS` | Gems the Shopping tab offers, grouped by mineral |
 | `CONSUMABLE_SHOP_IDS` | Ordered consumable IDs for the Shopping tab (the tables above are sets) |
@@ -132,7 +135,7 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 | `RaidPrepared.toc` | Addon manifest |
 | `Data.lua` | Patch-specific configuration |
 | `Scanner.lua` | Gear scanning (enchants, gems) for any unit |
-| `Potions.lua` | Potion and weapon buff counting |
+| `Potions.lua` | Flask, potion and weapon buff counting |
 | `RaidCheck.lua` | Raid/Party Inspect queue and tab |
 | `Dialog.lua` | Main window with Check, Inspect, Talents, Travel, Shopping and Options tabs |
 | `Minimap.lua` | Minimap button and addon compartment |

@@ -17,8 +17,10 @@ PullReady checks your gear the moment you join a raid group. Missing enchants, e
 - Optional **indicators on your character panel** show exactly which items lack an enchant or gem
 
 ### 🧪 Consumables
+- Counts your **flasks** (Thalassian Resistance, the Magisters, the Blood Knights, the Shattered Sun) and shows how long the flask you are already running still lasts
 - Counts your **Silvermoon Health Potions** and **Concentrated Silvermoon Health Potions**
 - Counts your **Lightfused Mana Potions** (only required for healers)
+- Counts your **power potions** (Light's Potential, Potion of Recklessness, Liquid Luster and friends)
 - Counts **weapon buffs** (Thalassian Phoenix Oil, Oil of Dawn, Smuggler's Enchanted Edge, Refulgent Whetstone & Weightstone, hunter ammo) and shows the remaining time of your active weapon buff
 - Warns you when you have none left
 - Works with **every client language** (items are matched by ID, all quality ranks)

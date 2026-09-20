@@ -74,6 +74,29 @@ PR.MIN_HEALING_POTIONS = 1
 PR.MIN_MANA_POTIONS = 1
 PR.MIN_WEAPON_BUFFS = 1
 PR.MIN_POWER_POTIONS = 1
+PR.MIN_FLASKS = 1
+
+-- Stat flasks: one hour, through death, one per raid night. The PvP honor flask and the
+-- profession phials (Haranir Phial of ...) are not raid consumables and are left out.
+PR.FLASK_IDS = {
+    [241320] = true, [241321] = true, -- Flask of Thalassian Resistance (Versatility)
+    [241322] = true, [241323] = true, -- Flask of the Magisters (Mastery)
+    [241324] = true, [241325] = true, -- Flask of the Blood Knights (Haste)
+    [241326] = true, [241327] = true, -- Flask of the Shattered Sun (Critical Strike)
+}
+
+-- Buff of each flask above; both crafting ranks of a flask share one spell ID. Used to
+-- show how long the flask that is already running still lasts.
+PR.FLASK_AURA_IDS = {
+    1235057, -- Flask of Thalassian Resistance
+    1235108, -- Flask of the Magisters
+    1235110, -- Flask of the Blood Knights
+    1235111, -- Flask of the Shattered Sun
+}
+
+-- Stands in for the flask icon while the bags hold none. An item ID, not a file ID:
+-- C_Item.GetItemIconByID resolves it without the item cache being warm.
+PR.FLASK_ICON_ID = 241326 -- Flask of the Shattered Sun
 
 PR.HEALING_POTION_IDS = {
     [241304] = true, [241305] = true, -- Silvermoon Health Potion
@@ -229,6 +252,7 @@ PR.EPIC_GEM_SHOP_IDS = {
 -- list needs its own ordered copy. Both crafting ranks are listed; the tab keeps one row
 -- per item name and drops the lower-item-level rank (see PR.BuildShopItems).
 PR.CONSUMABLE_SHOP_IDS = {
+    flask  = { 241320, 241321, 241322, 241323, 241324, 241325, 241326, 241327 },
     heal   = { 241304, 241305, 271883, 271884 },
     mana   = { 241300, 241301 },
     power  = { 241308, 241309, 245897, 245898, 241292, 241293, 241288, 241289, 245902, 245903,

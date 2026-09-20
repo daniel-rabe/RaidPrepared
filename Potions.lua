@@ -1,7 +1,7 @@
 local _, PR = ...
 local L = PR.L
 
--- Counts raid consumables in the bags by item ID (see Data.lua): healing potions,
+-- Counts raid consumables in the bags by item ID (see Data.lua): flasks, healing potions,
 -- mana potions, power potions and temporary weapon buffs (oils, stones, hunter ammo).
 
 local DEFAULT_ICONS = {
@@ -11,8 +11,22 @@ local DEFAULT_ICONS = {
     power = 7548911, -- inv_12_profession_alchemy_lightpotion_yellow
 }
 
+-- The icon a kind shows while nothing of it is in the bags. Flasks have no entry above:
+-- theirs is taken from the flask item itself, which keeps it right across seasons.
+local function DefaultIcon(kind)
+    if kind == "flask" then
+        return C_Item.GetItemIconByID(PR.FLASK_ICON_ID)
+    end
+    return DEFAULT_ICONS[kind]
+end
+
 -- Label and problem texts per consumable kind (full sentences, so they translate cleanly).
 local TEXTS = {
+    flask = {
+        label = L["Flasks"],
+        none = L["No flask in your bags!"],
+        few = L["Only %d flasks (minimum %d)"],
+    },
     heal = {
         label = L["Healing Potions"],
         none = L["No healing potions in your bags!"],
@@ -46,6 +60,18 @@ local function IsWeaponBuffRequired()
     return not PR.WEAPON_BUFF_EXEMPT_CLASSES[classFile]
 end
 
+-- Remaining time of the flask buff that is already running in seconds, or nil.
+local function GetActiveFlaskTime()
+    if not (C_UnitAuras and C_UnitAuras.GetPlayerAuraBySpellID) then return nil end
+    for _, spellID in ipairs(PR.FLASK_AURA_IDS) do
+        local aura = C_UnitAuras.GetPlayerAuraBySpellID(spellID)
+        if aura and aura.expirationTime and aura.expirationTime > 0 then
+            return aura.expirationTime - GetTime()
+        end
+    end
+    return nil
+end
+
 -- Remaining time of the currently applied main-hand temporary enchant in seconds, or nil.
 local function GetActiveWeaponBuffTime()
     local hasMainHand, mainHandExpiration = GetWeaponEnchantInfo()
@@ -63,7 +89,7 @@ local function NewEntry(kind, ids, minimum, required)
         minimum = minimum,
         required = required,
         count = 0,
-        icon = DEFAULT_ICONS[kind],
+        icon = DefaultIcon(kind),
         items = {},     -- one entry per item ID found, most numerous first
         itemsByID = {}, -- [itemID] = entry in items
     }
@@ -137,8 +163,10 @@ local function ForEachBagItem(func)
     end
 end
 
--- Returns consumables ({heal, mana, weapon} entries, also as array) and issues.
+-- Returns consumables ({flask, heal, mana, power, weapon} entries, also as array) and issues.
 function PR.ScanPotions()
+    local flask = NewEntry("flask", PR.FLASK_IDS, PR.MIN_FLASKS, true)
+    flask.activeTime = GetActiveFlaskTime()
     local heal = NewEntry("heal", PR.HEALING_POTION_IDS, PR.MIN_HEALING_POTIONS, true)
     local mana = NewEntry("mana", PR.MANA_POTION_IDS, PR.MIN_MANA_POTIONS, IsManaPotionRequired())
     local power = NewEntry("power", PR.POWER_POTION_IDS, PR.MIN_POWER_POTIONS, true)
@@ -146,8 +174,8 @@ function PR.ScanPotions()
     weapon.activeTime = GetActiveWeaponBuffTime()
 
     local consumables = {
-        heal, mana, power, weapon,
-        heal = heal, mana = mana, power = power, weapon = weapon,
+        flask, heal, mana, power, weapon,
+        flask = flask, heal = heal, mana = mana, power = power, weapon = weapon,
     }
 
     ForEachBagItem(function(_, _, info)
@@ -181,7 +209,7 @@ function PR.DebugPotions()
             end
         end
     end)
-    print(("  mana potions required: %s, weapon buffs required: %s, active weapon buff: %s"):format(
+    print(("  mana potions required: %s, weapon buffs required: %s, active weapon buff: %s, active flask: %s"):format(
         tostring(IsManaPotionRequired()), tostring(IsWeaponBuffRequired()),
-        tostring(GetActiveWeaponBuffTime())))
+        tostring(GetActiveWeaponBuffTime()), tostring(GetActiveFlaskTime())))
 end

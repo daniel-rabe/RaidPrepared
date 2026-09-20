@@ -8,7 +8,7 @@ local ROW_HEIGHT = 34
 -- Consumable summary: one icon per kind with its stack count, details in the tooltip.
 local POTION_ICON_SIZE = 34
 local POTION_ICON_GAP = 26
-local POTION_KINDS = { "heal", "mana", "power", "weapon" }
+local POTION_KINDS = { "flask", "heal", "mana", "power", "weapon" }
 local TOOLTIP_ICON = "|T%s:16:16:0:0:64:64:5:59:5:59|t"
 
 -- Quality option: the crafting quality icons the game itself uses, instead of a bare number.

@@ -63,8 +63,9 @@ local function GemGroupHeader(group)
     return group.mineral
 end
 
-local CONSUMABLE_ORDER = { "heal", "mana", "power", "weapon" }
+local CONSUMABLE_ORDER = { "flask", "heal", "mana", "power", "weapon" }
 local CONSUMABLE_HEADERS = {
+    flask  = L["Flasks"],
     heal   = L["Healing Potions"],
     mana   = L["Mana Potions"],
     power  = L["Power Potions"],
