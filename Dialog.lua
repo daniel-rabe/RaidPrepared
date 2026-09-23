@@ -239,7 +239,7 @@ local function UpdateTierIcon(button, entry)
     button.border:SetColorTexture(r, g, b, 0.9)
     button.count:SetText(("%d/%d"):format(entry.count, entry.maxPieces))
     button.count:SetTextColor(r, g, b)
-    button.bonus:SetText(entry.active and L["%dpc"]:format(entry.active.pieces) or "")
+    button.bonus:SetText(entry.active and L["%dP"]:format(entry.active.pieces) or "")
     button.bonus:SetTextColor(r, g, b)
     button:Show()
 end

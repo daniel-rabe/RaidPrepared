@@ -10,6 +10,7 @@ local LINK_RETRY_DELAY = 0.3
 
 local ROW_HEIGHT = 24
 local NAME_WIDTH = 165
+local TIER_WIDTH = 28 -- the "2P" / "4P" tier set tag between name and status
 
 local STATUS_TEXT = {
     pending    = "|cffaaaaaa" .. L["Waiting..."] .. "|r",
@@ -41,7 +42,7 @@ function RaidCheck:GetTitle()
     return IsInRaid() and L["Raid Inspect"] or L["Party Inspect"]
 end
 
-local members = {} -- guid -> { guid, name, classFile, status, issues }
+local members = {} -- guid -> { guid, name, classFile, status, issues, tierSet }
 local order = {}   -- guids sorted by name
 local queue = {}   -- guids waiting to be inspected
 local current      -- { guid, started, scanning } of the member being inspected
@@ -135,11 +136,12 @@ end
 -- Inspect queue
 ---------------------------------------------------------------------------
 
-local function Finish(guid, status, issues)
+local function Finish(guid, status, issues, tierSet)
     local entry = members[guid]
     if entry then
         entry.status = status
         entry.issues = issues or {}
+        entry.tierSet = tierSet
     end
     if current and current.guid == guid then
         local notified = current.notified
@@ -161,10 +163,11 @@ local function CountEquippedItems(unit)
     return count
 end
 
+-- The tier set is read off the same inspect data, right after the gear scan warmed it.
 local function ScanMember(guid, unit)
     PR.ScanUnitAsync(unit, "enchant", function(issues)
         if current and current.guid == guid then
-            Finish(guid, #issues > 0 and "issues" or "ok", issues)
+            Finish(guid, #issues > 0 and "issues" or "ok", issues, PR.ScanUnitTierSet(unit))
         end
     end)
 end
@@ -314,6 +317,28 @@ local function AddonUserLine(entry)
     if not version then return nil end
     if version == "?" then return L["Also using PullReady"] end
     return L["Also using PullReady %s"]:format(version)
+end
+
+-- Colour of a tier set reading: green on the best bonus, orange below it, grey on none.
+local function TierColor(tierSet)
+    local best = tierSet.bonuses[#tierSet.bonuses]
+    if best and best.active then
+        return 0.25, 1.0, 0.25
+    elseif tierSet.active then
+        return 1.0, 0.6, 0.1
+    end
+    return 0.65, 0.65, 0.65
+end
+
+-- The bonus a member is running as a short tag ("2P", "4P"), a dash when none is, and
+-- nothing at all while the member has not been inspected yet.
+local function TierTag(entry)
+    local tierSet = entry.tierSet
+    if not tierSet then return "" end
+    if not tierSet.active then return "|cffaaaaaa-|r" end
+    local best = tierSet.bonuses[#tierSet.bonuses]
+    return ("|c%s%s|r"):format(best and best.active and "ff40ff40" or "ffff9919",
+        L["%dP"]:format(tierSet.active.pieces))
 end
 
 local function ShortIssue(issue)
@@ -493,6 +518,12 @@ local function CreateRow(index)
     row.name:SetJustifyH("LEFT")
     row.name:SetWordWrap(false)
 
+    row.tier = row:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    row.tier:SetPoint("LEFT", row.name, "RIGHT", 4, 0)
+    row.tier:SetWidth(TIER_WIDTH)
+    row.tier:SetJustifyH("LEFT")
+    row.tier:SetWordWrap(false)
+
     row.refresh = CreateFrame("Button", nil, row, "UIPanelButtonTemplate")
     row.refresh:SetSize(70, 20)
     row.refresh:SetPoint("RIGHT", -2, 0)
@@ -526,7 +557,7 @@ local function CreateRow(index)
     row.whisper:SetScript("OnLeave", GameTooltip_Hide)
 
     row.status = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    row.status:SetPoint("LEFT", row.name, "RIGHT", 8, 0)
+    row.status:SetPoint("LEFT", row.tier, "RIGHT", 4, 0)
     row.status:SetPoint("RIGHT", row.whisper, "LEFT", -8, 0)
     row.status:SetJustifyH("LEFT")
     row.status:SetWordWrap(false)
@@ -534,11 +565,19 @@ local function CreateRow(index)
     row:SetScript("OnEnter", function(self)
         local entry = members[self.guid]
         local addonUser = entry and AddonUserLine(entry)
-        if not entry or (#entry.issues == 0 and not addonUser) then return end
+        if not entry or (#entry.issues == 0 and not addonUser and not entry.tierSet) then return end
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:AddLine(ColoredName(entry))
         if addonUser then
             GameTooltip:AddLine("|cff33ccff" .. addonUser .. "|r")
+        end
+        if entry.tierSet then
+            local tierSet = entry.tierSet
+            local state = ("%d/%d"):format(tierSet.count, tierSet.maxPieces)
+            if tierSet.active then
+                state = ("%s - %s"):format(state, L["%d-piece bonus"]:format(tierSet.active.pieces))
+            end
+            GameTooltip:AddDoubleLine(tierSet.name or L["Tier Set"], state, 1, 1, 1, TierColor(tierSet))
         end
         for _, issue in ipairs(entry.issues) do
             local detail = issue.detail
@@ -594,6 +633,7 @@ function RaidCheck:Refresh()
         local row = rows[i] or CreateRow(i)
         row.guid = guid
         row.name:SetText(MarkedName(entry))
+        row.tier:SetText(TierTag(entry))
         row.status:SetText(StatusText(entry))
         row.refresh:SetEnabled(entry.status ~= "inspecting" and entry.status ~= "pending")
         row.whisper:SetText(entry.whispered and L["Sent"] or L["Whisper"])

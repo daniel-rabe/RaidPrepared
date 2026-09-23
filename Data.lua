@@ -23,6 +23,34 @@ function PR.GetSpecInfo(specIndex)
     end
 end
 
+-- Specialization of an inspected unit. Only known once INSPECT_READY fired for that unit.
+function PR.GetInspectSpecID(unit)
+    if C_SpecializationInfo and C_SpecializationInfo.GetInspectSpecialization then
+        return C_SpecializationInfo.GetInspectSpecialization(unit)
+    end
+    if GetInspectSpecialization then
+        return GetInspectSpecialization(unit)
+    end
+end
+
+-- Every spec ID of a class, in spec order. Stands in where a unit's own spec is unknown.
+function PR.GetClassSpecIDs(classID)
+    local specIDs = {}
+    local getInfo = (C_SpecializationInfo and C_SpecializationInfo.GetSpecializationInfoForClassID)
+        or GetSpecializationInfoForClassID
+    if not (classID and getInfo) then return specIDs end
+
+    local count = C_SpecializationInfo and C_SpecializationInfo.GetNumSpecializationsForClassID
+        and C_SpecializationInfo.GetNumSpecializationsForClassID(classID)
+    for index = 1, count or 4 do
+        local specID = getInfo(classID, index)
+        if specID then
+            specIDs[#specIDs + 1] = specID
+        end
+    end
+    return specIDs
+end
+
 -- Slots that are expected to carry an enchant (Midnight).
 PR.ENCHANT_SLOTS = {
     [INVSLOT_HEAD]      = true,

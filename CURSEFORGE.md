@@ -30,6 +30,7 @@ PullReady checks your gear the moment you join a raid group. Missing enchants, e
 - Tells you whether you are running the **2-piece** or the **4-piece** bonus
 - Warns you when a better bonus is still missing and your **catalyst charges** would buy the pieces for it
 - Hover the icon for your set pieces, both bonuses and your remaining charges
+- In **Raid / Party Inspect**, every member's bonus shows next to their name as a small **2P** / **4P** tag
 
 ### 📜 Talent Loadouts
 - Flag your loadouts as **Raid** or **Dungeon** (Talents tab of the addon window or checkboxes in the talent frame)
@@ -56,6 +57,7 @@ PullReady checks your gear the moment you join a raid group. Missing enchants, e
 - Lists **every raid member** with their enchant and gem status
 - Shows **low/mid quality enchants** with the item level of the slot
 - Hover a player to see exactly which items are missing an enchant or gem
+- Shows each member's **tier set bonus** (**2P** / **4P**) beside their name, with the set name in the row tooltip
 - **Refresh** button for each player, plus **Refresh All**
 - **Whisper** button for each player: sends a short, friendly heads-up listing what's missing (hover it to preview the text)
 - Inspects players one at a time, pauses in combat, never interrupts your own inspect window

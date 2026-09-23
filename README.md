@@ -39,6 +39,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 ### Raid / Party Inspect
 - Tab **Raid Inspect** (in a raid) or **Party Inspect** (in a party), available to everyone in the group.
 - Lists **all group members** with their enchant/gem status (including a missing epic gem).
+- Shows each member's **tier set bonus** as a small tag next to their name: **2P**, **4P**, or a dash while no bonus is running. Hover the row for the set name and the piece count.
 - Shows **low or mid quality enchants** together with the item level of that gear slot.
 - Inspects players one after another (throttled, pauses in combat, doesn't interfere with your own inspect window).
 - Per-player **Refresh** button and a **Refresh All** button.
