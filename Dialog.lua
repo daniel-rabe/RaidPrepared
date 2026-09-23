@@ -6,11 +6,13 @@ local FRAME_HEIGHT = 390
 local ROW_HEIGHT = 34
 
 -- Consumable summary: one icon per kind with its stack count, details in the tooltip.
--- The tier set follows the consumables as one more icon in the same row.
+-- The tier set and the gear durability follow the consumables as two more icons in the
+-- same row.
 local POTION_ICON_SIZE = 34
 local POTION_ICON_GAP = 26
 local POTION_KINDS = { "flask", "heal", "mana", "power", "weapon" }
-local TIER_ICON_INDEX = #POTION_KINDS + 1 -- the tier set sits last in the row
+local TIER_ICON_INDEX = #POTION_KINDS + 1 -- the tier set follows the consumables
+local DURABILITY_ICON_INDEX = TIER_ICON_INDEX + 1 -- durability closes the row
 local TOOLTIP_ICON = "|T%s:16:16:0:0:64:64:5:59:5:59|t"
 
 -- Quality option: the crafting quality icons the game itself uses, instead of a bare number.
@@ -45,7 +47,7 @@ local indicatorsCheck
 local qualityButtons = {}
 local whisperCheck, whisperDrop
 local rows = {}
-local pendingIssues, pendingPotions, pendingTierSet -- waiting for combat to end
+local pendingIssues, pendingPotions, pendingTierSet, pendingDurability -- waiting for combat to end
 
 local function CreateRow(index)
     local row = CreateFrame("Button", nil, scrollChild)
@@ -244,6 +246,75 @@ local function UpdateTierIcon(button, entry)
     button:Show()
 end
 
+-- Green = nothing to repair, orange = something is worn down, red = something is broken.
+local function DurabilityStatusColor(entry)
+    if #entry.items == 0 then
+        return 0.65, 0.65, 0.65
+    elseif entry.broken > 0 then
+        return 1.0, 0.25, 0.25
+    elseif entry.worn > 0 then
+        return 1.0, 0.6, 0.1
+    end
+    return 0.25, 1.0, 0.25
+end
+
+-- What every item that can break still has left, worst first.
+local function ShowDurabilityTooltip(self)
+    local entry = self.entry
+    if not entry then return end
+    local r, g, b = DurabilityStatusColor(entry)
+
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:AddDoubleLine(entry.label, ("%d%%"):format(entry.display), 1, 1, 1, r, g, b)
+    GameTooltip:AddLine(" ")
+    if #entry.items == 0 then
+        GameTooltip:AddLine(L["Nothing equipped that can break"], 0.65, 0.65, 0.65)
+        GameTooltip:Show()
+        return
+    end
+
+    for _, item in ipairs(entry.items) do
+        local icon = item.icon and TOOLTIP_ICON:format(item.icon) .. " " or ""
+        local ir, ig, ib = 1, 1, 1
+        if item.broken then
+            ir, ig, ib = unpack(PROBLEM_COLORS.missing)
+        elseif item.worn then
+            ir, ig, ib = unpack(PROBLEM_COLORS.low)
+        end
+        GameTooltip:AddDoubleLine(icon .. item.slotName,
+            item.broken and L["Broken"] or ("%d%%"):format(item.display), 1, 1, 1, ir, ig, ib)
+    end
+
+    GameTooltip:AddLine(" ")
+    if entry.broken > 0 then
+        GameTooltip:AddLine(L["%d item(s) broken"]:format(entry.broken), unpack(PROBLEM_COLORS.missing))
+    end
+    if entry.worn > 0 then
+        GameTooltip:AddLine(L["%d item(s) below %d%%"]:format(entry.worn, entry.minimum),
+            unpack(PROBLEM_COLORS.low))
+    end
+    if entry.broken == 0 and entry.worn == 0 then
+        GameTooltip:AddLine(L["Nothing needs repairing"], 0.25, 1, 0.25)
+    end
+    GameTooltip:Show()
+end
+
+-- The durability of the whole gear on the icon, the pieces behind it in the tooltip.
+local function UpdateDurabilityIcon(button, entry)
+    button.entry = entry
+    if not entry then
+        button:Hide()
+        return
+    end
+    local r, g, b = DurabilityStatusColor(entry)
+    button.icon:SetTexture(entry.icon)
+    button.icon:SetDesaturated(entry.broken > 0)
+    button.border:SetColorTexture(r, g, b, 0.9)
+    button.count:SetText(#entry.items > 0 and ("%d%%"):format(entry.display) or "-")
+    button.count:SetTextColor(r, g, b)
+    button:Show()
+end
+
 -- First atlas set the client actually knows, so an older client still shows an icon.
 local function GetQualityAtlas(tier)
     local atlas
@@ -343,7 +414,8 @@ local function CreateDialog()
     summaryText:SetPoint("TOP", title, "BOTTOM", 0, -6)
 
     summaryBar = CreateFrame("Frame", nil, checkPanel)
-    summaryBar:SetSize(TIER_ICON_INDEX * POTION_ICON_SIZE + (TIER_ICON_INDEX - 1) * POTION_ICON_GAP,
+    summaryBar:SetSize(
+        DURABILITY_ICON_INDEX * POTION_ICON_SIZE + (DURABILITY_ICON_INDEX - 1) * POTION_ICON_GAP,
         POTION_ICON_SIZE)
     summaryBar:SetPoint("TOP", summaryText, "BOTTOM", 0, -8)
     summaryBar.icons = {}
@@ -357,6 +429,12 @@ local function CreateDialog()
     summaryBar.tier.bonus:SetPoint("TOPLEFT", -2, 2)
     summaryBar.tier.bonus:SetJustifyH("LEFT")
     summaryBar.tier:SetScript("OnEnter", ShowTierTooltip)
+
+    -- And once more for the gear durability. "100%" needs the smaller font to stay on
+    -- top of the icon.
+    summaryBar.durability = CreatePotionIcon(summaryBar, DURABILITY_ICON_INDEX)
+    summaryBar.durability.count:SetFontObject(NumberFontNormalSmall)
+    summaryBar.durability:SetScript("OnEnter", ShowDurabilityTooltip)
 
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -6, -6)
@@ -516,7 +594,7 @@ function Dialog:SelectTab(index)
     shoppingPanel:SetShown(index == Dialog.TAB_SHOPPING)
 end
 
-local function Populate(issues, potions, tierSet)
+local function Populate(issues, potions, tierSet, durability)
     for i, issue in ipairs(issues) do
         local row = rows[i] or CreateRow(i)
         row.itemLink = issue.itemLink
@@ -544,6 +622,7 @@ local function Populate(issues, potions, tierSet)
         UpdatePotionIcon(summaryBar.icons[kind], potions and potions[kind])
     end
     UpdateTierIcon(summaryBar.tier, tierSet)
+    UpdateDurabilityIcon(summaryBar.durability, durability)
 
     if #issues == 0 then
         summaryText:SetText("")
@@ -554,13 +633,14 @@ local function Populate(issues, potions, tierSet)
     end
 end
 
-function Dialog:Show(issues, potions, tierSet)
+function Dialog:Show(issues, potions, tierSet, durability)
     if InCombatLockdown() then
-        pendingIssues, pendingPotions, pendingTierSet = issues, potions, tierSet
+        pendingIssues, pendingPotions, pendingTierSet, pendingDurability =
+            issues, potions, tierSet, durability
         return
     end
     if not frame then CreateDialog() end
-    Populate(issues, potions, tierSet)
+    Populate(issues, potions, tierSet, durability)
     self:UpdateInspectAccess()
     self:SelectTab(Dialog.TAB_CHECK)
     frame:Show()
@@ -591,7 +671,7 @@ end
 function Dialog:OpenTab(index)
     if not frame then
         CreateDialog()
-        Populate({}, nil, nil)
+        Populate({}, nil, nil, nil)
         okText:Hide()
         summaryText:SetText(L["No check run yet - use /pr or the minimap button."])
     end
@@ -647,8 +727,9 @@ local combatWatcher = CreateFrame("Frame")
 combatWatcher:RegisterEvent("PLAYER_REGEN_ENABLED")
 combatWatcher:SetScript("OnEvent", function()
     if pendingIssues then
-        local issues, potions, tierSet = pendingIssues, pendingPotions, pendingTierSet
-        pendingIssues, pendingPotions, pendingTierSet = nil, nil, nil
-        Dialog:Show(issues, potions, tierSet)
+        local issues, potions = pendingIssues, pendingPotions
+        local tierSet, durability = pendingTierSet, pendingDurability
+        pendingIssues, pendingPotions, pendingTierSet, pendingDurability = nil, nil, nil, nil
+        Dialog:Show(issues, potions, tierSet, durability)
     end
 end)

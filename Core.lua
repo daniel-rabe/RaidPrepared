@@ -64,6 +64,11 @@ end
 -- manual = true: always show the dialog (also when everything is fine).
 function PR.RunCheck(manual)
     PR.ScanAsync(function(issues)
+        -- Durability belongs to the gear, so its warnings follow the enchant and gem ones.
+        local durability, durabilityIssues = PR.ScanDurability()
+        for _, issue in ipairs(durabilityIssues) do
+            issues[#issues + 1] = issue
+        end
         PR.ScanPotionsAsync(function(potions, potionIssues)
             for _, issue in ipairs(potionIssues) do
                 issues[#issues + 1] = issue
@@ -83,9 +88,9 @@ function PR.RunCheck(manual)
                         counts[#counts + 1] = FormatPotionCount(entry)
                     end
                     Print(L["%d problem(s) found. %s"]:format(#issues, table.concat(counts, ", ")))
-                    PR.Dialog:Show(issues, potions, tierSet)
+                    PR.Dialog:Show(issues, potions, tierSet, durability)
                 elseif manual then
-                    PR.Dialog:Show(issues, potions, tierSet)
+                    PR.Dialog:Show(issues, potions, tierSet, durability)
                 end
             end)
         end)
@@ -183,6 +188,7 @@ SlashCmdList.PULLREADY = function(input)
         PR.Debug()
         PR.DebugPotions()
         PR.DebugTierSet()
+        PR.DebugDurability()
     elseif cmd == "options" then
         PR.Dialog:OpenOptions()
     elseif cmd == "indicators" then

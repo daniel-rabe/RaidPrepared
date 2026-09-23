@@ -4,7 +4,7 @@
 
 # PullReady
 
-A World of Warcraft (Retail – Midnight) addon that makes sure you and your raid are ready before the pull: it checks equipped gear for missing or low-quality **enchants** and **gems**, counts your **flasks**, **healing potions**, **mana potions**, **power potions** and **weapon buffs** (oils, stones), tells you which **tier set bonus** you are running, can inspect the whole raid for missing enchants and gems, and searches every fast-travel option your character actually has.
+A World of Warcraft (Retail – Midnight) addon that makes sure you and your raid are ready before the pull: it checks equipped gear for missing or low-quality **enchants** and **gems**, counts your **flasks**, **healing potions**, **mana potions**, **power potions** and **weapon buffs** (oils, stones), tells you which **tier set bonus** you are running, keeps an eye on the **durability** of your gear, can inspect the whole raid for missing enchants and gems, and searches every fast-travel option your character actually has.
 
 ## Features
 
@@ -26,6 +26,9 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 - Reads your **tier set**: how many pieces of this season's class set are equipped and whether that is the **2-piece** or the **4-piece** bonus. Shown as one more icon next to the consumables - hover it for the pieces, both bonuses and your catalyst charges.
   - Warns you when a better bonus is still missing **and** the **catalyst charges** on the character would buy the pieces for it, so the warning only shows up when you can actually do something about it before the pull.
   - Only pieces in the five set slots (head, shoulders, chest, hands, legs) count - a catalyzed belt or cloak carries the look, not the bonus.
+- Watches the **durability** of your equipped gear: the overall percentage sits as one more icon next to the consumables, and hovering it lists every piece that can break, worst first.
+  - Warns about every item below **75%** of its durability, and separately about anything already **broken** - a broken item does nothing at all until it is repaired.
+  - Rings, neck, trinkets and cloaks have no durability and are left out.
 - Shows a dialog listing every problem (close with the X button or ESC). Nothing pops up when everything is fine.
 - Never opens in combat – it waits until combat ends.
 - Optional **indicators on the character panel** item slots: enchant icon and socket icon next to each slot – red = missing, orange = low quality/outdated; items with a missing enchant or gem get a red border. Hover for details, toggle in the **Options** tab of the addon window or with `/pr indicators`.
@@ -121,6 +124,7 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 | `EPIC_GEM_IDS` | Epic gem item IDs; warn if none is socketed (empty = no check) |
 | `FLASK_IDS` / `HEALING_POTION_IDS` / `MANA_POTION_IDS` / `POWER_POTION_IDS` / `WEAPON_BUFF_IDS` | Item IDs that are counted (one ID per quality rank) |
 | `MIN_FLASKS` / `MIN_HEALING_POTIONS` / `MIN_MANA_POTIONS` / `MIN_POWER_POTIONS` / `MIN_WEAPON_BUFFS` | Warn below this amount |
+| `MIN_DURABILITY` | Warn below this share of an item's durability |
 | `FLASK_AURA_IDS` / `FLASK_ICON_ID` | Flask buff spell IDs (remaining time) and the item the flask icon comes from |
 | `ENCHANT_ITEMS` / `LEG_ARMOR_ITEMS` | Enchants and leg armor the Shopping tab offers, per slot |
 | `GEM_ITEMS` / `EPIC_GEM_SHOP_IDS` | Gems the Shopping tab offers, grouped by mineral |
@@ -132,7 +136,7 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 
 - Consumable item IDs are season-specific and need to be updated in `Data.lua` for new seasons/expansions.
 - The raid check can only inspect players who are nearby (visible). Use **Refresh** once they are in range.
-- The raid check reports missing enchants and empty sockets only; potion counts of other players are not visible to addons.
+- The raid check reports missing enchants and empty sockets only; potion counts and gear durability of other players are not visible to addons.
 
 ## Files
 
@@ -142,6 +146,8 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 | `Data.lua` | Patch-specific configuration |
 | `Scanner.lua` | Gear scanning (enchants, gems) for any unit |
 | `Potions.lua` | Flask, potion and weapon buff counting |
+| `TierSet.lua` | Tier set pieces, set bonuses and catalyst charges for any unit |
+| `Durability.lua` | Durability of the equipped gear (player only) |
 | `RaidCheck.lua` | Raid/Party Inspect queue and tab |
 | `Comm.lua` | Addon channel handshake that finds the other PullReady users in the group |
 | `Dialog.lua` | Main window with Check, Inspect, Talents, Travel, Shopping and Options tabs |

@@ -73,6 +73,16 @@ L["%d piece(s) short of the %d-piece bonus"] = "Не хватает %d пред�
 L["%d piece(s) short of the %d-piece bonus - %d catalyst charge(s) ready"] = "Не хватает %d предм. для бонуса за %d предм. - есть %d заряд(ов) катализатора"
 L["The catalyst could convert: %s"] = "Катализатор может преобразовать: %s"
 
+-- Durability
+L["Durability"] = "Прочность"
+L["Broken"] = "Сломано"
+L["Broken - repair before the pull"] = "Сломано - почините до пула"
+L["Durability %d%% (minimum %d%%)"] = "Прочность %d%% (минимум %d%%)"
+L["%d item(s) broken"] = "%d предм. сломано"
+L["%d item(s) below %d%%"] = "%d предм. ниже %d%%"
+L["Nothing needs repairing"] = "Чинить нечего"
+L["Nothing equipped that can break"] = "Нет надетых предметов, которые могут сломаться"
+
 -- Talents
 L["raid"] = "рейдов"
 L["Mythic dungeon"] = "эпохальных подземелий"

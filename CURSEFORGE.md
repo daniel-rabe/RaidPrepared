@@ -2,7 +2,7 @@
 
 **Be ready before the pull – and make sure everyone else is too.**
 
-PullReady checks your gear the moment you join a raid group. Missing enchants, empty gem sockets, low-quality gems, no potions in your bags or only half a tier set? A short dialog tells you exactly what's missing, before the pull timer does.
+PullReady checks your gear the moment you join a raid group. Missing enchants, empty gem sockets, low-quality gems, gear that is about to break, no potions in your bags or only half a tier set? A short dialog tells you exactly what's missing, before the pull timer does.
 
 ---
 
@@ -31,6 +31,11 @@ PullReady checks your gear the moment you join a raid group. Missing enchants, e
 - Warns you when a better bonus is still missing and your **catalyst charges** would buy the pieces for it
 - Hover the icon for your set pieces, both bonuses and your remaining charges
 - In **Raid / Party Inspect**, every member's bonus shows next to their name as a small **2P** / **4P** tag
+
+### 🔨 Durability
+- Shows the **durability of your equipped gear** as one more icon next to the consumables
+- Warns you about every item **below 75%** - and about anything that is already **broken**
+- Hover the icon for every piece that can break, worst first
 
 ### 📜 Talent Loadouts
 - Flag your loadouts as **Raid** or **Dungeon** (Talents tab of the addon window or checkboxes in the talent frame)

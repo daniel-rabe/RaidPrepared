@@ -73,6 +73,16 @@ L["%d piece(s) short of the %d-piece bonus"] = "还差%d件才能激活%d件套�
 L["%d piece(s) short of the %d-piece bonus - %d catalyst charge(s) ready"] = "还差%d件才能激活%d件套效果 - 有%d点催化器充能可用"
 L["The catalyst could convert: %s"] = "催化器可转换：%s"
 
+-- Durability
+L["Durability"] = "耐久度"
+L["Broken"] = "已损坏"
+L["Broken - repair before the pull"] = "已损坏 - 开怪前请先修理"
+L["Durability %d%% (minimum %d%%)"] = "耐久度%d%%（最低%d%%）"
+L["%d item(s) broken"] = "%d件已损坏"
+L["%d item(s) below %d%%"] = "%d件低于%d%%"
+L["Nothing needs repairing"] = "没有需要修理的装备"
+L["Nothing equipped that can break"] = "没有装备会损坏的物品"
+
 -- Talents
 L["raid"] = "团队副本"
 L["Mythic dungeon"] = "史诗地下城"

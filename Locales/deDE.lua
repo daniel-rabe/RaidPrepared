@@ -73,6 +73,16 @@ L["%d piece(s) short of the %d-piece bonus"] = "%d Teil(e) fehlen für den %d-Te
 L["%d piece(s) short of the %d-piece bonus - %d catalyst charge(s) ready"] = "%d Teil(e) fehlen für den %d-Teile-Bonus - %d Katalysator-Ladung(en) bereit"
 L["The catalyst could convert: %s"] = "Der Katalysator könnte umwandeln: %s"
 
+-- Durability
+L["Durability"] = "Haltbarkeit"
+L["Broken"] = "Zerstört"
+L["Broken - repair before the pull"] = "Zerstört - vor dem Pull reparieren"
+L["Durability %d%% (minimum %d%%)"] = "Haltbarkeit %d%% (Minimum %d%%)"
+L["%d item(s) broken"] = "%d Teil(e) zerstört"
+L["%d item(s) below %d%%"] = "%d Teil(e) unter %d%%"
+L["Nothing needs repairing"] = "Nichts muss repariert werden"
+L["Nothing equipped that can break"] = "Nichts angelegt, was kaputtgehen kann"
+
 -- Talents
 L["raid"] = "Schlachtzüge"
 L["Mythic dungeon"] = "mythische Dungeons"
@@ -226,6 +236,8 @@ L["fun.no_power"]     = "Keine Kampftränke. Dein Parse weint jetzt schon."
 L["fun.few_powers"]   = "%d Kampftränke, nötig sind %d. Grauer Parse im Anflug."
 L["fun.no_weapon"]    = "Kein Waffenbuff. Schwingst du da eine nasse Nudel?"
 L["fun.few_weapons"]  = "%d Waffenbuffs, nötig sind %d. Hör auf zu geizen."
+L["fun.broken"]     = "Zerstört. Du schwingst einen Briefbeschwerer, Held."
+L["fun.durability"] = "Haltbarkeit %d%%, Minimum sind %d%%. Schon mal einen Amboss gesehen?"
 L["fun.tier_short"] = "%d Teil(e) fehlen zum %d-Teile-Bonus und %d Katalysator-Ladung(en) gammeln in deiner Bank. Aufwachen."
 L["fun.talents"]    = "Loadout '%s' ist nicht das für %s, du Pfeife. Nutze: %s"
 L["fun.summary"]      = "%d Verbrechen an der Ausrüstung, %d davon fehlen schlicht"

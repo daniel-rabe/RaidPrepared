@@ -44,6 +44,10 @@ local REPLACEMENTS = {
     ["No weapon buffs in your bags!"]          = "fun.no_weapon",
     ["Only %d weapon buffs (minimum %d)"]      = "fun.few_weapons",
 
+    -- Durability
+    ["Broken - repair before the pull"]        = "fun.broken",
+    ["Durability %d%% (minimum %d%%)"]         = "fun.durability",
+
     -- Tier set and talents
     ["%d piece(s) short of the %d-piece bonus - %d catalyst charge(s) ready"] = "fun.tier_short",
     ["Loadout '%s' is not flagged for %s (use: %s)"]                          = "fun.talents",
@@ -76,6 +80,9 @@ enUS["fun.no_power"]     = "No combat potions. Your parse is already crying."
 enUS["fun.few_powers"]   = "%d combat potions, need %d. Grey parse incoming."
 enUS["fun.no_weapon"]    = "No weapon buff. Swinging a wet noodle, are we?"
 enUS["fun.few_weapons"]  = "%d weapon buffs, need %d. Stop being cheap."
+
+enUS["fun.broken"]     = "Broken. You are swinging a paperweight, champ."
+enUS["fun.durability"] = "Durability %d%%, minimum is %d%%. Ever met an anvil?"
 
 enUS["fun.tier_short"] = "%d piece(s) off the %d-piece bonus and %d catalyst charge(s) rotting in your bank. Wake up."
 enUS["fun.talents"]    = "Loadout '%s' is not the one for %s, you muppet. Use: %s"

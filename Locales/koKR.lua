@@ -73,6 +73,16 @@ L["%d piece(s) short of the %d-piece bonus"] = "%d부위 부족: %d개 세트 �
 L["%d piece(s) short of the %d-piece bonus - %d catalyst charge(s) ready"] = "%d부위 부족: %d개 세트 효과 - 촉매 충전 %d개 준비됨"
 L["The catalyst could convert: %s"] = "촉매로 변환 가능: %s"
 
+-- Durability
+L["Durability"] = "내구도"
+L["Broken"] = "파손"
+L["Broken - repair before the pull"] = "파손됨 - 풀 전에 수리하세요"
+L["Durability %d%% (minimum %d%%)"] = "내구도 %d%% (최소 %d%%)"
+L["%d item(s) broken"] = "%d개 파손됨"
+L["%d item(s) below %d%%"] = "%d개가 %d%% 미만"
+L["Nothing needs repairing"] = "수리할 것이 없습니다"
+L["Nothing equipped that can break"] = "파손될 수 있는 장비가 없습니다"
+
 -- Talents
 L["raid"] = "공격대"
 L["Mythic dungeon"] = "신화 던전"

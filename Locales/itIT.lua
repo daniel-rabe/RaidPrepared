@@ -73,6 +73,16 @@ L["%d piece(s) short of the %d-piece bonus"] = "Mancano %d pezzo(i) per il bonus
 L["%d piece(s) short of the %d-piece bonus - %d catalyst charge(s) ready"] = "Mancano %d pezzo(i) per il bonus da %d pezzi - %d carica(he) del catalizzatore pronte"
 L["The catalyst could convert: %s"] = "Il catalizzatore potrebbe convertire: %s"
 
+-- Durability
+L["Durability"] = "Durabilità"
+L["Broken"] = "Rotto"
+L["Broken - repair before the pull"] = "Rotto - ripara prima del pull"
+L["Durability %d%% (minimum %d%%)"] = "Durabilità %d%% (minimo %d%%)"
+L["%d item(s) broken"] = "%d oggetto(i) rotto(i)"
+L["%d item(s) below %d%%"] = "%d oggetto(i) sotto il %d%%"
+L["Nothing needs repairing"] = "Non c'è nulla da riparare"
+L["Nothing equipped that can break"] = "Non hai equipaggiato nulla che possa rompersi"
+
 -- Talents
 L["raid"] = "le incursioni"
 L["Mythic dungeon"] = "le spedizioni mitiche"

@@ -95,6 +95,11 @@ PR.EPIC_GEM_IDS = {
 }
 PR.EPIC_GEM_ICON_ID = 240967 -- icon shown for the missing epic gem warning
 
+-- Durability check: equipped items below this share of their maximum durability are
+-- reported as worn, an item at zero as broken. Items without durability (rings, neck,
+-- trinkets, cloak) are not part of it.
+PR.MIN_DURABILITY = 0.75
+
 -- Consumable check. Items are matched by item ID, so it works with every client language.
 -- Each crafting quality rank is a separate item ID - list all of them. Update each season.
 -- Warn when fewer than the minimum are in the bags.
