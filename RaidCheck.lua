@@ -670,7 +670,7 @@ end
 
 function RaidCheck:Open()
     if not self:IsAllowed() then
-        print("|cff33ccffPullReady|r: " .. L["Raid/Party Inspect requires a party or raid."])
+        print(("|cff33ccff%s|r: "):format(PR.Fun:Title()) .. L["Raid/Party Inspect requires a party or raid."])
         return
     end
     PR.Dialog:OpenTab(PR.Dialog.TAB_INSPECT)

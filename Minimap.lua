@@ -26,7 +26,7 @@ end
 
 local function ShowTooltip(owner)
     GameTooltip:SetOwner(owner, "ANCHOR_LEFT")
-    GameTooltip:AddLine("PullReady")
+    GameTooltip:AddLine(PR.Fun:Title())
     GameTooltip:AddLine(L["Left-click: check enchants, gems & consumables"], 1, 1, 1)
     if PR.RaidCheck:IsAllowed() then
         GameTooltip:AddLine(L["Right-click: %s"]:format(PR.RaidCheck:GetTitle()), 1, 1, 1)

@@ -31,6 +31,8 @@ Locales\koKR.lua
 Locales\zhCN.lua
 Locales\zhTW.lua
 
+Fun.lua
+
 Data.lua
 Scanner.lua
 Potions.lua

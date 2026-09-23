@@ -63,7 +63,7 @@ local function CreateIndicator(button, icon, texCoordInset)
     indicator:SetScript("OnEnter", function(self)
         if not self.text then return end
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:AddLine("PullReady")
+        GameTooltip:AddLine(PR.Fun:Title())
         GameTooltip:AddLine(self.text, 1, 1, 1, true)
         GameTooltip:Show()
     end)

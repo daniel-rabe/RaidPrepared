@@ -43,9 +43,13 @@ function PR.GetString(key, locale)
     return t and t[key] or key
 end
 
--- The client's language, for everything shown to the player.
+-- The client's language, for everything shown to the player. Fun mode (see Fun.lua)
+-- swaps a warning for its joke key first, so the joke text is translated like any
+-- other string; PR.GetString itself stays untouched and keeps whispers serious.
 PR.L = setmetatable({}, {
-    __index = function(_, key) return PR.GetString(key, PR.CLIENT_LOCALE) end,
+    __index = function(_, key)
+        return PR.GetString(PR.Fun and PR.Fun:Key(key) or key, PR.CLIENT_LOCALE)
+    end,
 })
 
 -- Keys that are not English text themselves.

@@ -39,7 +39,7 @@ Dialog.TAB_TRAVEL = 4
 Dialog.TAB_SHOPPING = 5
 Dialog.TAB_OPTIONS = 6
 
-local frame, scrollChild, summaryText, summaryBar, okText
+local frame, scrollChild, titleText, summaryText, summaryBar, okText
 local checkPanel, inspectPanel, talentsPanel, optionsPanel, travelPanel, shoppingPanel
 local indicatorsCheck
 local qualityButtons = {}
@@ -332,7 +332,8 @@ local function CreateDialog()
 
     local title = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -18)
-    title:SetText("PullReady")
+    title:SetText(PR.Fun:Title())
+    titleText = title
 
     -- Tab 1: check results
     checkPanel = CreateFrame("Frame", nil, frame)
@@ -620,6 +621,13 @@ function Dialog:UpdateWhisperLocale()
     whisperDrop:SetDefaultText(name)
     whisperDrop:SetEnabled(selectable)
     whisperDrop.label:SetFontObject(selectable and "GameFontHighlight" or "GameFontDisable")
+end
+
+-- Header and the strings set once at creation, after fun mode was toggled (/pr ziegel).
+function Dialog:RefreshFunMode()
+    if not frame then return end
+    titleText:SetText(PR.Fun:Title())
+    okText:SetText(L["Everything looks good!"])
 end
 
 -- Keeps the quality buttons in sync when the rank changes elsewhere (/pr quality).

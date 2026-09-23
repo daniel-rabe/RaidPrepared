@@ -1,7 +1,6 @@
 local addonName, PR = ...
 local L = PR.L
 
-local PREFIX = "|cff33ccffPullReady|r: "
 local RAID_JOIN_DELAY = 2
 
 local DEFAULTS = {
@@ -9,6 +8,7 @@ local DEFAULTS = {
     minimap = { hide = false, angle = 225 },
     characterIndicators = true, -- enchant/socket indicators on the character panel
     localizedWhisper = false,   -- false = whisper in whisperLocale (recipient's language is unknown)
+    funMode = false,            -- joke skin, toggled with /pr ziegel (see Fun.lua)
     -- Shopping tab: the scope (missing only / whole catalog), then the favourites
     -- filter applied on top of whichever scope is selected.
     shoppingShowAll = false,
@@ -24,7 +24,7 @@ local DEFAULTS = {
 }
 
 local function Print(msg)
-    print(PREFIX .. msg)
+    print(("|cff33ccff%s|r: "):format(PR.Fun:Title()) .. msg)
 end
 
 local function ApplyDefaults(db, defaults)
@@ -188,6 +188,8 @@ SlashCmdList.PULLREADY = function(input)
     elseif cmd == "indicators" then
         Print(PR.CharacterPanel:Toggle() and L["Character panel indicators enabled."]
             or L["Character panel indicators disabled."])
+    elseif cmd == "ziegel" then
+        Print(PR.Fun:Toggle() and L["fun.on"] or L["fun.off"])
     elseif cmd == "minimap" then
         Print(PR.Minimap:Toggle() and L["Minimap button shown."] or L["Minimap button hidden."])
     elseif cmd == "quality" then
@@ -209,5 +211,9 @@ SlashCmdList.PULLREADY = function(input)
         print("  /pr minimap - " .. L["toggle minimap button"])
         print("  /pr quality <rank> - " .. L["required enchant/gem quality rank"])
         print("  /pr debug - " .. L["print raw item/socket data"])
+        -- An easter egg: only listed once it is on, so it can be found again to switch off.
+        if PR.Fun:IsEnabled() then
+            print("  /pr ziegel - " .. L["fun.help"])
+        end
     end
 end

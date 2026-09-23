@@ -9,8 +9,6 @@ local _, PR = ...
 local T = {}
 PR.Travel = T
 
-local PREFIX = "|cff33ccffPullReady|r: "
-
 -- Set at ADDON_LOADED; every module reads travel settings through this.
 T.db = nil
 
@@ -21,7 +19,7 @@ function T:Print(fmt, ...)
         local ok, formatted = pcall(string.format, fmt, ...)
         msg = ok and formatted or fmt
     end
-    DEFAULT_CHAT_FRAME:AddMessage(PREFIX .. tostring(msg))
+    DEFAULT_CHAT_FRAME:AddMessage(("|cff33ccff%s|r: "):format(PR.Fun:Title()) .. tostring(msg))
 end
 
 -- Strings come from the addon-wide locale table (Locales/).

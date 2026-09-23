@@ -131,7 +131,7 @@ end
 function PR.RunTalentCheck()
     local issue = Talents:Check()
     if issue then
-        print("|cffff4040PullReady|r: " .. issue.detail)
+        print(("|cffff4040%s|r: "):format(PR.Fun:Title()) .. issue.detail)
         PR.Dialog:Show({ issue })
     end
 end
@@ -284,7 +284,7 @@ local function HookTalentFrame()
     for _, check in ipairs({ raid, dungeon }) do
         check:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_TOP")
-            GameTooltip:AddLine("PullReady")
+            GameTooltip:AddLine(PR.Fun:Title())
             GameTooltip:AddLine(L["Flag the selected loadout for this content. You are warned when entering it with a loadout that is not flagged."], 1, 1, 1, true)
             GameTooltip:Show()
         end)
