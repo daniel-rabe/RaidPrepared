@@ -68,21 +68,26 @@ function PR.RunCheck(manual)
             for _, issue in ipairs(potionIssues) do
                 issues[#issues + 1] = issue
             end
-            local talentIssue = PR.Talents:Check()
-            if talentIssue then
-                issues[#issues + 1] = talentIssue
-            end
-
-            if #issues > 0 then
-                local counts = {}
-                for _, entry in ipairs(potions) do
-                    counts[#counts + 1] = FormatPotionCount(entry)
+            PR.ScanTierSetAsync(function(tierSet, tierIssues)
+                for _, issue in ipairs(tierIssues) do
+                    issues[#issues + 1] = issue
                 end
-                Print(L["%d problem(s) found. %s"]:format(#issues, table.concat(counts, ", ")))
-                PR.Dialog:Show(issues, potions)
-            elseif manual then
-                PR.Dialog:Show(issues, potions)
-            end
+                local talentIssue = PR.Talents:Check()
+                if talentIssue then
+                    issues[#issues + 1] = talentIssue
+                end
+
+                if #issues > 0 then
+                    local counts = {}
+                    for _, entry in ipairs(potions) do
+                        counts[#counts + 1] = FormatPotionCount(entry)
+                    end
+                    Print(L["%d problem(s) found. %s"]:format(#issues, table.concat(counts, ", ")))
+                    PR.Dialog:Show(issues, potions, tierSet)
+                elseif manual then
+                    PR.Dialog:Show(issues, potions, tierSet)
+                end
+            end)
         end)
     end)
 end
@@ -177,6 +182,7 @@ SlashCmdList.PULLREADY = function(input)
     elseif cmd == "debug" then
         PR.Debug()
         PR.DebugPotions()
+        PR.DebugTierSet()
     elseif cmd == "options" then
         PR.Dialog:OpenOptions()
     elseif cmd == "indicators" then

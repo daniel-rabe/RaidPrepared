@@ -2,7 +2,7 @@
 
 **Be ready before the pull – and make sure everyone else is too.**
 
-PullReady checks your gear the moment you join a raid group. Missing enchants, empty gem sockets, low-quality gems or no potions in your bags? A short dialog tells you exactly what's missing, before the pull timer does.
+PullReady checks your gear the moment you join a raid group. Missing enchants, empty gem sockets, low-quality gems, no potions in your bags or only half a tier set? A short dialog tells you exactly what's missing, before the pull timer does.
 
 ---
 
@@ -24,6 +24,12 @@ PullReady checks your gear the moment you join a raid group. Missing enchants, e
 - Counts **weapon buffs** (Thalassian Phoenix Oil, Oil of Dawn, Smuggler's Enchanted Edge, Refulgent Whetstone & Weightstone, hunter ammo) and shows the remaining time of your active weapon buff
 - Warns you when you have none left
 - Works with **every client language** (items are matched by ID, all quality ranks)
+
+### 🧩 Tier Set
+- Shows how many pieces of this season's **class set** you have equipped, right next to the consumables
+- Tells you whether you are running the **2-piece** or the **4-piece** bonus
+- Warns you when a better bonus is still missing and your **catalyst charges** would buy the pieces for it
+- Hover the icon for your set pieces, both bonuses and your remaining charges
 
 ### 📜 Talent Loadouts
 - Flag your loadouts as **Raid** or **Dungeon** (Talents tab of the addon window or checkboxes in the talent frame)

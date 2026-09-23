@@ -61,6 +61,18 @@ L["Only %d weapon buffs (minimum %d)"] = "무기 강화제 %d개뿐 (최소 %d�
 L["Not required"] = "필요 없음"
 L["None in your bags"] = "가방에 없음"
 
+-- Tier set
+L["Tier Set"] = "직업 세트"
+L["%d-piece bonus"] = "%d개 세트 효과"
+L["active"] = "활성"
+L["not active"] = "비활성"
+L["%dpc"] = "%d개"
+L["No set pieces equipped"] = "착용한 세트 부위가 없습니다"
+L["Catalyst charges"] = "촉매 충전"
+L["%d piece(s) short of the %d-piece bonus"] = "%d부위 부족: %d개 세트 효과"
+L["%d piece(s) short of the %d-piece bonus - %d catalyst charge(s) ready"] = "%d부위 부족: %d개 세트 효과 - 촉매 충전 %d개 준비됨"
+L["The catalyst could convert: %s"] = "촉매로 변환 가능: %s"
+
 -- Talents
 L["raid"] = "공격대"
 L["Mythic dungeon"] = "신화 던전"

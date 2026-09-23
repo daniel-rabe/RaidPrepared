@@ -61,6 +61,18 @@ L["Only %d weapon buffs (minimum %d)"] = "Nur %d Waffenbuffs (mindestens %d)"
 L["Not required"] = "Nicht erforderlich"
 L["None in your bags"] = "Keine in deinen Taschen"
 
+-- Tier set
+L["Tier Set"] = "Klassenset"
+L["%d-piece bonus"] = "%d-Teile-Bonus"
+L["active"] = "aktiv"
+L["not active"] = "nicht aktiv"
+L["%dpc"] = "%dT"
+L["No set pieces equipped"] = "Keine Setteile angelegt"
+L["Catalyst charges"] = "Katalysator-Ladungen"
+L["%d piece(s) short of the %d-piece bonus"] = "%d Teil(e) fehlen für den %d-Teile-Bonus"
+L["%d piece(s) short of the %d-piece bonus - %d catalyst charge(s) ready"] = "%d Teil(e) fehlen für den %d-Teile-Bonus - %d Katalysator-Ladung(en) bereit"
+L["The catalyst could convert: %s"] = "Der Katalysator könnte umwandeln: %s"
+
 -- Talents
 L["raid"] = "Schlachtzüge"
 L["Mythic dungeon"] = "mythische Dungeons"

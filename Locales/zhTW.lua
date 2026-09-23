@@ -61,6 +61,18 @@ L["Only %d weapon buffs (minimum %d)"] = "僅有%d個武器強化物品（至少
 L["Not required"] = "無需攜帶"
 L["None in your bags"] = "背包中沒有"
 
+-- Tier set
+L["Tier Set"] = "職業套裝"
+L["%d-piece bonus"] = "%d件套效果"
+L["active"] = "已啟用"
+L["not active"] = "未啟用"
+L["%dpc"] = "%d件"
+L["No set pieces equipped"] = "未裝備任何套裝部件"
+L["Catalyst charges"] = "催化器充能"
+L["%d piece(s) short of the %d-piece bonus"] = "還差%d件才能啟用%d件套效果"
+L["%d piece(s) short of the %d-piece bonus - %d catalyst charge(s) ready"] = "還差%d件才能啟用%d件套效果 - 有%d點催化器充能可用"
+L["The catalyst could convert: %s"] = "催化器可轉換：%s"
+
 -- Talents
 L["raid"] = "團隊副本"
 L["Mythic dungeon"] = "傳奇地城"

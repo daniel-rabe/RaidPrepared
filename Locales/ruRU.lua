@@ -61,6 +61,18 @@ L["Only %d weapon buffs (minimum %d)"] = "Усилений оружия: %d (м�
 L["Not required"] = "Не требуется"
 L["None in your bags"] = "Нет в сумках"
 
+-- Tier set
+L["Tier Set"] = "Сет класса"
+L["%d-piece bonus"] = "Бонус за %d предм."
+L["active"] = "активен"
+L["not active"] = "не активен"
+L["%dpc"] = "%dч"
+L["No set pieces equipped"] = "Нет надетых предметов сета"
+L["Catalyst charges"] = "Заряды катализатора"
+L["%d piece(s) short of the %d-piece bonus"] = "Не хватает %d предм. для бонуса за %d предм."
+L["%d piece(s) short of the %d-piece bonus - %d catalyst charge(s) ready"] = "Не хватает %d предм. для бонуса за %d предм. - есть %d заряд(ов) катализатора"
+L["The catalyst could convert: %s"] = "Катализатор может преобразовать: %s"
+
 -- Talents
 L["raid"] = "рейдов"
 L["Mythic dungeon"] = "эпохальных подземелий"

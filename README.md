@@ -4,7 +4,7 @@
 
 # PullReady
 
-A World of Warcraft (Retail – Midnight) addon that makes sure you and your raid are ready before the pull: it checks equipped gear for missing or low-quality **enchants** and **gems**, counts your **flasks**, **healing potions**, **mana potions**, **power potions** and **weapon buffs** (oils, stones), can inspect the whole raid for missing enchants and gems, and searches every fast-travel option your character actually has.
+A World of Warcraft (Retail – Midnight) addon that makes sure you and your raid are ready before the pull: it checks equipped gear for missing or low-quality **enchants** and **gems**, counts your **flasks**, **healing potions**, **mana potions**, **power potions** and **weapon buffs** (oils, stones), tells you which **tier set bonus** you are running, can inspect the whole raid for missing enchants and gems, and searches every fast-travel option your character actually has.
 
 ## Features
 
@@ -23,6 +23,9 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
   - **Power potions**: Light's Potential, Draught of Rampant Abandon, Potion of Recklessness, Potion of Zealotry, Liquid Luster, Alluring Nostrum (and their Fleeting versions)
   - **Weapon buffs**: Thalassian Phoenix Oil, Oil of Dawn, Smuggler's Enchanted Edge, Refulgent Whetstone, Refulgent Weightstone, Laced Zoomshots, Weighted Boomshots – including remaining time of the active buff. Death Knights, Rogues and Shamans are not warned.
   - Consumables are matched by item ID (all quality ranks), so the check works with every client language.
+- Reads your **tier set**: how many pieces of this season's class set are equipped and whether that is the **2-piece** or the **4-piece** bonus. Shown as one more icon next to the consumables - hover it for the pieces, both bonuses and your catalyst charges.
+  - Warns you when a better bonus is still missing **and** the **catalyst charges** on the character would buy the pieces for it, so the warning only shows up when you can actually do something about it before the pull.
+  - Only pieces in the five set slots (head, shoulders, chest, hands, legs) count - a catalyzed belt or cloak carries the look, not the bonus.
 - Shows a dialog listing every problem (close with the X button or ESC). Nothing pops up when everything is fine.
 - Never opens in combat – it waits until combat ends.
 - Optional **indicators on the character panel** item slots: enchant icon and socket icon next to each slot – red = missing, orange = low quality/outdated; items with a missing enchant or gem get a red border. Hover for details, toggle in the **Options** tab of the addon window or with `/pr indicators`.

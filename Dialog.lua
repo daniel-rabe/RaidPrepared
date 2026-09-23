@@ -6,9 +6,11 @@ local FRAME_HEIGHT = 390
 local ROW_HEIGHT = 34
 
 -- Consumable summary: one icon per kind with its stack count, details in the tooltip.
+-- The tier set follows the consumables as one more icon in the same row.
 local POTION_ICON_SIZE = 34
 local POTION_ICON_GAP = 26
 local POTION_KINDS = { "flask", "heal", "mana", "power", "weapon" }
+local TIER_ICON_INDEX = #POTION_KINDS + 1 -- the tier set sits last in the row
 local TOOLTIP_ICON = "|T%s:16:16:0:0:64:64:5:59:5:59|t"
 
 -- Quality option: the crafting quality icons the game itself uses, instead of a bare number.
@@ -37,13 +39,13 @@ Dialog.TAB_TRAVEL = 4
 Dialog.TAB_SHOPPING = 5
 Dialog.TAB_OPTIONS = 6
 
-local frame, scrollChild, summaryText, potionBar, okText
+local frame, scrollChild, summaryText, summaryBar, okText
 local checkPanel, inspectPanel, talentsPanel, optionsPanel, travelPanel, shoppingPanel
 local indicatorsCheck
 local qualityButtons = {}
 local whisperCheck, whisperDrop
 local rows = {}
-local pendingIssues, pendingPotions -- waiting for combat to end
+local pendingIssues, pendingPotions, pendingTierSet -- waiting for combat to end
 
 local function CreateRow(index)
     local row = CreateFrame("Button", nil, scrollChild)
@@ -163,6 +165,85 @@ local function UpdatePotionIcon(button, entry)
     button:Show()
 end
 
+-- Green = best set bonus active, orange = a lesser bonus, red = no bonus at all.
+local function TierStatusColor(entry)
+    local best = entry.bonuses[#entry.bonuses]
+    if best and best.active then
+        return 0.25, 1.0, 0.25
+    elseif entry.active then
+        return 1.0, 0.6, 0.1
+    end
+    return 1.0, 0.25, 0.25
+end
+
+-- Which set is worn, which bonus it grants and what the catalyst charges could still buy.
+local function ShowTierTooltip(self)
+    local entry = self.entry
+    if not entry then return end
+    local r, g, b = TierStatusColor(entry)
+    local pieces = ("%d/%d"):format(entry.count, entry.maxPieces)
+
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:AddDoubleLine(entry.name or entry.label, pieces, 1, 1, 1, r, g, b)
+    GameTooltip:AddLine(" ")
+    for _, bonus in ipairs(entry.bonuses) do
+        local state = bonus.active and L["active"] or L["not active"]
+        local br, bg, bb = 0.65, 0.65, 0.65
+        if bonus.active then br, bg, bb = 0.25, 1, 0.25 end
+        GameTooltip:AddDoubleLine(L["%d-piece bonus"]:format(bonus.pieces), state, 1, 1, 1, br, bg, bb)
+    end
+
+    GameTooltip:AddLine(" ")
+    if #entry.pieces > 0 then
+        for _, piece in ipairs(entry.pieces) do
+            local icon = piece.icon and TOOLTIP_ICON:format(piece.icon) .. " " or ""
+            GameTooltip:AddDoubleLine(piece.slotName, icon .. (piece.link or ""), 1, 1, 1, 1, 1, 1)
+        end
+    else
+        GameTooltip:AddLine(L["No set pieces equipped"], 1, 0.25, 0.25)
+    end
+
+    GameTooltip:AddLine(" ")
+    local currency = entry.currency
+    local currencyIcon = currency and currency.icon and TOOLTIP_ICON:format(currency.icon) .. " " or ""
+    GameTooltip:AddDoubleLine(currencyIcon .. (currency and currency.name or L["Catalyst charges"]),
+        tostring(entry.charges), 1, 1, 1, 1, 1, 1)
+    if entry.upgrade then
+        GameTooltip:AddLine(L["%d piece(s) short of the %d-piece bonus - %d catalyst charge(s) ready"]
+            :format(entry.upgrade.needed, entry.upgrade.pieces, entry.charges), 1, 0.6, 0.1, true)
+        if #entry.convertible > 0 then
+            local slotNames = {}
+            for _, piece in ipairs(entry.convertible) do
+                slotNames[#slotNames + 1] = piece.slotName
+            end
+            GameTooltip:AddLine(L["The catalyst could convert: %s"]:format(table.concat(slotNames, ", ")),
+                1, 0.82, 0, true)
+        end
+    elseif entry.nextBonus then
+        GameTooltip:AddLine(L["%d piece(s) short of the %d-piece bonus"]
+            :format(entry.nextBonus.needed, entry.nextBonus.pieces), 0.65, 0.65, 0.65, true)
+    end
+    GameTooltip:Show()
+end
+
+-- Pieces equipped in the icon's corner, the bonus they grant as a tag on top of it.
+local function UpdateTierIcon(button, entry)
+    button.entry = entry
+    if not entry then
+        button:Hide()
+        return
+    end
+    local r, g, b = TierStatusColor(entry)
+    button.icon:SetTexture(entry.icon or 134400)
+    button.icon:SetDesaturated(entry.count == 0)
+    button.border:SetColorTexture(r, g, b, 0.9)
+    button.count:SetText(("%d/%d"):format(entry.count, entry.maxPieces))
+    button.count:SetTextColor(r, g, b)
+    button.bonus:SetText(entry.active and L["%dpc"]:format(entry.active.pieces) or "")
+    button.bonus:SetTextColor(r, g, b)
+    button:Show()
+end
+
 -- First atlas set the client actually knows, so an older client still shows an icon.
 local function GetQualityAtlas(tier)
     local atlas
@@ -260,14 +341,21 @@ local function CreateDialog()
     summaryText = checkPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
     summaryText:SetPoint("TOP", title, "BOTTOM", 0, -6)
 
-    potionBar = CreateFrame("Frame", nil, checkPanel)
-    potionBar:SetSize(#POTION_KINDS * POTION_ICON_SIZE + (#POTION_KINDS - 1) * POTION_ICON_GAP,
+    summaryBar = CreateFrame("Frame", nil, checkPanel)
+    summaryBar:SetSize(TIER_ICON_INDEX * POTION_ICON_SIZE + (TIER_ICON_INDEX - 1) * POTION_ICON_GAP,
         POTION_ICON_SIZE)
-    potionBar:SetPoint("TOP", summaryText, "BOTTOM", 0, -8)
-    potionBar.icons = {}
+    summaryBar:SetPoint("TOP", summaryText, "BOTTOM", 0, -8)
+    summaryBar.icons = {}
     for i, kind in ipairs(POTION_KINDS) do
-        potionBar.icons[kind] = CreatePotionIcon(potionBar, i)
+        summaryBar.icons[kind] = CreatePotionIcon(summaryBar, i)
     end
+
+    -- Same button as a consumable, with the tier set's own count, tag and tooltip.
+    summaryBar.tier = CreatePotionIcon(summaryBar, TIER_ICON_INDEX)
+    summaryBar.tier.bonus = summaryBar.tier:CreateFontString(nil, "OVERLAY", "NumberFontNormalSmall")
+    summaryBar.tier.bonus:SetPoint("TOPLEFT", -2, 2)
+    summaryBar.tier.bonus:SetJustifyH("LEFT")
+    summaryBar.tier:SetScript("OnEnter", ShowTierTooltip)
 
     local close = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
     close:SetPoint("TOPRIGHT", -6, -6)
@@ -427,7 +515,7 @@ function Dialog:SelectTab(index)
     shoppingPanel:SetShown(index == Dialog.TAB_SHOPPING)
 end
 
-local function Populate(issues, potions)
+local function Populate(issues, potions, tierSet)
     for i, issue in ipairs(issues) do
         local row = rows[i] or CreateRow(i)
         row.itemLink = issue.itemLink
@@ -452,8 +540,9 @@ local function Populate(issues, potions)
         if issue.problem == "missing" then missing = missing + 1 end
     end
     for _, kind in ipairs(POTION_KINDS) do
-        UpdatePotionIcon(potionBar.icons[kind], potions and potions[kind])
+        UpdatePotionIcon(summaryBar.icons[kind], potions and potions[kind])
     end
+    UpdateTierIcon(summaryBar.tier, tierSet)
 
     if #issues == 0 then
         summaryText:SetText("")
@@ -464,13 +553,13 @@ local function Populate(issues, potions)
     end
 end
 
-function Dialog:Show(issues, potions)
+function Dialog:Show(issues, potions, tierSet)
     if InCombatLockdown() then
-        pendingIssues, pendingPotions = issues, potions
+        pendingIssues, pendingPotions, pendingTierSet = issues, potions, tierSet
         return
     end
     if not frame then CreateDialog() end
-    Populate(issues, potions)
+    Populate(issues, potions, tierSet)
     self:UpdateInspectAccess()
     self:SelectTab(Dialog.TAB_CHECK)
     frame:Show()
@@ -501,7 +590,7 @@ end
 function Dialog:OpenTab(index)
     if not frame then
         CreateDialog()
-        Populate({}, nil)
+        Populate({}, nil, nil)
         okText:Hide()
         summaryText:SetText(L["No check run yet - use /pr or the minimap button."])
     end
@@ -550,8 +639,8 @@ local combatWatcher = CreateFrame("Frame")
 combatWatcher:RegisterEvent("PLAYER_REGEN_ENABLED")
 combatWatcher:SetScript("OnEvent", function()
     if pendingIssues then
-        local issues, potions = pendingIssues, pendingPotions
-        pendingIssues, pendingPotions = nil, nil
-        Dialog:Show(issues, potions)
+        local issues, potions, tierSet = pendingIssues, pendingPotions, pendingTierSet
+        pendingIssues, pendingPotions, pendingTierSet = nil, nil, nil
+        Dialog:Show(issues, potions, tierSet)
     end
 end)

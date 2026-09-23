@@ -148,6 +148,32 @@ PR.WEAPON_BUFF_EXEMPT_CLASSES = {
     SHAMAN = true,
 }
 
+-- Tier ("class") set check. Five slots carry set pieces; the catalyst also converts
+-- belts, bracers, boots and cloaks, but those only copy the look and count for no bonus.
+PR.TIER_SET_SLOTS = {
+    INVSLOT_HEAD,
+    INVSLOT_SHOULDER,
+    INVSLOT_CHEST,
+    INVSLOT_HAND,
+    INVSLOT_LEGS,
+}
+
+-- Piece counts that unlock a set bonus, lowest first. The last one is the best bonus
+-- there is and the one the check nudges towards.
+PR.TIER_SET_BONUS_PIECES = { 2, 4 }
+
+-- Set pieces of an earlier expansion still carry their own set bonus, so only
+-- current-expansion pieces count as this season's tier set.
+PR.MIN_TIER_SET_EXPANSION = LE_EXPANSION_LEVEL_CURRENT
+
+-- Catalyst charge currencies, newest season first: one charge turns one piece of
+-- non-set armor into a set piece. The first one the character has already seen wins,
+-- so a new season only needs its currency ID added on top.
+PR.CATALYST_CURRENCY_IDS = {
+    3465, -- Venomblight Manaflux (Midnight season 2)
+    3378, -- Dawnlight Manaflux (Midnight season 1)
+}
+
 -- ============================================================================
 -- SHOPPING TAB CATALOG
 -- ============================================================================
