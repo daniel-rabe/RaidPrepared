@@ -66,6 +66,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 - **Shift-click** a row to paste the item into the auction house search bar (or into chat when the auction house is closed); **Ctrl-click** opens the dressing room.
 - **Right-click** a row to favourite it. Favourites are pinned to the top of their section and are remembered **per character**, since which ring enchant or gem you want depends on the character.
 - Two independent toggles: **Show everything** widens the list from what you are missing to the whole catalog, and **Only favourites** narrows whichever of those two you are looking at down to your favourites - as one flat list, without the section headings.
+- The count next to **Only favourites** says how many items are shown out of how many the current scope holds, so you can see the filter is what is keeping the list short.
 - Legs list spellthreads or armor kits depending on your spec's **primary stat** - neither is restricted by armor type, so an Intellect spec gets spellthreads whether it wears cloth, mail or plate.
 
 ### Languages

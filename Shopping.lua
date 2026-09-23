@@ -13,7 +13,10 @@ local L = PR.L
 --
 -- Two independent toggles control what is listed: "Show everything" widens the scope
 -- from "what I am missing" to the whole catalog, and "Only favourites" filters
--- whatever that scope produced down to the favourited items.
+-- whatever that scope produced down to the favourited items. Since the filter can hide
+-- everything the wider scope just added, the line next to it always says how many items
+-- are shown out of how many the scope holds - otherwise "Show everything" looks broken
+-- while "Only favourites" is on.
 --
 -- Right-clicking a row favourites the item, which pins it to the top of its section.
 -- Which ring enchant or gem a character wants is a property of that character, not
@@ -29,6 +32,7 @@ local ROW_HEIGHT     = 26
 local ICON_SIZE      = 22
 local SIDE_INSET     = 20
 local REFRESH_DELAY  = 0.2
+local LOAD_TIMEOUT   = 2
 
 -- Enchantable slots in the order the tab lists them. Legs are not in here: they take
 -- a spellthread or an armor kit instead of an enchant and have their own section.
@@ -68,9 +72,10 @@ local CONSUMABLE_HEADERS = {
     weapon = L["Weapon Buffs"],
 }
 
-local panel, scrollChild, hintText, emptyText, showAllCheck, favoritesCheck
+local panel, scrollChild, hintText, emptyText, countText, showAllCheck, favoritesCheck
 local rows = {}
 local refreshQueued = false
+local refreshToken = 0 -- only the newest refresh draws; a callback of an older one is dropped
 local lastNeeds -- the last scan result, so a favourite toggle need not rescan
 
 local function ShowAll()
@@ -102,20 +107,47 @@ end
 -- CATALOG
 -- ============================================================================
 
+-- The ranks of one item, best first: a favourited rank beats everything, then the higher
+-- item level, then the higher crafting quality, then the higher item ID.
+--
+-- Item level alone is not enough. The crafting ranks of a consumable mostly share one, and
+-- a cold cache reports 0 for every rank, so the first ID of the list used to win by default
+-- and pinned the row to rank 1 - while Data.lua lists rank 2 (rank 1 is always ID - 1).
+--
+-- The favourite comes first because a star is saved for one exact item ID: swapping the row
+-- to another rank of the same item would silently lose it, and drop the item out of the list
+-- entirely under "Only favourites".
+local function RankOf(itemID)
+    local quality = C_TradeSkillUI and C_TradeSkillUI.GetItemReagentQualityByItemInfo
+        and C_TradeSkillUI.GetItemReagentQualityByItemInfo(itemID)
+    return {
+        itemID   = itemID,
+        favorite = IsFavorite(itemID),
+        ilvl     = C_Item.GetDetailedItemLevelInfo(itemID) or 0,
+        quality  = quality or 0,
+    }
+end
+
+local function IsBetterRank(a, b)
+    if a.favorite ~= b.favorite then return a.favorite end
+    if a.ilvl ~= b.ilvl then return a.ilvl > b.ilvl end
+    if a.quality ~= b.quality then return a.quality > b.quality end
+    return a.itemID > b.itemID
+end
+
 -- One row per item name. The consumable tables list every crafting rank, and two rows
--- for the same potion are just noise, so the lower item level is dropped. Needs the
--- item cache to be warm; ids that are still unknown fall back to one row each.
+-- for the same potion are just noise, so only the best rank is kept. Needs the item cache
+-- to be warm; ids that are still unknown fall back to one row each.
 function PR.BuildShopItems(ids)
     local best, order = {}, {}
     for _, itemID in ipairs(ids) do
         local key = C_Item.GetItemNameByID(itemID) or itemID
-        local ilvl = C_Item.GetDetailedItemLevelInfo(itemID) or 0
-        local current = best[key]
-        if not current then
+        local rank = RankOf(itemID)
+        if not best[key] then
             order[#order + 1] = key
-            best[key] = { itemID = itemID, ilvl = ilvl }
-        elseif ilvl > current.ilvl then
-            current.itemID, current.ilvl = itemID, ilvl
+            best[key] = rank
+        elseif IsBetterRank(rank, best[key]) then
+            best[key] = rank
         end
     end
 
@@ -208,10 +240,12 @@ local function CollectIDs(needs)
     return ids
 end
 
--- The flat display list: { kind = "header"|"item", label | itemID }.
+-- The flat display list: { kind = "header"|"item", label | itemID }, and how many items
+-- the current scope holds before the favourites filter is applied to it.
 local function BuildEntries(needs)
     local showAll = ShowAll()
     local entries = {}
+    local total = 0
 
     local favoritesOnly = FavoritesOnly()
 
@@ -226,6 +260,7 @@ local function BuildEntries(needs)
             local block = IsFavorite(itemID) and favorites or rest
             block[#block + 1] = itemID
         end
+        total = total + #favorites + #rest
         if favoritesOnly then rest = {} end
         if #favorites + #rest == 0 then return end
 
@@ -267,7 +302,7 @@ local function BuildEntries(needs)
         end
     end
 
-    return entries
+    return entries, total
 end
 
 -- ============================================================================
@@ -374,13 +409,15 @@ local function SetItemRow(row, itemID)
     end
 end
 
-local function Populate(entries)
+local function Populate(entries, total)
+    local shown = 0
     for i, entry in ipairs(entries) do
         local row = rows[i] or CreateRow(i)
         if entry.kind == "header" then
             SetHeaderRow(row, entry.label)
         else
             SetItemRow(row, entry.itemID)
+            shown = shown + 1
         end
         row:Show()
     end
@@ -390,6 +427,15 @@ local function Populate(entries)
 
     scrollChild:SetHeight(math.max(1, #entries * ROW_HEIGHT))
     hintText:SetShown(#entries > 0)
+
+    -- What the two toggles actually produced. Without it "Show everything" looks like it
+    -- does nothing while "Only favourites" is on: the scope widens to the whole catalog
+    -- and the filter cuts it straight back to the same handful of rows, so the total is
+    -- the only thing that visibly moves.
+    total = total or shown
+    countText:SetText(shown < total and L["Showing %d of %d items"]:format(shown, total)
+        or L["%d items"]:format(total))
+    countText:SetShown(total > 0)
 
     -- An empty list under "Only favourites" usually means no favourites have been
     -- set yet, which is worth saying instead of claiming everything is bought.
@@ -424,23 +470,36 @@ end
 function Shopping:Refresh()
     if not Visible() then return end
 
+    refreshToken = refreshToken + 1
+    local token = refreshToken
+
     PR.ScanUnitAsync("player", true, function(issues)
-        -- The scan is async: the tab may have been closed meanwhile.
-        if not Visible() then return end
+        -- The scan is async: the tab may have been closed, or a newer refresh started.
+        if token ~= refreshToken or not Visible() then return end
 
         local consumables = PR.ScanPotions()
         local needs = BuildNeeds(issues, consumables)
         lastNeeds = needs
+
+        local function Draw()
+            if token ~= refreshToken or not Visible() then return end
+            Populate(BuildEntries(needs))
+        end
 
         -- Names and links are compared while building the list, so warm the cache first.
         local items = ContinuableContainer:Create()
         for _, itemID in ipairs(CollectIDs(needs)) do
             items:AddContinuable(Item:CreateFromItemID(itemID))
         end
-        items:ContinueOnLoad(function()
-            if not Visible() then return end
-            Populate(BuildEntries(needs))
-        end)
+        items:ContinueOnLoad(Draw)
+
+        -- ContinueOnLoad only fires once every single item has loaded, and an item ID the
+        -- client cannot resolve never loads at all - one stale ID in the catalog would
+        -- leave the tab sitting on its old contents for good, which "Show everything" runs
+        -- into first since it asks for the whole catalog. So draw what is cached once the
+        -- wait is up; the rows that missed out show the item ID and fill themselves in on
+        -- the next refresh, and a Draw arriving late from ContinueOnLoad is just a redraw.
+        C_Timer.After(LOAD_TIMEOUT, Draw)
     end)
 end
 
@@ -496,6 +555,12 @@ function Shopping:CreatePanel(parent)
     favoritesLabel:SetPoint("LEFT", favoritesCheck, "RIGHT", 2, 1)
     favoritesLabel:SetText(L["Only favourites"])
 
+    -- Next to the filter it explains, not under it: "Only favourites" is the short label
+    -- of the two, so the rest of that row is free in every locale.
+    countText = panel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    countText:SetPoint("LEFT", favoritesLabel, "RIGHT", 12, 0)
+    countText:SetJustifyH("LEFT")
+
     local scroll = CreateFrame("ScrollFrame", nil, panel, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", SIDE_INSET, -130)
     scroll:SetPoint("BOTTOMRIGHT", -38, 20)
@@ -504,8 +569,9 @@ function Shopping:CreatePanel(parent)
     scrollChild:SetSize(parent:GetWidth() - 58, 1)
     scroll:SetScrollChild(scrollChild)
 
+    -- LEFT and RIGHT alone: both carry the vertical centre of the scroll frame, so a CENTER
+    -- point on top of them would only be a second, conflicting answer for the same x.
     emptyText = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    emptyText:SetPoint("CENTER", scroll, "CENTER")
     emptyText:SetPoint("LEFT", scroll, "LEFT", 8, 0)
     emptyText:SetPoint("RIGHT", scroll, "RIGHT", -8, 0)
     emptyText:Hide()

@@ -196,6 +196,8 @@ L["Nothing to buy!"] = "Покупать нечего!"
 L["Only favourites"] = "Только избранное"
 L["No favourites yet - right-click an item to add one."] = "Избранного пока нет - щёлкните по предмету ПКМ, чтобы добавить."
 L["Show everything, not just what I am missing"] = "Показывать всё, а не только недостающее"
+L["Showing %d of %d items"] = "Показано %d из %d предметов"
+L["%d items"] = "Предметов: %d"
 L["Shift-click an item to paste it into the auction house search."] = "Shift+щелчок по предмету вставляет его в поиск аукциона."
 
 -- Equipment slots, for whispers in this language.

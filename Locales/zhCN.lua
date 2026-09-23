@@ -196,6 +196,8 @@ L["Nothing to buy!"] = "无需采购！"
 L["Only favourites"] = "仅收藏"
 L["No favourites yet - right-click an item to add one."] = "尚无收藏 - 右键点击物品即可添加。"
 L["Show everything, not just what I am missing"] = "显示全部，而不仅是缺少的"
+L["Showing %d of %d items"] = "显示 %d / %d 件物品"
+L["%d items"] = "%d 件物品"
 L["Shift-click an item to paste it into the auction house search."] = "Shift+点击物品即可粘贴到拍卖行搜索栏。"
 
 -- Equipment slots, for whispers in this language.

@@ -196,6 +196,8 @@ L["Nothing to buy!"] = "구매할 것이 없습니다!"
 L["Only favourites"] = "즐겨찾기만"
 L["No favourites yet - right-click an item to add one."] = "즐겨찾기가 없습니다 - 아이템을 오른쪽 클릭해 추가하세요."
 L["Show everything, not just what I am missing"] = "부족한 것뿐 아니라 전부 표시"
+L["Showing %d of %d items"] = "%d개 표시 (전체 %d개)"
+L["%d items"] = "아이템 %d개"
 L["Shift-click an item to paste it into the auction house search."] = "아이템을 Shift+클릭하면 경매장 검색창에 입력됩니다."
 
 -- Equipment slots, for whispers in this language.

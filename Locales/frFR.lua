@@ -196,6 +196,8 @@ L["Nothing to buy!"] = "Rien à acheter !"
 L["Only favourites"] = "Favoris uniquement"
 L["No favourites yet - right-click an item to add one."] = "Aucun favori - clic droit sur un objet pour en ajouter un."
 L["Show everything, not just what I am missing"] = "Tout afficher, pas seulement ce qui me manque"
+L["Showing %d of %d items"] = "Affichage de %d objets sur %d"
+L["%d items"] = "%d objets"
 L["Shift-click an item to paste it into the auction house search."] = "Maj+clic sur un objet pour le coller dans la recherche de l’hôtel des ventes."
 
 -- Equipment slots, for whispers in this language.
