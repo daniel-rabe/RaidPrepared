@@ -52,6 +52,44 @@ PR.L = setmetatable({}, {
     end,
 })
 
+-- The magic characters of a Lua pattern, escaped with "%%%0".
+local PATTERN_MAGIC = "[%^%$%(%)%%%.%[%]%*%+%-%?]"
+
+-- Turns a localized format global into a Lua pattern that matches a whole line, with every
+-- %s captured and every %d matched as digits. Only the literal parts of the format may be
+-- escaped: an escaped placeholder would survive into the pattern, and some locales spell
+-- their arguments out with a position ("%1$s (%2$d/%3$d)"), whose "%1" Lua reads as a
+-- capture reference and rejects on the first match. fallback (English) stands in when the
+-- global is missing or its format cannot be turned into a usable pattern.
+function PR.LineFormatPattern(fmt, fallback)
+    local function Build(f)
+        f = f:gsub("%%%d+%$", "%%") -- "%1$s" -> "%s"; the argument order does not matter here
+        local parts, pos = {}, 1
+        while true do
+            local from, to, spec = f:find("%%(.)", pos)
+            if not from then break end
+            parts[#parts + 1] = (f:sub(pos, from - 1):gsub(PATTERN_MAGIC, "%%%0"))
+            if spec == "s" then
+                parts[#parts + 1] = "(.+)"
+            elseif spec == "d" then
+                parts[#parts + 1] = "%d+"
+            else -- "%%", or anything unexpected: a literal percent and the character itself
+                parts[#parts + 1] = "%%" .. (spec ~= "%" and spec:gsub(PATTERN_MAGIC, "%%%0") or "")
+            end
+            pos = to + 1
+        end
+        parts[#parts + 1] = (f:sub(pos):gsub(PATTERN_MAGIC, "%%%0"))
+        return "^" .. table.concat(parts) .. "$"
+    end
+
+    local pattern = Build(fmt or fallback)
+    -- A pattern this addon cannot use is worse than no match at all, so try it once.
+    if not pcall(string.match, "", pattern) then
+        pattern = Build(fallback)
+    end
+    return pattern
+end
+
 -- Keys that are not English text themselves.
 local enUS = PR.NewLocale("enUS")
 enUS["cat.hearth"] = "Hearthstone"

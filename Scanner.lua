@@ -7,12 +7,7 @@ local QUALITY_ATLAS_PATTERN = "Professions%-ChatIcon%-Quality%-.-Tier(%d)"
 local QUALITY_ICON_PATTERN  = "Professions%-Icon%-Quality%-.-Tier(%d)"
 
 -- "Enchanted: %s" -> "^Enchanted: (.+)$" (localized)
-local ENCHANT_LINE_PATTERN
-do
-    local fmt = ENCHANTED_TOOLTIP_LINE or "Enchanted: %s"
-    fmt = fmt:gsub("([%(%)%.%+%-%*%?%[%]%^%$])", "%%%1")
-    ENCHANT_LINE_PATTERN = "^" .. fmt:gsub("%%s", "(.+)") .. "$"
-end
+local ENCHANT_LINE_PATTERN = PR.LineFormatPattern(ENCHANTED_TOOLTIP_LINE, "Enchanted: %s")
 
 local function GetMaxQualityTier()
     return PR.GetMaxQualityTier()

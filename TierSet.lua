@@ -9,13 +9,8 @@ local L = PR.L
 local ISSUE_SLOT = 110 -- sort position of the tier set warning (after the consumables)
 local FALLBACK_ICON = "Interface\\Icons\\INV_Chest_Plate04"
 
--- The set line of an item tooltip: "%s (%d/%d)" -> "^(.+) %((%d+)/(%d+)%)$" (localized).
-local SET_LINE_PATTERN
-do
-    local fmt = ITEM_SET_NAME or "%s (%d/%d)"
-    fmt = fmt:gsub("([%(%)%.%+%-%*%?%[%]%^%$])", "%%%1")
-    SET_LINE_PATTERN = "^" .. fmt:gsub("%%s", "(.+)"):gsub("%%d", "%%d+") .. "$"
-end
+-- The set line of an item tooltip: "%s (%d/%d)" -> "^(.+) %(%d+/%d+%)$" (localized).
+local SET_LINE_PATTERN = PR.LineFormatPattern(ITEM_SET_NAME, "%s (%d/%d)")
 
 -- The specs to ask about set bonuses. A unit's own spec is the answer wherever the client
 -- knows it; otherwise every spec of its class will do, since each of them has a set bonus
