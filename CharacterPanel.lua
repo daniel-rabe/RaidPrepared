@@ -1,4 +1,5 @@
 local _, PR = ...
+local Theme = PR.Theme
 
 -- Optional indicators on the character panel item slots: missing/low-quality enchant and
 -- empty/low-quality gem sockets. Toggle with /pr indicators.
@@ -24,10 +25,11 @@ local RIGHT_SIDE_SLOTS = {
 local ENCHANT_ICON = 136244 -- Trade_Engraving
 local SOCKET_ICON = "Interface\\ItemSocketingFrame\\UI-EmptySocket-Prismatic"
 
-local COLORS = {
-    missing = { 1.0, 0.15, 0.15 },
-    low = { 1.0, 0.6, 0.1 },
-    outdated = { 1.0, 0.6, 0.1 },
+-- Which palette entry (see Theme.lua) a scan problem is drawn in.
+local PROBLEM_STATUS = {
+    missing = "bad",
+    low = "warn",
+    outdated = "warn",
 }
 
 local SLOT_BUTTONS = {
@@ -79,7 +81,7 @@ local function CreateBorder(button)
     border:SetPoint("BOTTOMRIGHT", BORDER_SIZE, -BORDER_SIZE)
     border:SetFrameLevel(button:GetFrameLevel() + 4)
 
-    local r, g, b = unpack(COLORS.missing)
+    local r, g, b = Theme:Status("bad")
     local function Edge(point1, point2, width, height)
         local edge = border:CreateTexture(nil, "OVERLAY")
         edge:SetColorTexture(r, g, b, 1)
@@ -118,7 +120,7 @@ local function ShowIndicator(indicator, issue)
         indicator:Hide()
         return
     end
-    local r, g, b = unpack(COLORS[issue.problem] or COLORS.missing)
+    local r, g, b = Theme:Status(PROBLEM_STATUS[issue.problem] or "bad")
     indicator.border:SetColorTexture(r, g, b, 1)
     indicator.text = issue.detail
     indicator:Show()

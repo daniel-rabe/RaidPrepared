@@ -1,5 +1,6 @@
 local _, PR = ...
 local T = PR.Travel
+local Theme = PR.Theme
 local L = T.L
 
 -- PullReady - Travel/Panel.lua
@@ -134,7 +135,12 @@ local function CreateRow(index)
 
     row.bg = row:CreateTexture(nil, "BACKGROUND")
     row.bg:SetAllPoints()
-    row.bg:SetColorTexture(1, 1, 1, 0.05)
+    Theme:Register(function(palette)
+        local r, g, b, a = unpack(palette.rowHighlight)
+        row.bg:SetColorTexture(r, g, b, a * 0.6)
+        row.restColor = { r, g, b, a * 0.6 }
+        row.hoverColor = { r, g, b, math.min(1, a * 1.8) }
+    end)
 
     row.icon = row:CreateTexture(nil, "ARTWORK")
     row.icon:SetSize(ROW_HEIGHT - 6, ROW_HEIGHT - 6)
@@ -162,7 +168,7 @@ local function CreateRow(index)
     row.label:SetWordWrap(false)
 
     row:SetScript("OnEnter", function(self)
-        self.bg:SetColorTexture(1, 1, 1, 0.15)
+        self.bg:SetColorTexture(unpack(self.hoverColor))
         if not self.opt then return end
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         if self.opt.kind == "spell" then
@@ -181,7 +187,7 @@ local function CreateRow(index)
     end)
 
     row:SetScript("OnLeave", function(self)
-        self.bg:SetColorTexture(1, 1, 1, 0.05)
+        self.bg:SetColorTexture(unpack(self.restColor))
         GameTooltip:Hide()
     end)
 

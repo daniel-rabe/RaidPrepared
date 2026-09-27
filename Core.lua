@@ -9,6 +9,7 @@ local DEFAULTS = {
     characterIndicators = true, -- enchant/socket indicators on the character panel
     localizedWhisper = false,   -- false = whisper in whisperLocale (recipient's language is unknown)
     funMode = false,            -- joke skin, toggled with /pr ziegel (see Fun.lua)
+    theme = "default",          -- window look, see Theme.lua ("default" or "darkgold")
     -- Shopping tab: the scope (missing only / whole catalog), then the favourites
     -- filter applied on top of whichever scope is selected.
     shoppingShowAll = false,

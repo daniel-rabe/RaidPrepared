@@ -31,8 +31,10 @@ local function CreateCopyFrame()
         edgeSize = 12,
         insets   = { left = 3, right = 3, top = 3, bottom = 3 },
     })
+    PR.Theme:Register(function(palette)
+        copyFrame:SetBackdropBorderColor(unpack(palette.borderColor or { 0.4, 0.4, 0.45, 1 }))
+    end)
     copyFrame:SetBackdropColor(0.05, 0.05, 0.07, 0.96)
-    copyFrame:SetBackdropBorderColor(0.4, 0.4, 0.45, 1)
     copyFrame:Hide()
 
     tinsert(UISpecialFrames, "PullReadyTravelCopyFrame")

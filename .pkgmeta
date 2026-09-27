@@ -2,6 +2,7 @@ package-as: RaidPrepared
 
 ignore:
   - media
+  - tools
   - CURSEFORGE.md
   - README.md
   - RENAME.md

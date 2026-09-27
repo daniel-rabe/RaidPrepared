@@ -1,5 +1,6 @@
 local _, PR = ...
 local L = PR.L
+local Theme = PR.Theme
 
 -- Inspects every group member (one at a time) and lists missing enchants / empty gem sockets.
 
@@ -323,11 +324,11 @@ end
 local function TierColor(tierSet)
     local best = tierSet.bonuses[#tierSet.bonuses]
     if best and best.active then
-        return 0.25, 1.0, 0.25
+        return Theme:Status("ok")
     elseif tierSet.active then
-        return 1.0, 0.6, 0.1
+        return Theme:Status("warn")
     end
-    return 0.65, 0.65, 0.65
+    return Theme:Status("inactive")
 end
 
 -- The bonus a member is running as a short tag ("2P", "4P"), a dash when none is, and
@@ -510,7 +511,9 @@ local function CreateRow(index)
 
     row.highlight = row:CreateTexture(nil, "HIGHLIGHT")
     row.highlight:SetAllPoints()
-    row.highlight:SetColorTexture(1, 1, 1, 0.08)
+    Theme:Register(function(palette)
+        row.highlight:SetColorTexture(unpack(palette.rowHighlight))
+    end)
 
     row.name = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     row.name:SetPoint("LEFT", 4, 0)

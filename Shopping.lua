@@ -1,5 +1,6 @@
 local _, PR = ...
 local L = PR.L
+local Theme = PR.Theme
 
 -- PullReady - Shopping.lua
 -- The shopping tab: the enchants, leg armor, gems and consumables of the current
@@ -344,7 +345,9 @@ local function CreateRow(index)
 
     row.highlight = row:CreateTexture(nil, "HIGHLIGHT")
     row.highlight:SetAllPoints()
-    row.highlight:SetColorTexture(1, 1, 1, 0.08)
+    Theme:Register(function(palette)
+        row.highlight:SetColorTexture(unpack(palette.rowHighlight))
+    end)
 
     row.icon = row:CreateTexture(nil, "ARTWORK")
     row.icon:SetSize(ICON_SIZE, ICON_SIZE)

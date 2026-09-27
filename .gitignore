@@ -1,3 +1,7 @@
+# ComfyUI renders (tools/gen_textures.py); the shipped TGAs live in Textures/
+tools/out/
+__pycache__/
+
 # Compiled Lua sources
 luac.out
 
