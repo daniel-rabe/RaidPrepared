@@ -2,8 +2,9 @@ local _, PR = ...
 
 -- Fun mode, switched on and off with "/pr ziegel".
 --
--- It is a joke skin, not a feature: the window header becomes FUN_TITLE and every
--- warning the check produces is swapped for a ruder version of itself. The checks,
+-- It is a joke skin, not a feature: the window header becomes FUN_TITLE, every
+-- warning the check produces is swapped for a ruder version of itself and the
+-- window's warning sound is swapped too (see the bottom of this file). The checks,
 -- their colours and their ordering are untouched, and so is everything that leaves
 -- this client - the whispers of the Raid Inspect tab (they go through PR.GetString,
 -- not PR.L) and the addon channel keep their normal wording, so nobody else in the
@@ -119,4 +120,42 @@ end
 function Fun:Key(key)
     if not self:IsEnabled() then return nil end
     return REPLACEMENTS[key]
+end
+
+-- ---------------------------------------------------------------- warning sound
+--
+-- The check window's warning sound is swapped as well: fun mode answers a failed
+-- check with Illidan's "You are not prepared!" instead of the ordinary UI alert.
+-- The line is not shipped with the addon - every client already carries it as a
+-- sound kit, which is also why the player hears it in their own language.
+--
+-- 11466 is A_BLCKTMPLE_Illidan_04, the closing line of the Black Temple gate
+-- speech. If it ever turns out to be one of its neighbours (11463-11467 are the
+-- same speech), this constant is the only thing that has to move.
+local ILLIDAN_SOUND_KIT = 11466
+
+-- The shout runs a good three seconds and the window can reopen right after a
+-- check, so it is rationed. The ordinary alert is short enough to need none of this.
+local ILLIDAN_COOLDOWN = 20
+local lastShout = 0
+
+-- True once the shout is actually on its way. It is not when the cooldown is still
+-- running, and it is not on a streaming install that never pulled the Black Temple
+-- audio down: the client has no file for the kit then and PlaySound says so rather
+-- than playing anything.
+local function Shout()
+    local now = GetTime()
+    if now - lastShout < ILLIDAN_COOLDOWN then return false end
+    -- "Master", so the shout still lands with the dialog channel turned down. Fun
+    -- mode has to be switched on by hand, so it is allowed to be loud.
+    if not PlaySound(ILLIDAN_SOUND_KIT, "Master") then return false end
+    lastShout = now
+    return true
+end
+
+-- The sound the check window plays when it opens on problems. Falls back to the
+-- ordinary alert whenever the shout does not happen, so a failed check is never silent.
+function Fun:PlayWarningSound()
+    if self:IsEnabled() and Shout() then return end
+    PlaySound(SOUNDKIT.RAID_WARNING)
 end

@@ -69,8 +69,14 @@ function CreateColor(r, g, b, a)
              GetRGBA = function(self) return self.r, self.g, self.b, self.a end }
 end
 
-SOUNDKIT = setmetatable({}, { __index = function() return 1 end })
-function PlaySound() end
+-- Sound kits stub as their own name and every played sound is recorded, so the
+-- drive section below can tell the ordinary alert from Illidan.
+SOUNDKIT = setmetatable({}, { __index = function(_, key) return key end })
+local soundsPlayed = {}
+function PlaySound(kit)
+    soundsPlayed[#soundsPlayed + 1] = kit
+    return true
+end
 function GetLocale() return "enUS" end
 function InCombatLockdown() return false end
 function IsInRaid() return false end
@@ -205,5 +211,24 @@ PR.Dialog:Show({
 }, nil, nil, nil)
 PR.Dialog:Show({}, nil, nil, nil)
 print("populate ok")
+
+-- Fun mode swaps the warning sound too. GetTime is frozen in this stub, so the
+-- second window falls straight into the shout's cooldown and back onto the alert.
+local issues = { { slot = 1, slotName = "Head", problem = "missing", detail = "Missing enchant" } }
+local function lastSound() return soundsPlayed[#soundsPlayed] end
+
+PR.Fun:SetEnabled(true)
+PR.Dialog:Show(issues, nil, nil, nil)
+assert(lastSound() == 11466, "fun mode should answer a failed check with Illidan")
+PR.Dialog:Show(issues, nil, nil, nil)
+assert(lastSound() == "RAID_WARNING", "a shout on cooldown falls back to the alert")
+
+PR.Fun:SetEnabled(false)
+PR.Dialog:Show(issues, nil, nil, nil)
+assert(lastSound() == "RAID_WARNING", "without fun mode the alert is unchanged")
+local before = #soundsPlayed
+PR.Dialog:Show({}, nil, nil, nil)
+assert(#soundsPlayed == before, "a clean check must not play a warning at all")
+print("warning sound ok")
 
 print("SMOKE OK")

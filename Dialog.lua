@@ -937,7 +937,7 @@ function Dialog:Show(issues, potions, tierSet, durability)
     self:SelectTab(Dialog.TAB_CHECK)
     frame:Show()
     if #issues > 0 then
-        PlaySound(SOUNDKIT.RAID_WARNING)
+        PR.Fun:PlayWarningSound()
     end
 end
 
