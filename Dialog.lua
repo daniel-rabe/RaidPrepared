@@ -3,7 +3,9 @@ local L = PR.L
 local Theme = PR.Theme
 
 local FRAME_WIDTH = 580
-local FRAME_HEIGHT = 390
+-- The options tab is the tallest of the six and sets the height on its own: every
+-- one of its rows has to fit without a scrollbar, so a new option grows the window.
+local FRAME_HEIGHT = 460
 local ROW_HEIGHT = 34
 
 -- Consumable summary: one icon per kind with its stack count, details in the tooltip.
@@ -88,7 +90,7 @@ local frame, scrollChild, titleText, summaryText, summaryBar, okBlock, okText, o
 local checkPanel, inspectPanel, talentsPanel, optionsPanel, travelPanel, shoppingPanel
 local indicatorsCheck
 local qualityButtons = {}
-local whisperCheck, whisperDrop, themeDrop
+local whisperCheck, whisperDrop, themeDrop, funCheck
 local rows = {}
 local pendingIssues, pendingPotions, pendingTierSet, pendingDurability -- waiting for combat to end
 
@@ -743,6 +745,7 @@ local function CreateDialog()
         whisperCheck:SetChecked(PullReadyDB.localizedWhisper)
         Dialog:UpdateWhisperLocale()
         Dialog:UpdateThemeLabel()
+        funCheck:SetChecked(PR.Fun:IsEnabled())
     end)
 
     local optionsHeader = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -846,6 +849,25 @@ local function CreateDialog()
         end
     end)
     Dialog:UpdateThemeLabel()
+
+    -- The joke skin of Fun.lua. It used to be reachable through "/pr ziegel" alone;
+    -- the checkbox is the same switch, so either way round keeps the other in sync.
+    funCheck = CreateFrame("CheckButton", nil, optionsPanel, "UICheckButtonTemplate")
+    funCheck:SetSize(26, 26)
+    funCheck:SetPoint("TOPLEFT", themeLabel, "BOTTOMLEFT", -4, -22)
+    funCheck:SetScript("OnClick", function(self)
+        PR.Fun:SetEnabled(self:GetChecked())
+    end)
+
+    local funLabel = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    funLabel:SetPoint("LEFT", funCheck, "RIGHT", 2, 1)
+    funLabel:SetText(L["Fun mode: ruder warnings and a louder alarm"])
+
+    local funHint = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    funHint:SetPoint("TOPLEFT", funLabel, "BOTTOMLEFT", 0, -4)
+    funHint:SetPoint("RIGHT", optionsPanel, "RIGHT", -24, 0)
+    funHint:SetJustifyH("LEFT")
+    funHint:SetText(L["The check window insults you instead of advising you. Same as /pr ziegel."])
 
     -- Tab 4: fast-travel search
     travelPanel = PR.Travel:CreatePanel(frame)
@@ -1003,6 +1025,7 @@ function Dialog:RefreshFunMode()
     titleText:SetText(PR.Fun:Title())
     okText:SetText(L["Everything looks good!"])
     okSubText:SetText(L["You are ready for the pull."])
+    funCheck:SetChecked(PR.Fun:IsEnabled())
 end
 
 -- Keeps the quality buttons in sync when the rank changes elsewhere (/pr quality).

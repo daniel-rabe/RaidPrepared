@@ -218,7 +218,8 @@ SlashCmdList.PULLREADY = function(input)
         print("  /pr minimap - " .. L["toggle minimap button"])
         print("  /pr quality <rank> - " .. L["required enchant/gem quality rank"])
         print("  /pr debug - " .. L["print raw item/socket data"])
-        -- An easter egg: only listed once it is on, so it can be found again to switch off.
+        -- Half an easter egg: the options tab has the switch as well, but the command
+        -- is only listed once it is on, so it can be found again to switch off.
         if PR.Fun:IsEnabled() then
             print("  /pr ziegel - " .. L["fun.help"])
         end

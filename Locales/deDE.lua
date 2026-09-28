@@ -33,6 +33,8 @@ L["Quality rank %d"] = "Qualitätsstufe %d"
 L["Send Raid Inspect whispers in my language"] = "Flüsternachrichten aus „Schlachtzug betrachten“ in meiner Sprache senden"
 L["Off: whispers are sent in the language chosen below, since the other player's game language is unknown."] = "Aus: Flüsternachrichten werden in der unten gewählten Sprache gesendet, da die Spielsprache des anderen Spielers unbekannt ist."
 L["Whisper language:"] = "Sprache der Flüsternachrichten:"
+L["Fun mode: ruder warnings and a louder alarm"] = "Spaßmodus: frechere Warnungen und ein lauterer Alarm"
+L["The check window insults you instead of advising you. Same as /pr ziegel."] = "Das Prüffenster beleidigt dich, statt dich zu beraten. Entspricht /pr ziegel."
 
 -- Gear scan
 L["Missing enchant"] = "Fehlende Verzauberung"
