@@ -748,13 +748,30 @@ local function CreateDialog()
         funCheck:SetChecked(PR.Fun:IsEnabled())
     end)
 
-    local optionsHeader = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    optionsHeader:SetPoint("TOPLEFT", 24, -56)
-    optionsHeader:SetText(OPTIONS or L["Options"])
+    -- The joke skin of Fun.lua. It used to be reachable through "/pr ziegel" alone;
+    -- the checkbox is the same switch, so either way round keeps the other in sync.
+    funCheck = CreateFrame("CheckButton", nil, optionsPanel, "UICheckButtonTemplate")
+    funCheck:SetSize(26, 26)
+    funCheck:SetPoint("TOPLEFT", 20, -56)
+    funCheck:SetScript("OnClick", function(self)
+        PR.Fun:SetEnabled(self:GetChecked())
+    end)
+
+    local funLabel = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+    funLabel:SetPoint("LEFT", funCheck, "RIGHT", 2, 1)
+    funLabel:SetText(L["Fun mode: ruder warnings and a louder alarm"])
+
+    local funHint = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    funHint:SetPoint("TOPLEFT", funLabel, "BOTTOMLEFT", 0, -4)
+    funHint:SetPoint("RIGHT", optionsPanel, "RIGHT", -24, 0)
+    funHint:SetJustifyH("LEFT")
+    funHint:SetText(L["The check window insults you instead of advising you."])
 
     indicatorsCheck = CreateFrame("CheckButton", nil, optionsPanel, "UICheckButtonTemplate")
     indicatorsCheck:SetSize(26, 26)
-    indicatorsCheck:SetPoint("TOPLEFT", optionsHeader, "BOTTOMLEFT", -4, -10)
+    -- The hint above sits indented under its label, so back out the checkbox
+    -- width to line this box up with the one above it.
+    indicatorsCheck:SetPoint("TOPLEFT", funHint, "BOTTOMLEFT", -28, -24)
     indicatorsCheck:SetScript("OnClick", function(self)
         PR.CharacterPanel:SetEnabled(self:GetChecked())
     end)
@@ -849,25 +866,6 @@ local function CreateDialog()
         end
     end)
     Dialog:UpdateThemeLabel()
-
-    -- The joke skin of Fun.lua. It used to be reachable through "/pr ziegel" alone;
-    -- the checkbox is the same switch, so either way round keeps the other in sync.
-    funCheck = CreateFrame("CheckButton", nil, optionsPanel, "UICheckButtonTemplate")
-    funCheck:SetSize(26, 26)
-    funCheck:SetPoint("TOPLEFT", themeLabel, "BOTTOMLEFT", -4, -22)
-    funCheck:SetScript("OnClick", function(self)
-        PR.Fun:SetEnabled(self:GetChecked())
-    end)
-
-    local funLabel = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-    funLabel:SetPoint("LEFT", funCheck, "RIGHT", 2, 1)
-    funLabel:SetText(L["Fun mode: ruder warnings and a louder alarm"])
-
-    local funHint = optionsPanel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
-    funHint:SetPoint("TOPLEFT", funLabel, "BOTTOMLEFT", 0, -4)
-    funHint:SetPoint("RIGHT", optionsPanel, "RIGHT", -24, 0)
-    funHint:SetJustifyH("LEFT")
-    funHint:SetText(L["The check window insults you instead of advising you. Same as /pr ziegel."])
 
     -- Tab 4: fast-travel search
     travelPanel = PR.Travel:CreatePanel(frame)
