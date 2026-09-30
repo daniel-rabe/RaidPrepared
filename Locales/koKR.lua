@@ -94,6 +94,10 @@ L["Dungeon"] = "던전"
 L["(active)"] = "(활성)"
 L["Flag the loadouts you use for raids and Mythic dungeons."] = "공격대와 신화 던전에서 사용하는 구성을 표시하세요."
 L["No saved loadouts for this specialization."] = "이 전문화에 저장된 구성이 없습니다."
+L["(loading%s)"] = "(불러오는 중%s)"
+L["Click a loadout name to activate it."] = "구성 이름을 클릭하여 적용합니다."
+L["Talent loadouts cannot be changed in combat."] = "전투 중에는 특성 구성을 바꿀 수 없습니다."
+L["Could not activate the loadout '%s'."] = "'%s' 구성을 적용할 수 없습니다."
 L["Flag the selected loadout for this content. You are warned when entering it with a loadout that is not flagged."] = "선택한 구성을 이 콘텐츠용으로 표시합니다. 표시되지 않은 구성으로 입장하면 경고합니다."
 
 -- Raid / party inspect

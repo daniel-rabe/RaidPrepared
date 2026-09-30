@@ -91,9 +91,39 @@ ITEM_QUALITY_COLORS = setmetatable({}, {
     __index = function() return { r = 1, g = 1, b = 1, hex = "|cffffffff" } end,
 })
 
+-- Talent loadouts: two saved configs on the current spec, the first one active.
+-- LoadConfig records what the addon asked for, so the talents tab's click handler
+-- can be driven and checked below.
+local loadoutNames = { [11] = "Raid", [12] = "Mythic+" }
+local selectedConfigID, loadedConfigID = 11, nil
+C_ClassTalents = {
+    GetConfigIDsBySpecID = function() return { 11, 12 } end,
+    GetLastSelectedSavedConfigID = function() return selectedConfigID end,
+    GetStarterBuildActive = function() return false end,
+    LoadConfig = function(configID) loadedConfigID = configID; return 2 end, -- LoadInProgress
+    UpdateLastSelectedSavedConfigID = function(_, configID) selectedConfigID = configID end,
+}
+C_Traits = { GetConfigInfo = function(configID) return { name = loadoutNames[configID] } end }
+C_SpecializationInfo = {
+    GetSpecialization = function() return 1 end,
+    GetSpecializationInfo = function() return 250, "Blood", "", 135770 end,
+}
+PlayerUtil = { GetCurrentSpecID = function() return 250 end }
+Enum = { LoadConfigResult = { Error = 0, NoChangesNecessary = 1, LoadInProgress = 2 } }
+
 C_Texture = { GetAtlasInfo = function(atlas) return { width = 24, height = 24 } end }
--- Runs the callback straight away, so deferred work is exercised in this pass.
-C_Timer = { After = function(_, fn) fn() end, NewTimer = function(_, fn) fn() return {} end }
+-- After runs the callback straight away, so deferred work is exercised in this pass.
+-- NewTimer does not: its only caller is a failsafe that is meant to be cancelled long
+-- before it fires, and firing it here would undo the state the test is checking.
+local timers = {}
+C_Timer = {
+    After = function(_, fn) fn() end,
+    NewTimer = function(_, fn)
+        local timer = { fire = fn, Cancel = function(self) self.cancelled = true end }
+        timers[#timers + 1] = timer
+        return timer
+    end,
+}
 
 -- Anything else the addon reaches for becomes a harmless function. Constants that
 -- matter are defined above; this only keeps unrelated modules from exploding while
@@ -131,7 +161,7 @@ print(("loaded %d files"):format(#loaded))
 
 -- ------------------------------------------------------------------ saved vars
 PullReadyDB = {}
-PullReadyCharDB = {}
+PullReadyCharDB = { loadoutFlags = {} }
 RaidPreparedDB = nil
 RaidPreparedCharDB = nil
 
@@ -189,6 +219,64 @@ for index, tab in ipairs(PullReadyDialog.Tabs) do tab.text = original[index] end
 PR.Dialog:UpdateInspectAccess()
 assert(PullReadyDialog.Tabs[1].label:IsShown(), "labels should come back")
 print("tab label fallback ok")
+
+-- Talents tab: a row per saved loadout, and the name is a button that loads it.
+PR.Dialog:SelectTab(PR.Dialog.TAB_TALENTS)
+PR.Talents:RefreshWindow()
+
+local function loadoutButtons()
+    local found = {}
+    for _, f in ipairs(frames) do
+        local parent = f._parent
+        if f._kind == "Button" and parent and parent.configID and f:GetScript("OnClick") then
+            found[#found + 1] = f
+        end
+    end
+    return found
+end
+
+local buttons = loadoutButtons()
+assert(#buttons == 2, "expected one clickable name per saved loadout, got " .. #buttons)
+
+-- Talents.lua's own event frame, the one listening for the trait config events.
+local talentEvents
+for _, f in ipairs(frames) do
+    if f._events and f._events.TRAIT_CONFIG_UPDATED then talentEvents = f end
+end
+assert(talentEvents, "the talent event frame was not found")
+
+-- The second row is not the active loadout, so clicking it loads it.
+buttons[2]:GetScript("OnEnter")(buttons[2])
+buttons[2]:GetScript("OnClick")(buttons[2])
+assert(loadedConfigID == 12, "clicking a loadout name should load that loadout")
+assert(selectedConfigID == 12, "the loaded loadout should become the selected one")
+
+-- While the server applies the build the row says so instead of calling itself active,
+-- and a second click is ignored until it is done.
+assert(PR.Talents:IsLoading(), "the loadout being applied should be marked as loading")
+assert(buttons[2]._parent.name._text:find("loading"),
+    "the row should say it is loading, got: " .. tostring(buttons[2]._parent.name._text))
+loadedConfigID = nil
+buttons[1]:GetScript("OnClick")(buttons[1])
+assert(loadedConfigID == nil, "a second loadout must not be queued while one is applying")
+
+-- TRAIT_CONFIG_UPDATED is the client confirming the swap: the marker gives way to "active".
+talentEvents:GetScript("OnEvent")(talentEvents, "TRAIT_CONFIG_UPDATED")
+assert(not PR.Talents:IsLoading(), "the marker should clear once the config is confirmed")
+assert(buttons[2]._parent.name._text:find("active"),
+    "the applied loadout should read as active, got: " .. tostring(buttons[2]._parent.name._text))
+
+-- Clicking the one that is already active does nothing.
+loadedConfigID = nil
+buttons[2]:GetScript("OnClick")(buttons[2])
+assert(loadedConfigID == nil, "the active loadout must not be reloaded")
+
+-- And talents are locked in combat.
+InCombatLockdown = function() return true end
+buttons[1]:GetScript("OnClick")(buttons[1])
+assert(loadedConfigID == nil, "no loadout may be loaded in combat")
+InCombatLockdown = function() return false end
+print("talent loadout switching ok")
 
 -- Switch themes both ways.
 PR.Theme:Set("darkgold")

@@ -83,6 +83,10 @@ methods.GetCenter = function() return 50, 50 end
 methods.GetEffectiveScale = ret(1)
 
 -- The few that have to remember what they were given.
+methods.RegisterEvent = function(self, event)
+    self._events = self._events or {}
+    self._events[event] = true
+end
 methods.HookScript = function(self, name, fn)
     self._scripts = self._scripts or {}
     local previous = self._scripts[name]

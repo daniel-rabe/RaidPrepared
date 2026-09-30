@@ -35,6 +35,7 @@ A World of Warcraft (Retail – Midnight) addon that makes sure you and your rai
 
 ### Talent loadout check
 - Flag your saved talent loadouts as **Raid** and/or **Dungeon** – in the **Talents** tab of the addon window (`/pr talents`) or with the checkboxes above the loadout dropdown in the talent frame.
+- **Click a loadout name** in the Talents tab to switch to it (out of combat). The row reads **(loading…)** while the new build is being applied.
 - When you enter a **raid** or a **Mythic / Mythic+ dungeon**, and on every **ready check** inside, you are warned if your active loadout is not flagged for that content.
 - If no loadout of your current spec is flagged for the content, no warning appears.
 - Flags are saved per character.
@@ -153,7 +154,7 @@ Patch-specific settings live in [`Data.lua`](Data.lua):
 | `Comm.lua` | Addon channel handshake that finds the other PullReady users in the group |
 | `Dialog.lua` | Main window with Check, Inspect, Talents, Travel, Shopping and Options tabs |
 | `Minimap.lua` | Minimap button and addon compartment |
-| `Talents.lua` | Talent loadout flags, instance/ready check warning, talent frame checkboxes |
+| `Talents.lua` | Talent loadout flags and switching, instance/ready check warning, talent frame checkboxes |
 | `CharacterPanel.lua` | Enchant/socket indicators on the character panel |
 | `Shopping.lua` | Shopping tab: what to buy, filtered to what the check flagged |
 | `Locales/Locales.lua` | Localization table (English keys, English fallback) |

@@ -94,6 +94,10 @@ L["Dungeon"] = "地城"
 L["(active)"] = "（目前）"
 L["Flag the loadouts you use for raids and Mythic dungeons."] = "標記你在團隊副本與傳奇地城中使用的天賦配置。"
 L["No saved loadouts for this specialization."] = "此專精沒有已儲存的天賦配置。"
+L["(loading%s)"] = "(切換中%s)"
+L["Click a loadout name to activate it."] = "點擊配置名稱即可切換至該配置。"
+L["Talent loadouts cannot be changed in combat."] = "戰鬥中無法切換天賦配置。"
+L["Could not activate the loadout '%s'."] = "無法切換至配置「%s」。"
 L["Flag the selected loadout for this content. You are warned when entering it with a loadout that is not flagged."] = "將所選天賦配置標記用於此內容。使用未標記的配置進入時會收到警告。"
 
 -- Raid / party inspect

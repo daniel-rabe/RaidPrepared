@@ -94,6 +94,10 @@ L["Dungeon"] = "Masmorra"
 L["(active)"] = "(ativa)"
 L["Flag the loadouts you use for raids and Mythic dungeons."] = "Marque as configurações que você usa em raides e masmorras míticas."
 L["No saved loadouts for this specialization."] = "Nenhuma configuração salva para esta especialização."
+L["(loading%s)"] = "(carregando%s)"
+L["Click a loadout name to activate it."] = "Clique no nome de uma configuração para ativá-la."
+L["Talent loadouts cannot be changed in combat."] = "As configurações de talentos não podem ser trocadas em combate."
+L["Could not activate the loadout '%s'."] = "Não foi possível ativar a configuração '%s'."
 L["Flag the selected loadout for this content. You are warned when entering it with a loadout that is not flagged."] = "Marque a configuração selecionada para este conteúdo. Você será avisado ao entrar com uma configuração não marcada."
 
 -- Raid / party inspect

@@ -1,5 +1,6 @@
 local _, PR = ...
 local L = PR.L
+local Theme = PR.Theme
 
 -- Talent loadout check: players flag their saved loadouts as "raid" and/or "dungeon".
 -- Inside a raid or Mythic/Mythic+ dungeon a warning appears when the active loadout is not
@@ -17,13 +18,23 @@ local CONTENT_LABELS = {
 local FRAME_WIDTH = 380 -- width of the hint text
 local ROW_HEIGHT = 26
 
+-- Applying a loadout is a cast the server has to confirm, so the row says so meanwhile.
+local LOADING_TIMEOUT = 10 -- seconds before the marker gives up waiting for the client
+local LOADING_DOT_PERIOD = 0.3 -- seconds per dot of the animated ellipsis
+
 local Talents = {}
 PR.Talents = Talents
+
+local function Print(msg)
+    print(("|cff33ccff%s|r: "):format(PR.Fun:Title()) .. msg)
+end
 
 local frame, scrollChild, headerText, emptyText
 local rows = {}
 local talentFrameWidgets
 local lastCheckedInstanceID
+local loadingConfigID, loadingTimer -- the loadout being applied right now
+local loadingRow, loadingDots -- its row, and the ellipsis length drawn on it
 
 ---------------------------------------------------------------------------
 -- Data
@@ -65,6 +76,57 @@ function Talents:GetActiveLoadoutID()
         return nil
     end
     return C_ClassTalents.GetLastSelectedSavedConfigID(specID)
+end
+
+-- Applying a loadout runs a cast the server confirms with TRAIT_CONFIG_UPDATED (or
+-- CONFIG_COMMIT_FAILED), so the row that was clicked carries a marker until then. The
+-- timer is only a failsafe: without it a swallowed event would leave the marker up.
+function Talents:SetLoading(configID)
+    if loadingTimer then
+        loadingTimer:Cancel()
+        loadingTimer = nil
+    end
+    loadingConfigID = configID
+    if configID then
+        loadingTimer = C_Timer.NewTimer(LOADING_TIMEOUT, function() Talents:SetLoading(nil) end)
+    end
+    self:RefreshWindow()
+end
+
+function Talents:IsLoading()
+    return loadingConfigID ~= nil
+end
+
+-- Activates a saved loadout, the way clicking it in Blizzard's own load dropdown would.
+-- LoadConfig applies the build; the "last selected" id is what the talent UI and
+-- GetActiveLoadoutID above read back, so it has to follow along.
+function Talents:LoadLoadout(configID)
+    if not configID or configID == self:GetActiveLoadoutID() then return end
+    if not (C_ClassTalents and C_ClassTalents.LoadConfig) then return end
+    if self:IsLoading() then return end -- one at a time: the last one is still applying
+
+    local info = C_Traits.GetConfigInfo(configID)
+    local name = info and info.name or ("#" .. configID)
+
+    -- Talents are locked in combat, and the client would refuse the call anyway.
+    if InCombatLockdown() then
+        Print(L["Talent loadouts cannot be changed in combat."])
+        return
+    end
+
+    local specID = GetSpecID()
+    local failed = Enum.LoadConfigResult and Enum.LoadConfigResult.Error or 0
+    if C_ClassTalents.LoadConfig(configID, true) == failed then
+        -- Refused by the client: an encounter in progress, a pending unspent point, ...
+        Print(L["Could not activate the loadout '%s'."]:format(name))
+        return
+    end
+
+    if specID and C_ClassTalents.UpdateLastSelectedSavedConfigID then
+        C_ClassTalents.UpdateLastSelectedSavedConfigID(specID, configID)
+    end
+    self:SetLoading(configID)
+    self:NotifyChanged()
 end
 
 function Talents:GetFlag(configID, content)
@@ -157,6 +219,17 @@ local function LabelSpace(check)
     return math.ceil(check.label:GetStringWidth()) + 12
 end
 
+local function NameOnClick(self)
+    Talents:LoadLoadout(self:GetParent().configID)
+end
+
+local function NameOnEnter(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:AddLine(PR.Fun:Title())
+    GameTooltip:AddLine(L["Click a loadout name to activate it."], 1, 1, 1, true)
+    GameTooltip:Show()
+end
+
 local function CreateRow(index)
     local row = CreateFrame("Frame", nil, scrollChild)
     row:SetHeight(ROW_HEIGHT)
@@ -173,14 +246,40 @@ local function CreateRow(index)
     end)
     row.raid:SetPoint("RIGHT", row.dungeon, "LEFT", -math.max(40, LabelSpace(row.raid)), 0)
 
-    row.name = row:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    -- The name doubles as the button that loads the loadout.
+    row.load = CreateFrame("Button", nil, row)
+    row.load:SetHeight(ROW_HEIGHT - 4)
+    row.load:SetPoint("LEFT", 0, 0)
+    row.load:SetPoint("RIGHT", row.raid, "LEFT", -8, 0)
+    row.load:SetScript("OnClick", NameOnClick)
+    row.load:SetScript("OnEnter", NameOnEnter)
+    row.load:SetScript("OnLeave", GameTooltip_Hide)
+
+    row.load.highlight = row.load:CreateTexture(nil, "HIGHLIGHT")
+    row.load.highlight:SetAllPoints()
+    Theme:Register(function(palette)
+        row.load.highlight:SetColorTexture(unpack(palette.rowHighlight))
+    end)
+
+    row.name = row.load:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     row.name:SetPoint("LEFT", 4, 0)
-    row.name:SetPoint("RIGHT", row.raid, "LEFT", -8, 0)
+    row.name:SetPoint("RIGHT", -4, 0)
     row.name:SetJustifyH("LEFT")
     row.name:SetWordWrap(false)
 
     rows[index] = row
     return row
+end
+
+-- "Name (loading...)", with the ellipsis growing so the row reads as busy rather than
+-- stuck. Called from OnUpdate, so it only touches the font string when a dot is due.
+local function DrawLoadingRow(force)
+    if not loadingRow then return end
+    local dots = math.floor(GetTime() / LOADING_DOT_PERIOD) % 4
+    if dots == loadingDots and not force then return end
+    loadingDots = dots
+    loadingRow.name:SetText(("%s |cffffd100%s|r"):format(
+        loadingRow.loadoutName, L["(loading%s)"]:format(("."):rep(dots))))
 end
 
 -- Builds the loadout list into a parent frame (the "Talents" tab of the main dialog).
@@ -196,10 +295,11 @@ function Talents:CreatePanel(parent)
     local hint = frame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     hint:SetPoint("TOP", headerText, "BOTTOM", 0, -4)
     hint:SetWidth(FRAME_WIDTH)
-    hint:SetText(L["Flag the loadouts you use for raids and Mythic dungeons."])
+    hint:SetText(L["Flag the loadouts you use for raids and Mythic dungeons."]
+        .. "\n" .. L["Click a loadout name to activate it."])
 
     local scroll = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
-    scroll:SetPoint("TOPLEFT", 20, -80)
+    scroll:SetPoint("TOPLEFT", 20, -96)
     scroll:SetPoint("BOTTOMRIGHT", -38, 52)
 
     scrollChild = CreateFrame("Frame", nil, scroll)
@@ -220,10 +320,14 @@ function Talents:RefreshWindow()
 
     local loadouts = self:GetLoadouts()
     local activeID = self:GetActiveLoadoutID()
+    loadingRow, loadingDots = nil, nil
     for i, loadout in ipairs(loadouts) do
         local row = rows[i] or CreateRow(i)
         row.configID = loadout.id
-        if loadout.id == activeID then
+        row.loadoutName = loadout.name
+        if loadout.id == loadingConfigID then
+            loadingRow = row
+        elseif loadout.id == activeID then
             row.name:SetText(loadout.name .. " |cff40ff40" .. L["(active)"] .. "|r")
         else
             row.name:SetText(loadout.name)
@@ -237,6 +341,10 @@ function Talents:RefreshWindow()
     end
     scrollChild:SetHeight(math.max(1, #loadouts * ROW_HEIGHT))
     emptyText:SetShown(#loadouts == 0)
+
+    DrawLoadingRow(true)
+    -- Nothing to animate once the loadout is applied, so the OnUpdate goes away with it.
+    frame:SetScript("OnUpdate", loadingRow and DrawLoadingRow or nil)
 end
 
 function Talents:Open()
@@ -314,9 +422,17 @@ events:RegisterEvent("ADDON_LOADED")
 events:RegisterEvent("PLAYER_ENTERING_WORLD")
 events:RegisterEvent("READY_CHECK")
 for _, event in ipairs({ "PLAYER_SPECIALIZATION_CHANGED", "TRAIT_CONFIG_LIST_UPDATED", "TRAIT_CONFIG_UPDATED",
-    "ACTIVE_COMBAT_CONFIG_CHANGED", "SELECTED_LOADOUT_CHANGED" }) do
+    "ACTIVE_COMBAT_CONFIG_CHANGED", "SELECTED_LOADOUT_CHANGED", "CONFIG_COMMIT_FAILED" }) do
     pcall(events.RegisterEvent, events, event)
 end
+
+-- The events that end a loadout swap: the build went live, or the client gave up on it.
+local LOADING_DONE = {
+    TRAIT_CONFIG_UPDATED = true,
+    ACTIVE_COMBAT_CONFIG_CHANGED = true,
+    CONFIG_COMMIT_FAILED = true,
+    PLAYER_SPECIALIZATION_CHANGED = true,
+}
 
 events:SetScript("OnEvent", function(_, event, arg1)
     if event == "ADDON_LOADED" then
@@ -340,6 +456,9 @@ events:SetScript("OnEvent", function(_, event, arg1)
             PR.RunTalentCheck()
         end
     else
+        if LOADING_DONE[event] then
+            Talents:SetLoading(nil)
+        end
         Talents:NotifyChanged()
     end
 end)

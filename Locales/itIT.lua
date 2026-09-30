@@ -94,6 +94,10 @@ L["Dungeon"] = "Spedizione"
 L["(active)"] = "(attiva)"
 L["Flag the loadouts you use for raids and Mythic dungeons."] = "Contrassegna le configurazioni che usi per incursioni e spedizioni mitiche."
 L["No saved loadouts for this specialization."] = "Nessuna configurazione salvata per questa specializzazione."
+L["(loading%s)"] = "(caricamento%s)"
+L["Click a loadout name to activate it."] = "Clicca sul nome di una configurazione per attivarla."
+L["Talent loadouts cannot be changed in combat."] = "Le configurazioni dei talenti non possono essere cambiate in combattimento."
+L["Could not activate the loadout '%s'."] = "Impossibile attivare la configurazione '%s'."
 L["Flag the selected loadout for this content. You are warned when entering it with a loadout that is not flagged."] = "Contrassegna la configurazione selezionata per questo contenuto. Riceverai un avviso se entri con una configurazione non contrassegnata."
 
 -- Raid / party inspect

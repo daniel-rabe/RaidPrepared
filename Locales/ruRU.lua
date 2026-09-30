@@ -94,6 +94,10 @@ L["Dungeon"] = "Подземелье"
 L["(active)"] = "(активен)"
 L["Flag the loadouts you use for raids and Mythic dungeons."] = "Отметьте наборы талантов для рейдов и эпохальных подземелий."
 L["No saved loadouts for this specialization."] = "Нет сохранённых наборов для этой специализации."
+L["(loading%s)"] = "(загрузка%s)"
+L["Click a loadout name to activate it."] = "Щёлкните по названию набора, чтобы активировать его."
+L["Talent loadouts cannot be changed in combat."] = "Наборы талантов нельзя менять в бою."
+L["Could not activate the loadout '%s'."] = "Не удалось активировать набор '%s'."
 L["Flag the selected loadout for this content. You are warned when entering it with a loadout that is not flagged."] = "Отметьте выбранный набор для этого контента. При входе с неотмеченным набором появится предупреждение."
 
 -- Raid / party inspect

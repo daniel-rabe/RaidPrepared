@@ -100,6 +100,10 @@ L["Dungeon"] = "Dungeon"
 L["(active)"] = "(aktiv)"
 L["Flag the loadouts you use for raids and Mythic dungeons."] = "Markiere die Loadouts, die du für Schlachtzüge und mythische Dungeons nutzt."
 L["No saved loadouts for this specialization."] = "Keine gespeicherten Loadouts für diese Spezialisierung."
+L["(loading%s)"] = "(lädt%s)"
+L["Click a loadout name to activate it."] = "Klicke auf einen Loadout-Namen, um ihn zu aktivieren."
+L["Talent loadouts cannot be changed in combat."] = "Talent-Loadouts können im Kampf nicht gewechselt werden."
+L["Could not activate the loadout '%s'."] = "Loadout '%s' konnte nicht aktiviert werden."
 L["Flag the selected loadout for this content. You are warned when entering it with a loadout that is not flagged."] = "Markiere das gewählte Loadout für diesen Inhalt. Du wirst gewarnt, wenn du ihn mit einem nicht markierten Loadout betrittst."
 
 -- Raid / party inspect

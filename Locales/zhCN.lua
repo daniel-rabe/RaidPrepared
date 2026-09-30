@@ -94,6 +94,10 @@ L["Dungeon"] = "地下城"
 L["(active)"] = "（当前）"
 L["Flag the loadouts you use for raids and Mythic dungeons."] = "标记你在团队副本和史诗地下城中使用的天赋配置。"
 L["No saved loadouts for this specialization."] = "此专精没有已保存的天赋配置。"
+L["(loading%s)"] = "(切换中%s)"
+L["Click a loadout name to activate it."] = "点击配置名称即可切换到该配置。"
+L["Talent loadouts cannot be changed in combat."] = "战斗中无法切换天赋配置。"
+L["Could not activate the loadout '%s'."] = "无法切换到配置“%s”。"
 L["Flag the selected loadout for this content. You are warned when entering it with a loadout that is not flagged."] = "将所选天赋配置标记用于此内容。使用未标记的配置进入时会收到警告。"
 
 -- Raid / party inspect
