@@ -84,6 +84,10 @@ function IsInGroup() return false end
 function GetInventoryItemTexture() return 134400 end
 function GetInventoryItemLink() return nil end
 function GetInventoryItemDurability() return nil end
+-- Equipped item level, as the inspect list shows it in a member tooltip. Two decimals,
+-- so the rounding in PR.GetUnitItemLevel is exercised.
+function GetAverageItemLevel() return 702.5, 699.75 end
+C_PaperDollInfo = { GetInspectItemLevel = function() return 0 end }
 
 OPTIONS, TALENTS = "Options", "Talents"
 NORMAL_FONT_COLOR = { r = 1, g = 0.82, b = 0 }
@@ -318,5 +322,12 @@ local before = #soundsPlayed
 PR.Dialog:Show({}, nil, nil, nil)
 assert(#soundsPlayed == before, "a clean check must not play a warning at all")
 print("warning sound ok")
+
+-- The item level the inspect list puts in a member tooltip: the player's equipped level,
+-- rounded, and nil for a unit the client holds no inspect data for.
+function UnitIsUnit(a, b) return a == b end
+assert(PR.GetUnitItemLevel("player") == 700, "player item level should round to 700")
+assert(PR.GetUnitItemLevel("raid1") == nil, "a unit without inspect data has no item level")
+print("item level ok")
 
 print("SMOKE OK")

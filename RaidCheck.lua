@@ -43,7 +43,7 @@ function RaidCheck:GetTitle()
     return IsInRaid() and L["Raid Inspect"] or L["Party Inspect"]
 end
 
-local members = {} -- guid -> { guid, name, classFile, status, issues, tierSet }
+local members = {} -- guid -> { guid, name, classFile, status, issues, tierSet, itemLevel }
 local order = {}   -- guids sorted by name
 local queue = {}   -- guids waiting to be inspected
 local current      -- { guid, started, scanning } of the member being inspected
@@ -137,12 +137,13 @@ end
 -- Inspect queue
 ---------------------------------------------------------------------------
 
-local function Finish(guid, status, issues, tierSet)
+local function Finish(guid, status, issues, tierSet, itemLevel)
     local entry = members[guid]
     if entry then
         entry.status = status
         entry.issues = issues or {}
         entry.tierSet = tierSet
+        entry.itemLevel = itemLevel
     end
     if current and current.guid == guid then
         local notified = current.notified
@@ -164,11 +165,13 @@ local function CountEquippedItems(unit)
     return count
 end
 
--- The tier set is read off the same inspect data, right after the gear scan warmed it.
+-- The tier set and the equipped item level are read off the same inspect data, right
+-- after the gear scan warmed it.
 local function ScanMember(guid, unit)
     PR.ScanUnitAsync(unit, "enchant", function(issues)
         if current and current.guid == guid then
-            Finish(guid, #issues > 0 and "issues" or "ok", issues, PR.ScanUnitTierSet(unit))
+            Finish(guid, #issues > 0 and "issues" or "ok", issues,
+                PR.ScanUnitTierSet(unit), PR.GetUnitItemLevel(unit))
         end
     end)
 end
@@ -340,6 +343,13 @@ local function TierTag(entry)
     local best = tierSet.bonuses[#tierSet.bonuses]
     return ("|c%s%s|r"):format(best and best.active and "ff40ff40" or "ffff9919",
         L["%dP"]:format(tierSet.active.pieces))
+end
+
+-- Equipped item level of a member, a grey dash while no inspect has brought one in yet.
+-- A re-inspect keeps the last reading, the way the tier set tag does.
+local function ItemLevelText(entry)
+    if not entry.itemLevel then return "|cffaaaaaa-|r" end
+    return tostring(entry.itemLevel)
 end
 
 local function ShortIssue(issue)
@@ -567,13 +577,15 @@ local function CreateRow(index)
 
     row:SetScript("OnEnter", function(self)
         local entry = members[self.guid]
-        local addonUser = entry and AddonUserLine(entry)
-        if not entry or (#entry.issues == 0 and not addonUser and not entry.tierSet) then return end
+        if not entry then return end
+        local addonUser = AddonUserLine(entry)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:AddLine(ColoredName(entry))
         if addonUser then
             GameTooltip:AddLine("|cff33ccff" .. addonUser .. "|r")
         end
+        GameTooltip:AddDoubleLine(STAT_AVERAGE_ITEM_LEVEL or L["Item Level"],
+            ItemLevelText(entry), 1, 1, 1, 1, 1, 1)
         if entry.tierSet then
             local tierSet = entry.tierSet
             local state = ("%d/%d"):format(tierSet.count, tierSet.maxPieces)
