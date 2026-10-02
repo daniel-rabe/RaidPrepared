@@ -33,6 +33,22 @@ function PR.GetInspectSpecID(unit)
     end
 end
 
+-- Equipped item level of a unit. The player's own gear reads out at any time; for anyone
+-- else the number only exists once INSPECT_READY fired for that unit, so call this from
+-- the inspect callback while the client still holds that unit's data.
+function PR.GetUnitItemLevel(unit)
+    if UnitIsUnit(unit, "player") then
+        local _, equipped = GetAverageItemLevel()
+        if equipped and equipped > 0 then return math.floor(equipped + 0.5) end
+        return nil
+    end
+    if C_PaperDollInfo and C_PaperDollInfo.GetInspectItemLevel then
+        local itemLevel = C_PaperDollInfo.GetInspectItemLevel(unit)
+        if itemLevel and itemLevel > 0 then return math.floor(itemLevel + 0.5) end
+    end
+    return nil
+end
+
 -- Every spec ID of a class, in spec order. Stands in where a unit's own spec is unknown.
 function PR.GetClassSpecIDs(classID)
     local specIDs = {}

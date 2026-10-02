@@ -110,6 +110,7 @@ L["Inspect failed - try refresh"] = "Осмотр не удался - обнов
 L["low quality enchant"] = "чары низкого качества"
 L["mid quality enchant"] = "чары среднего качества"
 L["(ilvl %d)"] = "(ур. %d)"
+L["Item Level"] = "Уровень предмета"
 L["no enchant"] = "нет чар"
 L["missing"] = "отсутствует"
 L["empty gem socket"] = "пустое гнездо"

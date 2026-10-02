@@ -110,6 +110,7 @@ L["Inspect failed - try refresh"] = "살펴보기 실패 - 새로고침하세요
 L["low quality enchant"] = "저품질 마법부여"
 L["mid quality enchant"] = "중품질 마법부여"
 L["(ilvl %d)"] = "(템렙 %d)"
+L["Item Level"] = "아이템 레벨"
 L["no enchant"] = "마법부여 없음"
 L["missing"] = "없음"
 L["empty gem socket"] = "빈 보석 홈"
